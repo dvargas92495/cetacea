@@ -1,10 +1,10 @@
 apply plugin: 'java'
 
 jar {
-    baseName = 'java-sample-app'
-    version =  'v3'
+    baseName = 'Cetacea'
+    version =  'v0'
     manifest {
-        attributes('Main-Class': 'edu.mit.cetacea.Application')
+        attributes('Main-Class': 'main.java.edu.mit.cetacea.Application')
     }
     from {
         configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }

@@ -1,4 +1,4 @@
-package edu.mit.cetacea;
+package main.java.edu.mit.cetacea;
 
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
@@ -46,10 +46,10 @@ public class Application {
             .build();
 
     private static String loadIndex() {
-        final String fileName = isXRayEnabled() ? "/index_xray.html" : "/index_default.html";
+        final String fileName = "client/index.html";
         try {
-            final String page = new Scanner(Application.class.getResourceAsStream(fileName), "UTF-8").useDelimiter("\\A").next();
-            return page;
+            System.out.println(new java.io.FileInputStream(fileName));
+            return new Scanner(new java.io.FileInputStream(fileName), "UTF-8").useDelimiter("\\A").next();
         } catch (final Exception exception) {
             return getStackTrace(exception);
         }
@@ -86,7 +86,6 @@ public class Application {
         server.setHandler(handler);
         server.start();
         server.join();
-        System.out.println("Server started on port: " + getPort());
     }
 
     public static class HomeServlet extends HttpServlet {
