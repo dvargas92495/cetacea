@@ -48,7 +48,6 @@ public class Application {
     private static String loadIndex() {
         final String fileName = "client/index.html";
         try {
-            System.out.println(new java.io.FileInputStream(fileName));
             return new Scanner(new java.io.FileInputStream(fileName), "UTF-8").useDelimiter("\\A").next();
         } catch (final Exception exception) {
             return getStackTrace(exception);
@@ -78,6 +77,7 @@ public class Application {
         handler.addServletWithMapping(HomeServlet.class, "/*");
         handler.addServletWithMapping(TraceServlet.class, "/trace");
         handler.addServletWithMapping(CronServlet.class, "/crontask");
+        handler.addServletWithMapping(EntryResource.class, "/entry");
         if (isXRayEnabled()) {
             FilterHolder filterHolder = handler.addFilterWithMapping(AWSXRayServletFilter.class, "/*", EnumSet.of(DispatcherType.REQUEST));
             filterHolder.setInitParameter("dynamicNamingFallbackName", "ElasticBeanstalkSample");
