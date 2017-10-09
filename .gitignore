@@ -3,4 +3,8 @@
 out/*
 build/*
 .gradle/*
-gradle/*
+gradle/
+.DS_Store
+client/.DS_Store
+client/node_modules/*
+client/npm-debug.log
