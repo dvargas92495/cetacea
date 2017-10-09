@@ -1,4 +1,4 @@
-package main.java.edu.mit.cetacea;
+package main.java;
 
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
