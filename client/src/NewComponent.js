@@ -17,7 +17,7 @@ class NewComponent extends React.Component {
     return (
       <div>
         Likes : <span>{this.state.likesCount} </span>
-        <div><button onClick={this.onLike}>Press me bitch </button></div>
+        <div><button onClick={this.onLike}>Press me world </button></div>
       </div>
     )
   }
