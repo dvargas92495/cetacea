@@ -1,26 +1,68 @@
-import React from 'react';
+import React from 'react'
+import {EditableText} from '@blueprintjs/core'
+import Button from './components/Button.js'
+import NavBar from './components/NavBar.js'
+import moment from 'moment';
 
 class NewComponent extends React.Component {
+
   constructor(props) {
     super(props)
-    this.state = {likesCount : 0}
-    this.onLike = this.onLike.bind(this)
-
+    this.state = {
+      textContent : "",
+      date: moment().format("LL")
+    }
+    this.onChange = this.onChange.bind(this)
+    this.handleSubmit = this.handleSubmit.bind(this)
   }
 
-  onLike() {
-    let newLikesCount = this.state.likesCount +1
-    this.setState({likesCount: newLikesCount});
+  onChange (newText: string) {
+    return this.setState({textContent: newText})
   }
+
+  handleSubmit(event) {
+    alert('A name was submitted: ');
+    event.preventDefault();
+  }
+
+  // render () {
+  //   return (
+  //     <form onSubmit={this.handleSubmit}>
+  //       <EditableText
+  //           multiline
+  //           maxLines={12}
+  //           minLines={3}
+  //           multiline={true}
+  //           placeholder="Try Me!"
+  //           value={this.state.textContent}
+  //           onChange={this.onChange}
+  //       />
+  //     </form>
+  //   )
+  // }
 
   render () {
     return (
       <div>
-        Likes : <span>{this.state.likesCount} </span>
-        <div><button onClick={this.onLike}>Press me bitch </button></div>
+        <NavBar />
+          <div >
+            {this.state.date.toString()}
+          </div>
+        <form onSubmit={this.handleSubmit}>
+          <EditableText
+              multiline
+              maxLines={12}
+              minLines={3}
+              multiline={true}
+              placeholder="Try Me!"
+              value={this.state.textContent}
+              onChange={this.onChange}
+          />
+        </form>
       </div>
     )
   }
 }
+
 
 export default NewComponent
