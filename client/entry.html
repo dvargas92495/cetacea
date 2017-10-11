@@ -5,7 +5,10 @@
     <title>Journal</title>
 </head>
 <body>
-<input type="text" placeholder="Name"><br>
-<input type="text" placeholder="Journal">
+    <form action="/entry" method="post" enctype="application/x-www-form-urlencoded">
+        <input name="name" type="text" placeholder="Name"><br>
+        <input name="journal" type="text" placeholder="Journal">
+        <button>Send</button>
+    </form>
 </body>
 </html>

@@ -1,4 +1,4 @@
-package main.java.edu.mit.cetacea;
+package main.java;
 
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
@@ -75,6 +75,7 @@ public class Application {
         Server server = new Server(getPort());
         ServletHandler handler = new ServletHandler();
         handler.addServletWithMapping(HomeServlet.class, "/*");
+        handler.addServletWithMapping(PublicServlet.class, "/public/*");
         handler.addServletWithMapping(TraceServlet.class, "/trace");
         handler.addServletWithMapping(CronServlet.class, "/crontask");
         handler.addServletWithMapping(EntryResource.class, "/entry");
@@ -94,6 +95,16 @@ public class Application {
             response.setContentType("text/html;charset=utf-8");
             response.setStatus(HttpServletResponse.SC_OK);
             response.getWriter().println(INDEX_HTML);
+        }
+    }
+
+    public static class PublicServlet extends HttpServlet {
+        @Override
+        protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+            response.setContentType("text/javascript;charset=utf-8");
+            response.setStatus(HttpServletResponse.SC_OK);
+            String fileName = "client" + request.getRequestURI();
+            response.getWriter().println(new Scanner(new java.io.FileInputStream(fileName), "UTF-8").useDelimiter("\\A").next());
         }
     }
 

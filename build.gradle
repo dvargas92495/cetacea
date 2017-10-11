@@ -4,7 +4,7 @@ jar {
     baseName = 'Cetacea'
     version =  'v0'
     manifest {
-        attributes('Main-Class': 'main.java.edu.mit.cetacea.Application')
+        attributes('Main-Class': 'main.java.Application')
     }
     from {
         configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
@@ -43,6 +43,7 @@ dependencies {
     compile files("lib/jetty-xml-9.4.0.RC2.jar")
     compile files("lib/jmespath-java-1.0.jar")
     compile files("lib/joda-time-2.8.1.jar")
+    compile files("lib/postgresql-9.4.1212.jar")
 }
 
 task wrapper(type: Wrapper) {

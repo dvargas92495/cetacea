@@ -8,3 +8,7 @@ gradle/
 client/.DS_Store
 client/node_modules/*
 client/npm-debug.log
+client/src/.DS_Store
+client/public/*
+cetacea.zip
+
