@@ -1,4 +1,4 @@
-package main.java;
+package main.java.data;
 
 import java.sql.*;
 import java.util.Map;
