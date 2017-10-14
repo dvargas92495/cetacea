@@ -34,7 +34,8 @@ public class Application {
         handler.addServletWithMapping(PublicServlet.class, "/public/*");
         handler.addServletWithMapping(TraceServlet.class, "/trace");
         handler.addServletWithMapping(CronServlet.class, "/crontask");
-        handler.addServletWithMapping(EntryServlet.class, "/entry");
+        handler.addServletWithMapping(JournalServlet.class, "/journal");
+        handler.addServletWithMapping(LoginServlet.class, "/login");
         if (isXRayEnabled()) {
             FilterHolder filterHolder = handler.addFilterWithMapping(AWSXRayServletFilter.class, "/*", EnumSet.of(DispatcherType.REQUEST));
             filterHolder.setInitParameter("dynamicNamingFallbackName", "ElasticBeanstalkSample");

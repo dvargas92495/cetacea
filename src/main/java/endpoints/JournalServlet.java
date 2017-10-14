@@ -1,6 +1,7 @@
 package main.java.endpoints;
 
 import com.amazonaws.util.IOUtils;
+import main.java.data.DataConverter;
 import main.java.data.Repository;
 
 import javax.servlet.ServletException;
@@ -18,33 +19,27 @@ import java.util.Scanner;
 /**
  * Created by David on 9/25/2017.
  */
-public class EntryServlet extends HttpServlet{
+public class JournalServlet extends HttpServlet{
 
-    Repository repo = new Repository();
+    private static final String USER_ID = "user_id";
+    private static final String ENTRY = "entry";
+    private static final String TIMESTAMP = "timestamp";
+    private static final String TABLE = "journals";
+    private static final Map<String, String> journalTypeMapping = new HashMap<String, String>() {{
+        put(USER_ID, DataConverter.INT);
+        put(ENTRY, DataConverter.TEXT);
+        put(TIMESTAMP, DataConverter.DATE);
+    }};
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("text/html;charset=utf-8");
         response.setStatus(HttpServletResponse.SC_OK);
-        response.getWriter().println(loadHtml());
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        InputStream in = request.getInputStream();
-        String jsonString = IOUtils.toString(in);
-        //TODO: HARD CODED HACK BELOW
-        Map<String, Object> entry = new HashMap<>();
-        //entry.put("id",5);
-        entry.put("email","\'dvargas92495@gmail.com\'");
-        entry.put("name","\'Vargas\'");
-        entry.put("entry","\'Today was fantastic\'");
-        entry.put("timestamp","\'" + (new Date()).toString() + "\'");
-        repo.createJournalEntry(entry);
-    }
-
-    private static String loadHtml() throws FileNotFoundException {
-        final String fileName = "client/entry.html";
-        return new Scanner(new java.io.FileInputStream(fileName), "UTF-8").useDelimiter("\\A").next();
+        Map<String, Object> entry = DataConverter.convertParams(request.getParameterMap(), journalTypeMapping);
+        Repository.createEntry(TABLE, entry);
     }
 }

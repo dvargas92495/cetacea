@@ -8,14 +8,14 @@ import java.util.Map;
  */
 public class Repository {
 
-    public void createJournalEntry(Map<String, Object> journalEntry){
+    public static void createEntry(String table, Map<String, Object> entry){
         StringBuilder sb = new StringBuilder();
-        sb.append("INSERT INTO journals (");
+        sb.append(String.format("INSERT INTO %s (",table));
         StringBuilder valSb = new StringBuilder();
-        for (String column:journalEntry.keySet()){
+        for (String column:entry.keySet()){
             sb.append(column);
             sb.append(',');
-            valSb.append(journalEntry.get(column));
+            valSb.append(entry.get(column));
             valSb.append(',');
         }
         sb.setLength(sb.length() - 1);
@@ -26,7 +26,7 @@ public class Repository {
         query(sb.toString());
     }
 
-    public void query(String q){
+    public static void query(String q){
         Connection con = null;
         Statement st = null;
         int rs;
