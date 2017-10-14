@@ -1,20 +1,8 @@
 import React from 'react'
 import styled from 'styled-components'
+import {Link} from 'react-router-dom'
 
 class NavBar extends React.Component {
-
-  // displayNavPages () {
-  //   this.props.pages.reverse()
-  //   for (page in this.props.pages) {
-  //
-  //     <List><Link href={page[1]}>
-  //
-  //   }
-  //   <List><Link href="#">Help</Link></List>
-  //   <List><Link href="#">Settings</Link></List>
-  //   <List><Link href="#">Groups</Link></List>
-  //   <List><Link href="#">Journal</Link></List>
-  // }
 
   render () {
     const NavBar = styled.ul`
@@ -33,7 +21,7 @@ class NavBar extends React.Component {
       float: right;
     `
 
-    const Link = styled.a`
+    const Page = styled(Link)`
       display: block;
       font-family: Allerta;
       color: #616161;
@@ -45,10 +33,11 @@ class NavBar extends React.Component {
         text-decoration: none;
       }
     `
+    console.log(this.props.pages)
     return (
       <div>
         <NavBar>
-          {this.props.pages.map(page => <List><Link key={page[0]} href={page[1]}>{page[0]}</Link></List>)}
+          {this.props.pages.map(page => <List><Page to={page[1]}>{page[0]}</Page></List>)}
         </NavBar>
       </div>
     )
@@ -56,7 +45,9 @@ class NavBar extends React.Component {
 }
 
 NavBar.defaultProps = {
-  pages: [['Home', 'www.cetacea.xyz']]
+  pages: [['Home', '/']]
 }
 
 export default NavBar
+
+// {this.props.pages.map(page => <List><Link to={page[1]}>{page[0]}</Link></List>)}

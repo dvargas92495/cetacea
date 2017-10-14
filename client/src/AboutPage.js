@@ -52,13 +52,6 @@ class JournalPage extends React.Component {
         <DateHeader>
           {moment().format("dddd, MMMM D, YYYY").toString()}
         </DateHeader>
-        <Entry placeholder='Start typing here.'/>
-        <div style={{'textAlign':'right', 'margin-right':'10px'}}>
-          <SmallText>
-            last submit: 10/11/17 9:24 pm
-          </SmallText>
-          <Button text="submit"/>
-        </div>
       </div>
     )
   }

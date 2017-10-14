@@ -4,20 +4,24 @@ import Button from './components/Button.js'
 import NavBar from './components/NavBar.js'
 import styled from 'styled-components'
 import moment from 'moment';
+import {Link} from 'react-router-dom'
 
 class HomePage extends React.Component {
 
   constructor(props) {
+    console.log('home')
     super(props)
     this.state = {
-      pages: [ ['Learn More', 'http://www.cetacea.xyz/'], ['Log In', 'http://www.cetacea.xyz/']]
+      pages: [ ['Learn More', '/about'], ['Log In', '/journal']]
     }
     this.handleClick = this.handleClick.bind(this);
   }
 
   handleClick(e) {
     e.preventDefault()
-    window.location = 'http://www.cetacea.xyz/entry';
+    return (
+      <Link to='journal'/>
+    )
   }
 
   render () {
@@ -56,13 +60,16 @@ class HomePage extends React.Component {
           journaling for a porpoise
         </Subtitle>
         <div style={{'textAlign': "center", 'margin-top': '25px'}}>
-          <Button text="lets go" press={this.props.onClick}/>
-          <Button text="learn more" press={this.handleClick}/>
+        <Link to='/journal'>
+          <Button text="lets go" />
+        </Link>
+        <Link to = '/about'>
+          <Button text="learn more" />
+        </Link>
         </div>
       </div>
     )
   }
 }
-
 
 export default HomePage
