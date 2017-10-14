@@ -1,14 +1,12 @@
-package main.java;
+package main.java.endpoints;
 
 import com.amazonaws.util.IOUtils;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.commons.collections.map.HashedMap;
+import main.java.data.Repository;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.DataInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,7 +18,7 @@ import java.util.Scanner;
 /**
  * Created by David on 9/25/2017.
  */
-public class EntryResource extends HttpServlet{
+public class EntryServlet extends HttpServlet{
 
     Repository repo = new Repository();
 
