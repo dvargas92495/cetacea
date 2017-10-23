@@ -11,10 +11,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Scanner;
+import java.sql.ResultSet;
+import java.util.*;
 
 /**
  * Created by David on 9/25/2017.
@@ -35,6 +33,10 @@ public class JournalServlet extends HttpServlet{
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("text/html;charset=utf-8");
         response.setStatus(HttpServletResponse.SC_OK);
+        Map<String, Object> filters = new HashMap<>();
+        filters.put(USER_ID, request.getParameter("id"));
+        List<Map<String, Object>> rs = Repository.queryEntry(TABLE, filters);
+        System.out.println(rs);
     }
 
     @Override
