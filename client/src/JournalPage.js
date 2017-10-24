@@ -5,64 +5,80 @@ import NavBar from './components/NavBar.js'
 import styled from 'styled-components'
 import moment from 'moment';
 
-class JournalPage extends React.Component {
+const Entry = styled.textarea`
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 20px;
+  width: 95%;
+  height: 400px;
+  resize: none;
+  outline: none;`
+const DateHeader = styled.h1`
+  display: block;
+  text-align: right;
+  font-size: 2em;
+  margin-top: 0.75em;
+  margin-bottom: 1em;
+  margin-left: 0;
+  margin-right: 1.5em;
+  font-family: Allerta;
+  color: #FFFFFF;
+  font-weight: lighter;`
+const SmallText = styled.h3`
+  display: inline-block;
+  text-align: right;
+  font-size: 12px;
+  font-family: Allerta;
+  color: #FFFFFF;
+  font-weight: lighter;`
 
+class JournalPage extends React.Component {
   constructor(props) {
-    console.log('journal')
     super(props)
     this.state = {
-      pages: [ ['Help', '/'], ['Settings', '/' ], ['Groups', '/'], ['Journal', '/journal']]
+      pages: [ ['Help', '/'], ['Settings', '/' ], ['Groups', '/'], ['Journal', '/journal']],
+      value: 'Please write an essay about your favorite DOM element.'
     }
+
+    this.handleChange = this.handleChange.bind(this)
+    this.handleSubmit = this.handleSubmit.bind(this)
   }
 
-  render () {
-    const DateHeader = styled.h1`
-      display: block;
-      text-align: right;
-      font-size: 2em;
-      margin-top: 0.75em;
-      margin-bottom: 1em;
-      margin-left: 0;
-      margin-right: 1.5em;
-      font-family: Allerta;
-      color: #FFFFFF;
-      font-weight: lighter;
-    `
-    const SmallText = styled.h3`
-      display: inline-block;
-      text-align: right;
-      font-size: 12px;
-      font-family: Allerta;
-      color: #FFFFFF;
-      font-weight: lighter;
-    `
-    const Entry = styled.textarea`
-      display: block;
-      margin-left: auto;
-      margin-right: auto;
-      margin-bottom: 20px;
-      width: 95%;
-      height: 400px;
-      resize: none;
-      outline: none;
-    `
+  handleChange(event) {
+    this.setState({value: event.target.value})
+  }
+
+  handleSubmit(event) {
+    console.log('daviddd')
+    fetch('/journal', {
+      method: 'POST',
+      body: {
+        user_id: '1',
+        entry: this.state.value,
+        timestamp: moment().toDate(),
+      }
+    })
+    console.log('david')
+  }
+
+  render() {
     return (
       <div>
         <NavBar pages={this.state.pages} />
         <DateHeader>
           {moment().format("dddd, MMMM D, YYYY").toString()}
         </DateHeader>
-        <Entry placeholder='Start typing here.'/>
-        <div style={{'textAlign':'right', 'margin-right':'10px'}}>
+        <Entry value={this.state.value} onChange={this.handleChange}/>
+        <div style={{'textAlign':'right', 'marginRight':'10px'}}>
           <SmallText>
-            last submit: 10/11/17 9:24 pm
+            {"Last submit: " + moment().format("M/D/YY h:m a")}
           </SmallText>
-          <Button text="submit"/>
+          <Button text="submit" press={this.handleSubmit}/>
         </div>
       </div>
     )
   }
 }
-
 
 export default JournalPage
