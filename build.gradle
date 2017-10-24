@@ -65,6 +65,9 @@ dependencies {
     compile files("lib/protobuf-java-2.6.1.jar")
     compile files("lib/transaction-api-1.1.jar")
     compile files("lib/xpp3-1.1.4c.jar")
+    compile files("lib/google-api-client-1.22.0.jar")
+    compile files("lib/google-api-client-appengine-1.22.0.jar")
+    compile files("lib/google-api-client-servlet-1.22.0.jar")
 
 }
 
