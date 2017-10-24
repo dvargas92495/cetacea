@@ -1,5 +1,4 @@
 import React from 'react'
-import {EditableText} from '@blueprintjs/core'
 import Button from './components/Button.js'
 import NavBar from './components/NavBar.js'
 import styled from 'styled-components'
@@ -38,7 +37,7 @@ class JournalPage extends React.Component {
     super(props)
     this.state = {
       pages: [ ['Help', '/'], ['Settings', '/' ], ['Groups', '/'], ['Journal', '/journal']],
-      value: 'Please write an essay about your favorite DOM element.'
+      value: ''
     }
 
     this.handleChange = this.handleChange.bind(this)
@@ -50,7 +49,6 @@ class JournalPage extends React.Component {
   }
 
   handleSubmit(event) {
-    console.log('daviddd')
     fetch('/journal', {
       method: 'POST',
       body: {
@@ -59,7 +57,6 @@ class JournalPage extends React.Component {
         timestamp: moment().toDate(),
       }
     })
-    console.log('david')
   }
 
   render() {
@@ -69,7 +66,7 @@ class JournalPage extends React.Component {
         <DateHeader>
           {moment().format("dddd, MMMM D, YYYY").toString()}
         </DateHeader>
-        <Entry value={this.state.value} onChange={this.handleChange}/>
+        <Entry value={this.state.value} onChange={this.handleChange} placeholder="Start writing here!"/>
         <div style={{'textAlign':'right', 'marginRight':'10px'}}>
           <SmallText>
             {"Last submit: " + moment().format("M/D/YY h:m a")}
