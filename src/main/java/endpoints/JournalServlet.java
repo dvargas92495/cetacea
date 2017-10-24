@@ -3,6 +3,7 @@ package main.java.endpoints;
 import static main.java.data.Tables.*;
 
 import main.java.Repository;
+import main.java.util.RequestHelper;
 import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.Result;
@@ -13,8 +14,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.Map;
 
 /**
@@ -31,7 +34,7 @@ public class JournalServlet extends HttpServlet{
             return;
         }
         int queryId = Integer.parseInt(request.getParameter("id"));
-        Date[] dateRange = getDateRange();
+        OffsetDateTime[] dateRange = getDateRange();
         Result<Record> result = create.select()
                 .from(JOURNALS)
                 .where(JOURNALS.USER_ID.eq(queryId))
@@ -41,36 +44,36 @@ public class JournalServlet extends HttpServlet{
         for (Record r : result) {
             Integer id = r.getValue(JOURNALS.ID);
             String je = r.getValue(JOURNALS.ENTRY);
-            Date ts = r.getValue(JOURNALS.TIMESTAMP);
+            //Date ts = r.getValue(JOURNALS.TIMESTAMP);
 
-            System.out.println("ID: " + id + " first name: " + je + " last name: " + ts);
+            System.out.println("ID: " + id + " first name: " + je + " last name: " + "ts");
         }
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        Map<String, String> params = null;
+        Map<String, String> params = RequestHelper.getBodyAsMap(request);
         DSLContext create = Repository.getContext();
         if (create == null){
             return;
         }
         String entry = params.get("entry");
-        Date timestamp = Date.valueOf(params.get("timestamp"));
+        OffsetDateTime timestamp = OffsetDateTime.parse(params.get("timestamp"));
         int user_id = Integer.parseInt(params.get("user_id"));
         create.insertInto(JOURNALS, JOURNALS.ENTRY, JOURNALS.TIMESTAMP, JOURNALS.USER_ID)
                 .values(entry, timestamp, user_id)
                 .execute();
     }
 
-    private Date[] getDateRange(){
+    private OffsetDateTime[] getDateRange(){
         //TODO: Get Day based on input^
         //TODO: Get Time based on Group configuration
-        Date[] dateRange = new Date[2];
+        OffsetDateTime[] dateRange = new OffsetDateTime[2];
         LocalDate today = LocalDate.of(2017, 10, 24);
         LocalDateTime start = today.atTime(6, 0);
         LocalDateTime end = today.atTime(6, 0).plusDays(1);
-        dateRange[0] = Date.valueOf(start.toLocalDate());
-        dateRange[1] = Date.valueOf(end.toLocalDate());
+        //dateRange[0] = OffsetDateTime.of(2017, 10, 24, 6, 0, 0 ,0);
+        //dateRange[1] = OffsetDateTime.of(end.toLocalDate());
         return dateRange;
     }
 }

@@ -4,7 +4,7 @@
 package main.java.data.tables;
 
 
-import java.sql.Date;
+import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.List;
 
@@ -41,7 +41,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Journals extends TableImpl<JournalsRecord> {
 
-    private static final long serialVersionUID = -2116484280;
+    private static final long serialVersionUID = 2056082358;
 
     /**
      * The reference instance of <code>public.journals</code>
@@ -69,7 +69,7 @@ public class Journals extends TableImpl<JournalsRecord> {
     /**
      * The column <code>public.journals.timestamp</code>.
      */
-    public final TableField<JournalsRecord, Date> TIMESTAMP = createField("timestamp", org.jooq.impl.SQLDataType.DATE.nullable(false), this, "");
+    public final TableField<JournalsRecord, OffsetDateTime> TIMESTAMP = createField("timestamp", org.jooq.impl.SQLDataType.TIMESTAMPWITHTIMEZONE.nullable(false), this, "");
 
     /**
      * The column <code>public.journals.user_id</code>.

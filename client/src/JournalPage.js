@@ -51,11 +51,11 @@ class JournalPage extends React.Component {
   handleSubmit(event) {
     fetch('/journal', {
       method: 'POST',
-      body: {
+      body: JSON.stringify({
         user_id: '1',
         entry: this.state.value,
         timestamp: moment().toDate(),
-      }
+      })
     })
   }
 
