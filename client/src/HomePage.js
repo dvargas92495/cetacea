@@ -38,6 +38,32 @@ class HomePage extends React.Component {
     }
   }
 
+  componentDidMount() {
+    console.log('it wroked')
+    gapi.signin2.render('g-signin2', {
+      'scope': 'https://www.googleapis.com/auth/plus.login',
+      'onsuccess': this.onSignIn
+    })
+  }
+
+  onSignIn(googleUser) {
+    var profile = googleUser.getBasicProfile()
+    var id_token = googleUser.getAuthResponse().id_token
+
+    fetch('/login', {
+      method: 'POST',
+      body: JSON.stringify({
+        idtoken: id_token
+      })
+    })
+
+    console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
+    console.log('Name: ' + profile.getName());
+    console.log('Image URL: ' + profile.getImageUrl());
+    console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
+  }
+
+
   render () {
     return (
       <div>
@@ -48,6 +74,7 @@ class HomePage extends React.Component {
         <Subtitle>
           journaling for a porpoise
         </Subtitle>
+        <div id="g-signin2" data-onsuccess={this.onSignIn}></div>
         <div style={{'textAlign': "center", 'topMargin': '25px'}}>
         <Link to='/journal'>
           <Button text="lets go" />
