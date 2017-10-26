@@ -44,7 +44,6 @@ public class JournalServlet extends HttpServlet{
         for (Record r : result) {
             Integer id = r.getValue(JOURNALS.ID);
             String je = r.getValue(JOURNALS.ENTRY);
-            //Date ts = r.getValue(JOURNALS.TIMESTAMP);
 
             System.out.println("ID: " + id + " first name: " + je + " last name: " + "ts");
         }

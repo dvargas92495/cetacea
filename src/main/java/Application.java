@@ -32,10 +32,12 @@ public class Application {
         ServletHandler handler = new ServletHandler();
         handler.addServletWithMapping(HomeServlet.class, "/*");
         handler.addServletWithMapping(PublicServlet.class, "/public/*");
+        handler.addServletWithMapping(PublicServlet.class, "/node_modules/*");
         handler.addServletWithMapping(TraceServlet.class, "/trace");
         handler.addServletWithMapping(CronServlet.class, "/crontask");
         handler.addServletWithMapping(JournalServlet.class, "/journal");
         handler.addServletWithMapping(LoginServlet.class, "/login");
+        //handler.addServletWithMapping(EmailServlet.class, "/email");
         if (isXRayEnabled()) {
             FilterHolder filterHolder = handler.addFilterWithMapping(AWSXRayServletFilter.class, "/*", EnumSet.of(DispatcherType.REQUEST));
             filterHolder.setInitParameter("dynamicNamingFallbackName", "ElasticBeanstalkSample");
