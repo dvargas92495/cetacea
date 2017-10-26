@@ -37,7 +37,7 @@ public class Application {
         handler.addServletWithMapping(CronServlet.class, "/crontask");
         handler.addServletWithMapping(JournalServlet.class, "/journal");
         handler.addServletWithMapping(LoginServlet.class, "/login");
-        //handler.addServletWithMapping(EmailServlet.class, "/email");
+        handler.addServletWithMapping(EmailServlet.class, "/email");
         if (isXRayEnabled()) {
             FilterHolder filterHolder = handler.addFilterWithMapping(AWSXRayServletFilter.class, "/*", EnumSet.of(DispatcherType.REQUEST));
             filterHolder.setInitParameter("dynamicNamingFallbackName", "ElasticBeanstalkSample");

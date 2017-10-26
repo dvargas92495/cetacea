@@ -18,6 +18,7 @@ import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.Map;
 
 /**
@@ -64,7 +65,15 @@ public class JournalServlet extends HttpServlet{
                 .execute();
     }
 
-    private OffsetDateTime[] getDateRange(){
+    public static ArrayList<String> getJournalsByEmails(ArrayList<String> emails){
+        ArrayList<String> journals = new ArrayList<String>();
+        journals.add("Hey this is my journal.");
+        journals.add("Not much happened today.");
+        journals.add("I had a bad day.");
+        return journals;
+    }
+
+    private static OffsetDateTime[] getDateRange(){
         //TODO: Get Day based on input^
         //TODO: Get Time based on Group configuration
         OffsetDateTime[] dateRange = new OffsetDateTime[2];

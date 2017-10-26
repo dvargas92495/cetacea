@@ -23,6 +23,9 @@ dependencies {
     compile files("lib/commons-digester-1.8.1.jar")
     compile files("lib/commons-logging-1.2.jar")
     compile files("lib/commons-validator-1.5.1.jar")
+    compile files("lib/google-api-client-1.22.0.jar")
+    compile files("lib/google-api-client-appengine-1.22.0.jar")
+    compile files("lib/google-api-client-servlet-1.22.0.jar")
     compile files("lib/google-http-client-1.22.0.jar")
     compile files("lib/google-http-client-android-1.22.0.jar")
     compile files("lib/google-http-client-appengine-1.22.0.jar")
@@ -47,6 +50,7 @@ dependencies {
     compile files("lib/jackson-databind-2.6.6.jar")
     compile files("lib/jackson-dataformat-cbor-2.6.6.jar")
     compile files("lib/javax.servlet-api-3.1.0.jar")
+    compile files("lib/javax.mail.jar")
     compile files("lib/jdo2-api-2.3-eb.jar")
     compile files("lib/jetty-continuation-9.4.0.RC2.jar")
     compile files("lib/jetty-http-9.4.0.RC2.jar")
@@ -69,9 +73,6 @@ dependencies {
     compile files("lib/protobuf-java-2.6.1.jar")
     compile files("lib/transaction-api-1.1.jar")
     compile files("lib/xpp3-1.1.4c.jar")
-    compile files("lib/google-api-client-1.22.0.jar")
-    compile files("lib/google-api-client-appengine-1.22.0.jar")
-    compile files("lib/google-api-client-servlet-1.22.0.jar")
 
 }
 
