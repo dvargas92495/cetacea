@@ -1,4 +1,4 @@
-package main.java;
+package main.java.util;
 
 import org.jooq.DSLContext;
 import org.jooq.SQLDialect;
@@ -12,6 +12,7 @@ import java.sql.*;
 public class Repository {
 
     public static DSLContext getContext() {
+        //TODO: Magic strings
         String url = "jdbc:postgresql://aanlh5mrzrcgku.c2sjnb5f4d57.us-east-1.rds.amazonaws.com:5432/postgres";
         String user = "cetacea";
         String password = "passwerd";

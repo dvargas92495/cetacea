@@ -49,7 +49,7 @@ class JournalPage extends React.Component {
   }
 
   handleSubmit(event) {
-    fetch('/journal', {
+    fetch('/api/journal', {
       method: 'POST',
       body: JSON.stringify({
         user_id: '1',

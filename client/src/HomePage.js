@@ -50,7 +50,7 @@ class HomePage extends React.Component {
     var profile = googleUser.getBasicProfile()
     var id_token = googleUser.getAuthResponse().id_token
 
-    fetch('/login', {
+    fetch('/api/login', {
       method: 'POST',
       body: JSON.stringify({
         idtoken: id_token

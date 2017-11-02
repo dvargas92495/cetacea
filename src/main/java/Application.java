@@ -2,12 +2,15 @@ package main.java;
 
 import com.amazonaws.xray.javax.servlet.AWSXRayServletFilter;
 import main.java.endpoints.*;
+import main.java.util.Scheduler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletHandler;
 
 import javax.servlet.DispatcherType;
+import java.util.Calendar;
 import java.util.EnumSet;
+import java.util.Timer;
 
 public class Application {
 
@@ -28,16 +31,18 @@ public class Application {
     }
 
     public static void main(String[] args) throws Exception {
+
+        //Establish Endpoints
         Server server = new Server(getPort());
         ServletHandler handler = new ServletHandler();
         handler.addServletWithMapping(HomeServlet.class, "/*");
         handler.addServletWithMapping(PublicServlet.class, "/public/*");
         handler.addServletWithMapping(PublicServlet.class, "/node_modules/*");
         handler.addServletWithMapping(TraceServlet.class, "/trace");
-        handler.addServletWithMapping(CronServlet.class, "/crontask");
-        handler.addServletWithMapping(JournalServlet.class, "/journal");
-        handler.addServletWithMapping(LoginServlet.class, "/login");
-        handler.addServletWithMapping(EmailServlet.class, "/email");
+        handler.addServletWithMapping(JournalServlet.class, "/api/journal");
+        handler.addServletWithMapping(LoginServlet.class, "/api/login");
+        handler.addServletWithMapping(EmailServlet.class, "/api/email");
+        handler.addServletWithMapping(GroupServlet.class, "/api/group");
         if (isXRayEnabled()) {
             FilterHolder filterHolder = handler.addFilterWithMapping(AWSXRayServletFilter.class, "/*", EnumSet.of(DispatcherType.REQUEST));
             filterHolder.setInitParameter("dynamicNamingFallbackName", "ElasticBeanstalkSample");

@@ -2,7 +2,7 @@ package main.java.endpoints;
 
 import static main.java.data.Tables.*;
 
-import main.java.Repository;
+import main.java.util.Repository;
 import main.java.util.RequestHelper;
 import org.jooq.DSLContext;
 import org.jooq.Record;
@@ -13,8 +13,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.sql.Date;
-import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
