@@ -1,6 +1,8 @@
 package main.java.endpoints;
 
+import main.java.data.tables.records.GroupsRecord;
 import main.java.util.Repository;
+import main.java.util.RequestHelper;
 import main.java.util.Scheduler;
 import org.jooq.DSLContext;
 import org.jooq.Record;
@@ -11,7 +13,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
+import java.util.Map;
 
 import static main.java.data.Tables.*;
 
@@ -22,23 +26,34 @@ public class GroupServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        Map<String, String> params = RequestHelper.getBodyAsMap(request);
+        DSLContext create = Repository.getContext();
 
+        //First Create the group
+        String name = params.get("name");
+        String description = params.get("description");
+        OffsetDateTime timestampCreated = OffsetDateTime.parse(params.get("timestamp_created"));
+        int user_id = Integer.parseInt(params.get("created_by"));
+        GroupsRecord group = create.insertInto(GROUPS, GROUPS.NAME, GROUPS.DESCRIPTION, GROUPS.TIMESTAMP_CREATED, GROUPS.CREATED_BY)
+                .values(name, description, timestampCreated, user_id)
+                .returning(GROUPS.ID).fetch().get(0);
+
+        //Then create the group-user link
+        UserGroupServlet.addUserToGroup(user_id, group.getValue(GROUPS.ID), timestampCreated, true);
     }
 
-    static ArrayList<String> getEmailAddressesByGroup(int groupId) {
+    static ArrayList<String> getEmailAddressesByGroup(int groupId) throws ServletException {
         ArrayList<String> emails = new ArrayList<String>();
-        DSLContext create = Repository.getContext();
-        if (create == null){
-            return emails;
-        }
-        Result<Record> result = create.select().from(USERS).fetch();
+        DSLContext query = Repository.getContext();
+        Result<Record> result = query.select().from(USERS).fetch();
         result.forEach(record -> emails.add(record.get(USERS.EMAIL)));
         return emails;
     }
 
-    static ArrayList<Integer> getAllGroupIds(){
-        ArrayList<Integer> groupsIds = new ArrayList<>();
-        groupsIds.add(0); //TODO: Replace with db call
-        return groupsIds;
+    public static ArrayList<Integer> getAllGroupIds() throws ServletException{
+        DSLContext create = Repository.getContext();
+        ArrayList<Integer> groupIds = new ArrayList<>();
+        create.select().from(GROUPS).fetch().forEach(r -> groupIds.add(r.get(GROUPS.ID)));
+        return groupIds;
     }
 }

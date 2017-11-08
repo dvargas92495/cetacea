@@ -10,7 +10,9 @@ import java.util.List;
 
 import javax.annotation.Generated;
 
+import main.java.data.tables.Groups;
 import main.java.data.tables.Journals;
+import main.java.data.tables.UserGroupLinks;
 import main.java.data.tables.Users;
 
 import org.jooq.Catalog;
@@ -32,7 +34,7 @@ import org.jooq.impl.SchemaImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Public extends SchemaImpl {
 
-    private static final long serialVersionUID = 1153981423;
+    private static final long serialVersionUID = -2001846068;
 
     /**
      * The reference instance of <code>public</code>
@@ -40,9 +42,19 @@ public class Public extends SchemaImpl {
     public static final Public PUBLIC = new Public();
 
     /**
+     * The table <code>public.groups</code>.
+     */
+    public final Groups GROUPS = main.java.data.tables.Groups.GROUPS;
+
+    /**
      * The table <code>public.journals</code>.
      */
     public final Journals JOURNALS = main.java.data.tables.Journals.JOURNALS;
+
+    /**
+     * The table <code>public.user_group_links</code>.
+     */
+    public final UserGroupLinks USER_GROUP_LINKS = main.java.data.tables.UserGroupLinks.USER_GROUP_LINKS;
 
     /**
      * The table <code>public.users</code>.
@@ -74,7 +86,9 @@ public class Public extends SchemaImpl {
 
     private final List<Sequence<?>> getSequences0() {
         return Arrays.<Sequence<?>>asList(
+            Sequences.GROUPS_ID_SEQ,
             Sequences.JOURNALS_ID_SEQ,
+            Sequences.USER_GROUP_LINKS_ID_SEQ,
             Sequences.USERS_ID_SEQ);
     }
 
@@ -87,7 +101,9 @@ public class Public extends SchemaImpl {
 
     private final List<Table<?>> getTables0() {
         return Arrays.<Table<?>>asList(
+            Groups.GROUPS,
             Journals.JOURNALS,
+            UserGroupLinks.USER_GROUP_LINKS,
             Users.USERS);
     }
 }

@@ -1,15 +1,16 @@
 package main.java.endpoints;
 
+import main.java.Application;
+
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.mail.*;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Properties;
 
 /**
@@ -17,17 +18,9 @@ import java.util.Properties;
  */
 public class EmailServlet extends HttpServlet {
 
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        System.out.println("Sending Emails");
-        ArrayList<Integer> groupIds = GroupServlet.getAllGroupIds();
-        groupIds.forEach(EmailServlet::sendEmail);
-    }
-
-    private static void sendEmail(int groupId) {
+    public static void sendEmail(int groupId) {
         String FROM = "noreply@cetacea.xyz"; //TODO: Magic String
         String FROMNAME = "No Reply"; //TODO: Groupname
-        ArrayList<String> TO = GroupServlet.getEmailAddressesByGroup(groupId);
 
         String SMTP_USERNAME = System.getenv("CETACEA_MAIL_USER");
         if (SMTP_USERNAME == null) {
@@ -43,17 +36,20 @@ public class EmailServlet extends HttpServlet {
         String HOST = "email-smtp.us-east-1.amazonaws.com"; //TODO: Magic String
         int PORT = 587; //TODO: Magic Int
 
-        String SUBJECT = "Daily Journal"; //TODO: Magic String & Missing Date
-        ArrayList<String> journals = JournalServlet.getJournalsByEmails(TO);
-        String BODY = formatJournalsToEmail(journals);
-
-        Properties props = System.getProperties();
-        props.put("mail.transport.protocol", "smtp");
-        props.put("mail.smtp.port", PORT);
-        props.put("mail.smtp.starttls.enable", "true");
-        props.put("mail.smtp.auth", "true");
-        Session session = Session.getDefaultInstance(props);
         try {
+            ArrayList<String> TO = GroupServlet.getEmailAddressesByGroup(groupId);
+
+            String SUBJECT = "Daily Journal"; //TODO: Magic String & Missing Date
+            ArrayList<String> journals = JournalServlet.getJournalsByEmails(TO);
+            String BODY = formatJournalsToEmail(journals);
+
+            Properties props = System.getProperties();
+            props.put("mail.transport.protocol", "smtp");
+            props.put("mail.smtp.port", PORT);
+            props.put("mail.smtp.starttls.enable", "true");
+            props.put("mail.smtp.auth", "true");
+            Session session = Session.getDefaultInstance(props);
+
             // Create a default MimeMessage object.
             MimeMessage message = new MimeMessage(session);
             message.setFrom(new InternetAddress(FROM, FROMNAME));
@@ -62,15 +58,20 @@ public class EmailServlet extends HttpServlet {
             message.setText(BODY);
             Transport transport = session.getTransport();
             try {
-                transport.connect(HOST, SMTP_USERNAME, SMTP_PASSWORD);
-                transport.sendMessage(message, message.getAllRecipients());
-            } catch (MessagingException mex) {
+                if (Application.PRODUCTION.equals(Application.getEnvironment())) {
+                    transport.connect(HOST, SMTP_USERNAME, SMTP_PASSWORD);
+                    transport.sendMessage(message, message.getAllRecipients());
+                } else {
+                    System.out.println(message.getContent());
+                    System.out.println(Arrays.asList(message.getAllRecipients()));
+                }
+            } catch (MessagingException | IOException mex) {
                 System.out.println("Email wasn't sent");
                 mex.printStackTrace();
             } finally {
                 if (transport != null) {transport.close();}
             }
-        }catch (MessagingException | UnsupportedEncodingException mex) {
+        }catch (MessagingException | UnsupportedEncodingException | ServletException mex) {
             mex.printStackTrace();
         }
     }

@@ -1,5 +1,10 @@
 package main.java.util;
 
+import main.java.endpoints.EmailServlet;
+import main.java.endpoints.GroupServlet;
+
+import javax.servlet.ServletException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.TimerTask;
 
@@ -10,11 +15,12 @@ public class Scheduler extends TimerTask{
 
     public void run(){
         System.out.println(new Date() + ": Sending Scheduled Emails");
-
-    }
-
-    public static void main(String[] args){
-        System.out.println("ooooh another main file");
+        try {
+            ArrayList<Integer> groupIds = GroupServlet.getAllGroupIds();
+            groupIds.forEach(EmailServlet::sendEmail);
+        } catch(ServletException ex) {
+            ex.printStackTrace();
+        }
     }
 
 }

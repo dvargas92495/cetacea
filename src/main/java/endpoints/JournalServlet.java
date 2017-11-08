@@ -2,8 +2,10 @@ package main.java.endpoints;
 
 import static main.java.data.Tables.*;
 
+import jdk.nashorn.internal.scripts.JO;
 import main.java.util.Repository;
 import main.java.util.RequestHelper;
+import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.Result;
@@ -17,6 +19,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -28,58 +31,84 @@ public class JournalServlet extends HttpServlet{
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("text/html;charset=utf-8");
         response.setStatus(HttpServletResponse.SC_OK);
-        DSLContext create = Repository.getContext();
-        if (create == null){
-            return;
-        }
         int queryId = Integer.parseInt(request.getParameter("id"));
-        OffsetDateTime[] dateRange = getDateRange();
-        Result<Record> result = create.select()
-                .from(JOURNALS)
-                .where(JOURNALS.USER_ID.eq(queryId))
-                .and(JOURNALS.TIMESTAMP.ge(dateRange[0]))
-                .and(JOURNALS.TIMESTAMP.le(dateRange[1]))
-                .fetch();
-        for (Record r : result) {
-            Integer id = r.getValue(JOURNALS.ID);
-            String je = r.getValue(JOURNALS.ENTRY);
-
-            System.out.println("ID: " + id + " first name: " + je + " last name: " + "ts");
-        }
+        Map<String, String> responseBody = getJournalById(queryId);
+        RequestHelper.setResponseToMap(response, responseBody);
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Map<String, String> params = RequestHelper.getBodyAsMap(request);
         DSLContext create = Repository.getContext();
-        if (create == null){
-            return;
-        }
         String entry = params.get("entry");
         OffsetDateTime timestamp = OffsetDateTime.parse(params.get("timestamp"));
-        int user_id = Integer.parseInt(params.get("user_id"));
-        create.insertInto(JOURNALS, JOURNALS.ENTRY, JOURNALS.TIMESTAMP, JOURNALS.USER_ID)
-                .values(entry, timestamp, user_id)
-                .execute();
+        int userId = Integer.parseInt(params.get("user_id"));
+        Map<String, String> resposeBody = getJournalById(userId);
+        if (resposeBody.isEmpty()) {
+            create.insertInto(JOURNALS, JOURNALS.ENTRY, JOURNALS.TIMESTAMP, JOURNALS.USER_ID)
+                    .values(entry, timestamp, userId)
+                    .execute();
+        } else {
+            int journalId = Integer.parseInt(resposeBody.get("id"));
+            create.update(JOURNALS)
+                    .set(JOURNALS.ENTRY, entry)
+                    .set(JOURNALS.TIMESTAMP, timestamp)
+                    .where(JOURNALS.ID.eq(journalId))
+                    .execute();
+        }
     }
 
-    public static ArrayList<String> getJournalsByEmails(ArrayList<String> emails){
+    static ArrayList<String> getJournalsByEmails(ArrayList<String> emails) throws ServletException{
         ArrayList<String> journals = new ArrayList<String>();
-        journals.add("Hey this is my journal.");
-        journals.add("Not much happened today.");
-        journals.add("I had a bad day.");
+        if (emails.size() == 0){
+            return journals;
+        }
+        DSLContext query = Repository.getContext();
+        ArrayList<Integer> userIds = new ArrayList<>();
+        emails.forEach(e -> userIds.add(query.select()
+                                             .from(USERS)
+                                             .where(USERS.EMAIL.eq(e))
+                                             .fetchOne()
+                                             .get(USERS.ID)));
+        userIds.forEach(u -> {
+            try {
+                Map<String, String> entry = JournalServlet.getJournalById(u);
+                if (!entry.isEmpty()) {
+                    journals.add(entry.get(JOURNALS.ENTRY.getName()));
+                }
+            } catch (ServletException ex) {
+                ex.printStackTrace();
+            }
+        });
         return journals;
     }
 
+    private static Map<String, String> getJournalById(int userId) throws ServletException{
+        DSLContext create = Repository.getContext();
+
+        OffsetDateTime[] dateRange = getDateRange();
+        Result<Record> result = create.select()
+                .from(JOURNALS)
+                .where(JOURNALS.USER_ID.eq(userId))
+                .and(JOURNALS.TIMESTAMP.ge(dateRange[0]))
+                .and(JOURNALS.TIMESTAMP.le(dateRange[1]))
+                .fetch();
+        Map<String, String> journal = new HashMap<>();
+        if (result.isNotEmpty()){
+            Record journalRecord = result.get(result.size() - 1);
+            RequestHelper.addFieldToMap(journal, JOURNALS.ID, journalRecord);
+            RequestHelper.addFieldToMap(journal, JOURNALS.TIMESTAMP, journalRecord);
+            RequestHelper.addFieldToMap(journal, JOURNALS.ENTRY, journalRecord);
+            RequestHelper.addFieldToMap(journal, JOURNALS.USER_ID, journalRecord);
+        }
+        return journal;
+    }
+
     private static OffsetDateTime[] getDateRange(){
-        //TODO: Get Day based on input^
-        //TODO: Get Time based on Group configuration
+        //TODO: Get Time and range based on Group configuration
         OffsetDateTime[] dateRange = new OffsetDateTime[2];
-        LocalDate today = LocalDate.of(2017, 10, 24);
-        LocalDateTime start = today.atTime(6, 0);
-        LocalDateTime end = today.atTime(6, 0).plusDays(1);
-        //dateRange[0] = OffsetDateTime.of(2017, 10, 24, 6, 0, 0 ,0);
-        //dateRange[1] = OffsetDateTime.of(end.toLocalDate());
+        dateRange[1] = OffsetDateTime.now();
+        dateRange[0] = dateRange[1].minusDays(1);
         return dateRange;
     }
 }

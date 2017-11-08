@@ -21,9 +21,16 @@ public class Application {
         //AWSXRay.setGlobalRecorder(builder.build());
     //}
 
+    public static final String PRODUCTION = "PRODUCTION";
+    public static final String DEVELOPMENT = "DEVELOPMENT";
+
     private static int getPort() {
         String port = System.getenv().get("PORT") != null ? System.getenv().get("PORT"):"5000";
         return Integer.parseInt(port);
+    }
+
+    public static String getEnvironment() {
+        return System.getenv().get("CETACEA_ENV") != null ? System.getenv().get("CETACEA_ENV"):DEVELOPMENT;
     }
 
     public static boolean isXRayEnabled() {
@@ -31,6 +38,19 @@ public class Application {
     }
 
     public static void main(String[] args) throws Exception {
+
+        //Establish Scheduler
+        Timer timer = new Timer();
+        Calendar date = Calendar.getInstance();
+        date.set(Calendar.HOUR, 0);
+        date.set(Calendar.MINUTE, 0);
+        date.set(Calendar.SECOND, 0);
+        date.set(Calendar.MILLISECOND, 0);
+        timer.schedule(
+                new Scheduler(),
+                date.getTime(),
+                1000 * 60 * 60 * 24
+        );
 
         //Establish Endpoints
         Server server = new Server(getPort());
@@ -43,6 +63,7 @@ public class Application {
         handler.addServletWithMapping(LoginServlet.class, "/api/login");
         handler.addServletWithMapping(EmailServlet.class, "/api/email");
         handler.addServletWithMapping(GroupServlet.class, "/api/group");
+        handler.addServletWithMapping(UserGroupServlet.class, "/api/usergroup");
         if (isXRayEnabled()) {
             FilterHolder filterHolder = handler.addFilterWithMapping(AWSXRayServletFilter.class, "/*", EnumSet.of(DispatcherType.REQUEST));
             filterHolder.setInitParameter("dynamicNamingFallbackName", "ElasticBeanstalkSample");

@@ -6,7 +6,9 @@ package main.java.data;
 
 import javax.annotation.Generated;
 
+import main.java.data.tables.Groups;
 import main.java.data.tables.Journals;
+import main.java.data.tables.UserGroupLinks;
 import main.java.data.tables.Users;
 
 import org.jooq.Index;
@@ -31,7 +33,11 @@ public class Indexes {
     // INDEX definitions
     // -------------------------------------------------------------------------
 
+    public static final Index GROUPS_ID_UINDEX = Indexes0.GROUPS_ID_UINDEX;
+    public static final Index GROUPS_PKEY = Indexes0.GROUPS_PKEY;
     public static final Index JOURNALS_PKEY = Indexes0.JOURNALS_PKEY;
+    public static final Index USER_GROUP_LINKS_ID_UINDEX = Indexes0.USER_GROUP_LINKS_ID_UINDEX;
+    public static final Index USER_GROUP_LINKS_PKEY = Indexes0.USER_GROUP_LINKS_PKEY;
     public static final Index USERS_ID_UINDEX = Indexes0.USERS_ID_UINDEX;
     public static final Index USERS_PKEY = Indexes0.USERS_PKEY;
 
@@ -40,7 +46,11 @@ public class Indexes {
     // -------------------------------------------------------------------------
 
     private static class Indexes0 extends AbstractKeys {
+        public static Index GROUPS_ID_UINDEX = createIndex("groups_id_uindex", Groups.GROUPS, new OrderField[] { Groups.GROUPS.ID }, true);
+        public static Index GROUPS_PKEY = createIndex("groups_pkey", Groups.GROUPS, new OrderField[] { Groups.GROUPS.ID }, true);
         public static Index JOURNALS_PKEY = createIndex("journals_pkey", Journals.JOURNALS, new OrderField[] { Journals.JOURNALS.ID }, true);
+        public static Index USER_GROUP_LINKS_ID_UINDEX = createIndex("user_group_links_id_uindex", UserGroupLinks.USER_GROUP_LINKS, new OrderField[] { UserGroupLinks.USER_GROUP_LINKS.ID }, true);
+        public static Index USER_GROUP_LINKS_PKEY = createIndex("user_group_links_pkey", UserGroupLinks.USER_GROUP_LINKS, new OrderField[] { UserGroupLinks.USER_GROUP_LINKS.ID }, true);
         public static Index USERS_ID_UINDEX = createIndex("users_id_uindex", Users.USERS, new OrderField[] { Users.USERS.ID }, true);
         public static Index USERS_PKEY = createIndex("users_pkey", Users.USERS, new OrderField[] { Users.USERS.ID }, true);
     }
