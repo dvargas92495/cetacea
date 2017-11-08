@@ -1,5 +1,6 @@
 package main.java.util;
 
+import main.java.Application;
 import main.java.endpoints.EmailServlet;
 import main.java.endpoints.GroupServlet;
 import org.jooq.Record;
@@ -29,9 +30,11 @@ public class Scheduler {
                 Result<Record> groups = GroupServlet.getAllGroups();
                 groups.forEach(g -> {
                     LocalTime timeToSend = LocalTime.of(6, 0); //TODO: Get from group configuration
+                    long delay = Application.PRODUCTION.equals(Application.getEnvironment()) ?
+                            computeNextDelay(timeToSend.getHour(), timeToSend.getMinute(), timeToSend.getSecond()): 0;
                     executorService.schedule(
                         new EmailSender(g.get(GROUPS.ID)),
-                        computeNextDelay(timeToSend.getHour(), timeToSend.getMinute(), timeToSend.getSecond()),
+                        delay,
                         TimeUnit.SECONDS
                     );
                 });
@@ -53,9 +56,10 @@ public class Scheduler {
     }
 
     public static void init(){
+        long delay = Application.PRODUCTION.equals(Application.getEnvironment()) ? computeNextDelay(0, 0, 0): 0;
         executorService.scheduleAtFixedRate(
             new Master(),
-            computeNextDelay(0, 0, 0),
+            delay,
             TimeUnit.SECONDS.convert(1, TimeUnit.DAYS),
             TimeUnit.SECONDS
         );

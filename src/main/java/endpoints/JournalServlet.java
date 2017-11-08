@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -105,10 +106,16 @@ public class JournalServlet extends HttpServlet{
     }
 
     private static OffsetDateTime[] getDateRange(){
-        //TODO: Get Time and range based on Group configuration
+        //TODO: Get range based on Group configuration (Daily, Weekly, etc...)
+        LocalTime timeToSend = LocalTime.of(6, 0); //TODO: Get from group configuration
         OffsetDateTime[] dateRange = new OffsetDateTime[2];
         dateRange[1] = OffsetDateTime.now();
-        dateRange[0] = dateRange[1].minusDays(1);
+        dateRange[0] = dateRange[1].withHour(timeToSend.getHour())
+                                   .withMinute(timeToSend.getMinute())
+                                   .withSecond(timeToSend.getSecond());
+        if (dateRange[0].compareTo(dateRange[1]) > 0){
+            dateRange[0] = dateRange[0].minusDays(1);
+        }
         return dateRange;
     }
 }
