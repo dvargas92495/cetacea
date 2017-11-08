@@ -50,10 +50,9 @@ public class GroupServlet extends HttpServlet {
         return emails;
     }
 
-    public static ArrayList<Integer> getAllGroupIds() throws ServletException{
+    public static Result<Record> getAllGroups() throws ServletException{
         DSLContext create = Repository.getContext();
         ArrayList<Integer> groupIds = new ArrayList<>();
-        create.select().from(GROUPS).fetch().forEach(r -> groupIds.add(r.get(GROUPS.ID)));
-        return groupIds;
+        return create.select().from(GROUPS).fetch();
     }
 }

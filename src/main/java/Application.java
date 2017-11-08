@@ -8,9 +8,7 @@ import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletHandler;
 
 import javax.servlet.DispatcherType;
-import java.util.Calendar;
 import java.util.EnumSet;
-import java.util.Timer;
 
 public class Application {
 
@@ -40,17 +38,7 @@ public class Application {
     public static void main(String[] args) throws Exception {
 
         //Establish Scheduler
-        Timer timer = new Timer();
-        Calendar date = Calendar.getInstance();
-        date.set(Calendar.HOUR, 0);
-        date.set(Calendar.MINUTE, 0);
-        date.set(Calendar.SECOND, 0);
-        date.set(Calendar.MILLISECOND, 0);
-        timer.schedule(
-                new Scheduler(),
-                date.getTime(),
-                1000 * 60 * 60 * 24
-        );
+        Scheduler.init();
 
         //Establish Endpoints
         Server server = new Server(getPort());
