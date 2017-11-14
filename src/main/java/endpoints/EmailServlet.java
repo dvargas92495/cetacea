@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Properties;
 
 /**
@@ -37,10 +38,10 @@ public class EmailServlet extends HttpServlet {
         int PORT = 587; //TODO: Magic Int
 
         try {
-            ArrayList<String> TO = GroupServlet.getEmailAddressesByGroup(groupId);
+            List<String> TO = GroupServlet.getEmailAddressesByGroup(groupId);
 
             String SUBJECT = "Daily Journal"; //TODO: Magic String & Missing Date
-            ArrayList<String> journals = JournalServlet.getJournalsByEmails(TO);
+            List<String> journals = JournalServlet.getJournalsByEmails(TO);
             String BODY = formatJournalsToEmail(journals);
 
             Properties props = System.getProperties();
@@ -76,7 +77,7 @@ public class EmailServlet extends HttpServlet {
         }
     }
 
-    private static String formatJournalsToEmail(ArrayList<String> journals) {
+    private static String formatJournalsToEmail(List<String> journals) {
         return String.join("\n\n\n", journals);
     }
 

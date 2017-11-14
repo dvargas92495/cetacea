@@ -1,13 +1,12 @@
 package main.java.util;
 
 import com.google.gson.Gson;
-import org.jooq.Record;
-import org.jooq.TableField;
+import com.google.gson.reflect.TypeToken;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.Map;
 
 public class RequestHelper {
@@ -21,17 +20,7 @@ public class RequestHelper {
         String postBody = buffer.toString();
 
         Gson g = new Gson();
-        Map<String, String> bodyMap = g.fromJson(postBody, Map.class);
-        return bodyMap;
-    }
-
-    public static void setResponseToMap(HttpServletResponse response, Map<String, String> bodyMap) throws IOException {
-        Gson g = new Gson();
-        String content = g.toJson(bodyMap, Map.class);
-        response.getWriter().println(content);
-    }
-
-    public static void addFieldToMap(Map<String, String> fieldMap, TableField field, Record r){
-        fieldMap.put(field.getName(), r.getValue(field).toString());
+        Type mapType = new TypeToken<Map<String,String>>() {}.getType();
+        return g.fromJson(postBody, mapType);
     }
 }
