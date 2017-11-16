@@ -1,5 +1,5 @@
 version: 1
 cron:
-  - name: "hello"
-    url: /crontask
-    schedule: "* * * * *"
+  - name: "Email Scheduler"
+    url: /api/email
+    schedule: "0 0 * * *"

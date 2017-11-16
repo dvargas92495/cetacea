@@ -6,14 +6,13 @@ import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.xray.AWSXRay;
 import com.amazonaws.xray.entities.Subsegment;
 import com.amazonaws.xray.handlers.TracingHandler;
+import main.java.Application;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-
-import static main.java.Application.isXRayEnabled;
 
 /**
  * Created by David on 10/14/2017.
@@ -35,7 +34,7 @@ public class TraceServlet extends HttpServlet {
         response.setContentType("text/html;charset=utf-8");
         response.setStatus(HttpServletResponse.SC_OK);
 
-        if (isXRayEnabled()) {
+        if (Application.XRAY_ENABLED) {
             traceS3();
         }
     }

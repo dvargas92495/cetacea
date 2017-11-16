@@ -6,9 +6,13 @@ package main.java.data;
 
 import javax.annotation.Generated;
 
+import main.java.data.tables.Groups;
 import main.java.data.tables.Journals;
+import main.java.data.tables.UserGroupLinks;
 import main.java.data.tables.Users;
+import main.java.data.tables.records.GroupsRecord;
 import main.java.data.tables.records.JournalsRecord;
+import main.java.data.tables.records.UserGroupLinksRecord;
 import main.java.data.tables.records.UsersRecord;
 
 import org.jooq.ForeignKey;
@@ -35,37 +39,51 @@ public class Keys {
     // IDENTITY definitions
     // -------------------------------------------------------------------------
 
+    public static final Identity<GroupsRecord, Integer> IDENTITY_GROUPS = Identities0.IDENTITY_GROUPS;
     public static final Identity<JournalsRecord, Integer> IDENTITY_JOURNALS = Identities0.IDENTITY_JOURNALS;
+    public static final Identity<UserGroupLinksRecord, Integer> IDENTITY_USER_GROUP_LINKS = Identities0.IDENTITY_USER_GROUP_LINKS;
     public static final Identity<UsersRecord, Integer> IDENTITY_USERS = Identities0.IDENTITY_USERS;
 
     // -------------------------------------------------------------------------
     // UNIQUE and PRIMARY KEY definitions
     // -------------------------------------------------------------------------
 
+    public static final UniqueKey<GroupsRecord> GROUPS_PKEY = UniqueKeys0.GROUPS_PKEY;
     public static final UniqueKey<JournalsRecord> JOURNALS_PKEY = UniqueKeys0.JOURNALS_PKEY;
+    public static final UniqueKey<UserGroupLinksRecord> USER_GROUP_LINKS_PKEY = UniqueKeys0.USER_GROUP_LINKS_PKEY;
     public static final UniqueKey<UsersRecord> USERS_PKEY = UniqueKeys0.USERS_PKEY;
 
     // -------------------------------------------------------------------------
     // FOREIGN KEY definitions
     // -------------------------------------------------------------------------
 
+    public static final ForeignKey<GroupsRecord, UsersRecord> GROUPS__GROUPS_USERS_ID_FK = ForeignKeys0.GROUPS__GROUPS_USERS_ID_FK;
     public static final ForeignKey<JournalsRecord, UsersRecord> JOURNALS__JOURNALS_USERS_ID_FK = ForeignKeys0.JOURNALS__JOURNALS_USERS_ID_FK;
+    public static final ForeignKey<UserGroupLinksRecord, UsersRecord> USER_GROUP_LINKS__USER_GROUP_LINKS_USERS_ID_FK = ForeignKeys0.USER_GROUP_LINKS__USER_GROUP_LINKS_USERS_ID_FK;
+    public static final ForeignKey<UserGroupLinksRecord, GroupsRecord> USER_GROUP_LINKS__USER_GROUP_LINKS_GROUPS_ID_FK = ForeignKeys0.USER_GROUP_LINKS__USER_GROUP_LINKS_GROUPS_ID_FK;
 
     // -------------------------------------------------------------------------
     // [#1459] distribute members to avoid static initialisers > 64kb
     // -------------------------------------------------------------------------
 
     private static class Identities0 extends AbstractKeys {
+        public static Identity<GroupsRecord, Integer> IDENTITY_GROUPS = createIdentity(Groups.GROUPS, Groups.GROUPS.ID);
         public static Identity<JournalsRecord, Integer> IDENTITY_JOURNALS = createIdentity(Journals.JOURNALS, Journals.JOURNALS.ID);
+        public static Identity<UserGroupLinksRecord, Integer> IDENTITY_USER_GROUP_LINKS = createIdentity(UserGroupLinks.USER_GROUP_LINKS, UserGroupLinks.USER_GROUP_LINKS.ID);
         public static Identity<UsersRecord, Integer> IDENTITY_USERS = createIdentity(Users.USERS, Users.USERS.ID);
     }
 
     private static class UniqueKeys0 extends AbstractKeys {
+        public static final UniqueKey<GroupsRecord> GROUPS_PKEY = createUniqueKey(Groups.GROUPS, "groups_pkey", Groups.GROUPS.ID);
         public static final UniqueKey<JournalsRecord> JOURNALS_PKEY = createUniqueKey(Journals.JOURNALS, "journals_pkey", Journals.JOURNALS.ID);
+        public static final UniqueKey<UserGroupLinksRecord> USER_GROUP_LINKS_PKEY = createUniqueKey(UserGroupLinks.USER_GROUP_LINKS, "user_group_links_pkey", UserGroupLinks.USER_GROUP_LINKS.ID);
         public static final UniqueKey<UsersRecord> USERS_PKEY = createUniqueKey(Users.USERS, "users_pkey", Users.USERS.ID);
     }
 
     private static class ForeignKeys0 extends AbstractKeys {
+        public static final ForeignKey<GroupsRecord, UsersRecord> GROUPS__GROUPS_USERS_ID_FK = createForeignKey(main.java.data.Keys.USERS_PKEY, Groups.GROUPS, "groups__groups_users_id_fk", Groups.GROUPS.CREATED_BY);
         public static final ForeignKey<JournalsRecord, UsersRecord> JOURNALS__JOURNALS_USERS_ID_FK = createForeignKey(main.java.data.Keys.USERS_PKEY, Journals.JOURNALS, "journals__journals_users_id_fk", Journals.JOURNALS.USER_ID);
+        public static final ForeignKey<UserGroupLinksRecord, UsersRecord> USER_GROUP_LINKS__USER_GROUP_LINKS_USERS_ID_FK = createForeignKey(main.java.data.Keys.USERS_PKEY, UserGroupLinks.USER_GROUP_LINKS, "user_group_links__user_group_links_users_id_fk", UserGroupLinks.USER_GROUP_LINKS.USER_ID);
+        public static final ForeignKey<UserGroupLinksRecord, GroupsRecord> USER_GROUP_LINKS__USER_GROUP_LINKS_GROUPS_ID_FK = createForeignKey(main.java.data.Keys.GROUPS_PKEY, UserGroupLinks.USER_GROUP_LINKS, "user_group_links__user_group_links_groups_id_fk", UserGroupLinks.USER_GROUP_LINKS.GROUP_ID);
     }
 }

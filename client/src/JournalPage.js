@@ -40,6 +40,13 @@ class JournalPage extends React.Component {
       value: ''
     }
 
+    var self = this
+    fetch('/api/journal?id=1').then(function(resp){
+      return resp.json();
+    }).then(function(body){
+      self.setState({value: body.entry})
+    });
+
     this.handleChange = this.handleChange.bind(this)
     this.handleSubmit = this.handleSubmit.bind(this)
   }
@@ -49,7 +56,7 @@ class JournalPage extends React.Component {
   }
 
   handleSubmit(event) {
-    fetch('/journal', {
+    fetch('/api/journal', {
       method: 'POST',
       body: JSON.stringify({
         user_id: '1',
