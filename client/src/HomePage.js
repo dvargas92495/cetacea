@@ -34,7 +34,8 @@ class HomePage extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      pages: [ ['Learn More', '/about'], ['Sign Up', '/signup']]
+      pages: [ ['Learn More', '/about'], ['Sign Up', '/signup']],
+      userId: 0
     }
   }
 
@@ -42,7 +43,7 @@ class HomePage extends React.Component {
     console.log('it wroked')
     gapi.signin2.render('g-signin2', {
       'scope': 'https://www.googleapis.com/auth/plus.login',
-      'onsuccess': this.onSignIn
+      'onsuccess': this.onSignIn.bind(this)
     })
   }
 
@@ -50,7 +51,7 @@ class HomePage extends React.Component {
     var profile = googleUser.getBasicProfile()
     var id_token = googleUser.getAuthResponse().id_token
 
-
+    var self = this
     fetch('/api/login', {
       method: 'POST',
       body: JSON.stringify({
@@ -60,7 +61,7 @@ class HomePage extends React.Component {
     }).then(function(resp){
       return resp.json();
     }).then(function(body){
-      console.log(body)
+      self.setState({id: body.id})
     })
 
     // fetch('/api/journal?id=1').then(function(resp){
@@ -88,7 +89,7 @@ class HomePage extends React.Component {
         </Subtitle>
         <div id="g-signin2" data-onsuccess={this.onSignIn}></div>
         <div style={{'textAlign': "center", 'topMargin': '25px'}}>
-        <Link to='/journal'>
+        <Link to={{ pathname: '/journal', state: { id: this.state.id} }}>
           <Button text="lets go" />
         </Link>
         <Link to = '/about'>
