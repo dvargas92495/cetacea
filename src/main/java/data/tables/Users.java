@@ -39,7 +39,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Users extends TableImpl<UsersRecord> {
 
-    private static final long serialVersionUID = -914394308;
+    private static final long serialVersionUID = -1637220501;
 
     /**
      * The reference instance of <code>public.users</code>
@@ -73,6 +73,11 @@ public class Users extends TableImpl<UsersRecord> {
      * The column <code>public.users.email</code>.
      */
     public final TableField<UsersRecord, String> EMAIL = createField("email", org.jooq.impl.SQLDataType.CLOB.nullable(false), this, "");
+
+    /**
+     * The column <code>public.users.oauth_id</code>.
+     */
+    public final TableField<UsersRecord, String> OAUTH_ID = createField("oauth_id", org.jooq.impl.SQLDataType.CLOB, this, "");
 
     /**
      * Create a <code>public.users</code> table reference
