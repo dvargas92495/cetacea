@@ -3,6 +3,8 @@ import Button from './components/Button.js'
 import NavBar from './components/NavBar.js'
 import styled from 'styled-components'
 import moment from 'moment';
+import {Dialog} from '@blueprintjs/core'
+import LoginPopup from './components/LoginPopup.js'
 
 const DateHeader = styled.h1`
   display: block;
@@ -37,8 +39,16 @@ class AboutPage extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      pages: [ ['Help', '/'], ['Settings', '/' ], ['Groups', '/'], ['Journal', '/journal']]
+      pages: [ ['Help', '/'], ['Settings', '/' ], ['Groups', '/'], ['Journal', '/journal']],
+      isOpen: false
     }
+    this.toggleDialog = this.toggleDialog.bind(this)
+
+  }
+
+
+  toggleDialog() {
+    this.setState({isOpen: !this.state.isOpen })
   }
 
   render () {
@@ -48,6 +58,8 @@ class AboutPage extends React.Component {
         <DateHeader>
           {moment().format("dddd, MMMM D, YYYY").toString()}
         </DateHeader>
+        <Button press={this.toggleDialog}/>
+        <LoginPopup isOpen={this.state.isOpen} onClose={this.toggleDialog} />
       </div>
     )
   }

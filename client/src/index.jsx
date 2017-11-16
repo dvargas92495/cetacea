@@ -2,10 +2,10 @@ import React from 'react'
 import {render} from 'react-dom'
 import { BrowserRouter } from 'react-router-dom'
 
-import HomeRoutes from './HomeRoutes.js'
+import HomeRoutesPre from './HomeRoutesPre.js'
 
 render((
   <BrowserRouter>
-    <HomeRoutes/>
+    <HomeRoutesPre/>
   </BrowserRouter>
 ), document.getElementById('root'));

@@ -31,7 +31,7 @@ class NavBar extends React.Component {
     return (
       <div>
         <Bar>
-          {this.props.pages.map(page => <List key={page[0]}><Page key={page[0]}to={page[1]}>{page[0]}</Page></List>)}
+          {this.props.pages.map(page => <List key={page[0]}><Page key={page[0]} to={page[1]}>{page[0]}</Page></List>)}
         </Bar>
       </div>
     )
@@ -43,3 +43,5 @@ NavBar.defaultProps = {
 }
 
 export default NavBar
+
+// {this.props.pages.map(page => <List key={page[0]}><Page key={page[0]} to={page[1]} onClick={page[2]}>{page[0]}</Page></List>)}
