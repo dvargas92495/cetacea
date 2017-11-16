@@ -2,11 +2,9 @@ package main.java.endpoints;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.sun.javafx.fxml.expression.Expression;
 import main.java.data.tables.pojos.Users;
 import main.java.util.Repository;
 import main.java.util.RequestHelper;
-import org.jooq.DSLContext;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;

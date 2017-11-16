@@ -4,7 +4,6 @@ import org.jooq.*;
 import org.jooq.impl.DSL;
 
 import javax.servlet.ServletException;
-import java.sql.*;
 
 /**
  * Created by David on 9/30/2017.
