@@ -23,18 +23,11 @@ public class Application {
     public static final String PRODUCTION = "PRODUCTION";
     public static final String DEVELOPMENT = "DEVELOPMENT";
 
-    private static int getPort() {
-        String port = System.getenv().get("PORT") != null ? System.getenv().get("PORT"):"5000";
-        return Integer.parseInt(port);
-    }
-
-    public static String getEnvironment() {
-        return System.getenv().get("CETACEA_ENV") != null ? System.getenv().get("CETACEA_ENV"):DEVELOPMENT;
-    }
-
-    public static boolean isXRayEnabled() {
-        return Boolean.valueOf(System.getenv("XRAY_ENABLED"));
-    }
+    public static final String ENVIRONMENT = System.getenv().get("CETACEA_ENV") != null ? System.getenv().get("CETACEA_ENV"):DEVELOPMENT;
+    public static final boolean XRAY_ENABLED = Boolean.valueOf(System.getenv("XRAY_ENABLED"));
+    public static final String MAIL_USER = System.getenv("CETACEA_MAIL_USER");
+    public static final String MAIL_PASSWORD = System.getenv("CETACEA_MAIL_PASSWORD");
+    public static final int PORT = Integer.parseInt(System.getenv().get("PORT") != null ? System.getenv().get("PORT"):"5000");
 
     public static void main(String[] args) throws Exception {
 
@@ -42,7 +35,7 @@ public class Application {
         Scheduler.init();
 
         //Establish Endpoints
-        Server server = new Server(getPort());
+        Server server = new Server(PORT);
         ServletHandler handler = new ServletHandler();
         handler.addServletWithMapping(HomeServlet.class, "/*");
         handler.addServletWithMapping(PublicServlet.class, "/public/*");
@@ -53,7 +46,7 @@ public class Application {
         handler.addServletWithMapping(EmailServlet.class, "/api/email");
         handler.addServletWithMapping(GroupServlet.class, "/api/group");
         handler.addServletWithMapping(UserGroupServlet.class, "/api/usergroup");
-        if (isXRayEnabled()) {
+        if (XRAY_ENABLED) {
             FilterHolder filterHolder = handler.addFilterWithMapping(AWSXRayServletFilter.class, "/*", EnumSet.of(DispatcherType.REQUEST));
             filterHolder.setInitParameter("dynamicNamingFallbackName", "ElasticBeanstalkSample");
             filterHolder.setInitParameter("dynamicNamingRecognizedHosts", "*");

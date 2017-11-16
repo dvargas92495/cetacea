@@ -23,13 +23,12 @@ public class EmailServlet extends HttpServlet {
         String FROM = "noreply@cetacea.xyz"; //TODO: Magic String
         String FROMNAME = "No Reply"; //TODO: Groupname
 
-        String SMTP_USERNAME = System.getenv("CETACEA_MAIL_USER");
-        if (SMTP_USERNAME == null) {
+        if (Application.MAIL_USER == null) {
             System.out.println("Missing SMTP username, please set the CETACEA_MAIL_USER environment variable");
             return;
         }
         String SMTP_PASSWORD = System.getenv("CETACEA_MAIL_PASSWORD");
-        if (SMTP_PASSWORD == null) {
+        if (Application.MAIL_PASSWORD == null) {
             System.out.println("Missing SMTP password, please set the CETACEA_MAIL_PASSWORD environment variable");
             return;
         }
@@ -59,8 +58,8 @@ public class EmailServlet extends HttpServlet {
             message.setText(BODY);
             Transport transport = session.getTransport();
             try {
-                if (Application.PRODUCTION.equals(Application.getEnvironment())) {
-                    transport.connect(HOST, SMTP_USERNAME, SMTP_PASSWORD);
+                if (Application.PRODUCTION.equals(Application.ENVIRONMENT)) {
+                    transport.connect(HOST, Application.MAIL_USER, Application.MAIL_PASSWORD);
                     transport.sendMessage(message, message.getAllRecipients());
                 } else {
                     System.out.println(message.getContent());

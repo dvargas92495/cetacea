@@ -30,7 +30,7 @@ public class Scheduler {
                 Result<Record> groups = GroupServlet.getAllGroups();
                 groups.forEach(g -> {
                     LocalTime timeToSend = LocalTime.of(6, 0); //TODO: Get from group configuration
-                    long delay = Application.PRODUCTION.equals(Application.getEnvironment()) ?
+                    long delay = Application.PRODUCTION.equals(Application.ENVIRONMENT) ?
                             computeNextDelay(timeToSend.getHour(), timeToSend.getMinute(), timeToSend.getSecond()): 0;
                     executorService.schedule(
                         new EmailSender(g.get(GROUPS.ID)),
@@ -56,7 +56,7 @@ public class Scheduler {
     }
 
     public static void init(){
-        long delay = Application.PRODUCTION.equals(Application.getEnvironment()) ? computeNextDelay(0, 0, 0): 0;
+        long delay = Application.PRODUCTION.equals(Application.ENVIRONMENT) ? computeNextDelay(0, 0, 0): 0;
         executorService.scheduleAtFixedRate(
             new Master(),
             delay,
