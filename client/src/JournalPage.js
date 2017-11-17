@@ -37,11 +37,12 @@ class JournalPage extends React.Component {
     super(props)
     this.state = {
       pages: [ ['Help', '/'], ['Settings', '/' ], ['Groups', '/'], ['Journal', '/journal']],
-      value: ''
+      value: '',
+      id: props.location.state.id
     }
 
     var self = this
-    fetch('/api/journal?id=1').then(function(resp){
+    fetch('/api/journal?id='+this.state.id).then(function(resp){
       return resp.json();
     }).then(function(body){
       self.setState({value: body.entry})
@@ -59,7 +60,7 @@ class JournalPage extends React.Component {
     fetch('/api/journal', {
       method: 'POST',
       body: JSON.stringify({
-        user_id: '1',
+        user_id: this.state.id,
         entry: this.state.value,
         timestamp: moment().toDate(),
       })

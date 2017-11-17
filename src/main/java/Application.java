@@ -24,10 +24,17 @@ public class Application {
     public static final String DEVELOPMENT = "DEVELOPMENT";
 
     public static final String ENVIRONMENT = System.getenv().get("CETACEA_ENV") != null ? System.getenv().get("CETACEA_ENV"):DEVELOPMENT;
+    public static final int PORT = System.getenv().get("PORT") != null ? Integer.parseInt(System.getenv().get("PORT")):5000;
     public static final boolean XRAY_ENABLED = Boolean.valueOf(System.getenv("XRAY_ENABLED"));
+
     public static final String MAIL_USER = System.getenv("CETACEA_MAIL_USER");
     public static final String MAIL_PASSWORD = System.getenv("CETACEA_MAIL_PASSWORD");
-    public static final int PORT = Integer.parseInt(System.getenv().get("PORT") != null ? System.getenv().get("PORT"):"5000");
+    public static final String MAIL_HOST = System.getenv("CETACEA_MAIL_HOST");
+    public static final int MAIL_PORT = System.getenv().get("CETACEA_MAIL_PORT") != null ? Integer.parseInt(System.getenv().get("CETACEA_MAIL_PORT")):587;
+
+    public static final String DB_USER = System.getenv("CETACEA_DB_USER");
+    public static final String DB_PASSWORD = System.getenv("CETACEA_DB_PASSWORD");
+    public static final String DB_HOST = System.getenv("CETACEA_DB_HOST");
 
     public static void main(String[] args) throws Exception {
 

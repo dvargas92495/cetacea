@@ -9,13 +9,13 @@ import java.security.GeneralSecurityException;
 import java.util.Collections;
 import java.util.Map;
 
-import com.google.api.client.auth.oauth2.AuthorizationCodeFlow;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken.Payload;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.gson.GsonFactory;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import main.java.data.tables.pojos.Users;
 import main.java.util.Repository;
 import main.java.util.RequestHelper;
@@ -25,18 +25,11 @@ import static main.java.data.Tables.*;
 /**
  * Created by David on 10/14/2017.
  *
- * TODO: Implement with FE
  */
 public class LoginServlet extends HttpServlet {
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
-    }
-
-    @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        System.out.println("got this far");
         String CLIENT_ID = "548992550759-kmikahq1pkfhffgps85151j5o2a6gduu.apps.googleusercontent.com";
 
         GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(new NetHttpTransport(), new GsonFactory())
@@ -64,79 +57,33 @@ public class LoginServlet extends HttpServlet {
                             .execute();
                 }
 
-                Users checkUser = Repository.getDsl().selectFrom(USERS).where(USERS.OAUTH_ID.eq(userId)).fetchOne().into(Users.class);
+                Users checkUser = Repository.getDsl().selectFrom(USERS).where(USERS.OAUTH_ID.eq(userId)).fetchOneInto(Users.class);
                 if (checkUser == null) {
-                    System.out.println("Fucked up");
+                    JsonObject resBody = new JsonObject();
+                    resBody.addProperty("isAuthenticated", false);
+                    resBody.addProperty("message", "Valid google account is not registered.");
+                    response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                    response.getWriter().println(resBody.toString());
                 }
                 else {
-                    response.getWriter().println(new Gson().toJson(checkUser, Users.class));
+                    response.setStatus(HttpServletResponse.SC_OK);
+                    JsonObject user = new Gson().toJsonTree(checkUser, Users.class).getAsJsonObject();
+                    user.remove("oauthId");
+                    user.addProperty("isAuthenticated", true);
+                    response.getWriter().println(user.toString());
                 }
-
             }
             else {
-                System.out.println("Invalid ID Token");
+                JsonObject resBody = new JsonObject();
+                resBody.addProperty("isAuthenticated", false);
+                resBody.addProperty("message", "Invalid google account.");
+                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                response.getWriter().println(resBody.toString());
             }
-
         } catch (GeneralSecurityException e) {
             System.out.println("General security exception thrown.");
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.getWriter().println("Internal Server Error");
         }
-
-//        try {
-//            GoogleIdToken idToken = verifier.verify(idTokenString);
-//            if (idToken != null) {
-//                Payload payload = idToken.getPayload();
-//
-//                // Print user identifier
-//                String userId = payload.getSubject();
-//
-//                if (isSignup) {
-//
-//                }
-//
-//                else {
-//                    Users checkUser = Repository.getDsl().selectFrom(USERS).where(USERS.OAUTH_ID.eq(userId)).fetchOne().into(Users.class);
-//                    if (checkUser == null) {
-//                        System.out.println("Fucked up");
-//                    }
-//                    else {
-//                        response.getWriter().println(new Gson().toJson(checkUser, Users.class));
-//                    }
-//
-////                    System.out.println("User ID: " + userId);
-////
-////                    // Get profile information from payload
-////                    String email = payload.getEmail();
-////                    boolean emailVerified = Boolean.valueOf(payload.getEmailVerified());
-////                    String name = (String) payload.get("name");
-////                    String pictureUrl = (String) payload.get("picture");
-////                    String locale = (String) payload.get("locale");
-////                    String familyName = (String) payload.get("family_name");
-////                    String givenName = (String) payload.get("given_name");
-////                    System.out.println("Name: " + name);
-////                    System.out.println("Family Name: " + familyName);
-////                    System.out.println("Given Name: " + givenName);
-////                    }
-
-//                } else {
-//                    System.out.println("Invalid ID token.");
-//                }
-//        } catch (GeneralSecurityException e) {
-//            System.out.println("General security exception thrown.");
-//        }
-    }
-
-
-    protected AuthorizationCodeFlow initializeFlow() throws ServletException, IOException {
-        return null;
-    }
-
-
-    protected String getRedirectUri(HttpServletRequest httpServletRequest) throws ServletException, IOException {
-        return null;
-    }
-
-
-    protected String getUserId(HttpServletRequest httpServletRequest) throws ServletException, IOException {
-        return null;
     }
 }

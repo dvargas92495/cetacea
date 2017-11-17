@@ -27,9 +27,18 @@ public class JournalServlet extends HttpServlet{
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("text/html;charset=utf-8");
         String idParam = request.getParameter("id");
-        if (idParam == null) return;
+        if (idParam == null) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return;
+        }
+        int queryId;
+        try {
+            queryId = Integer.parseInt(idParam);
+        } catch(NumberFormatException e){
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return;
+        }
         response.setStatus(HttpServletResponse.SC_OK);
-        int queryId = Integer.parseInt(idParam);
         Journals journalRecord = getJournalById(queryId);
         if (journalRecord == null){
             journalRecord = new Journals();

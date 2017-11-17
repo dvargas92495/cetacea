@@ -36,7 +36,7 @@ class LoginPopup extends React.Component {
     var profile = googleUser.getBasicProfile()
     var id_token = googleUser.getAuthResponse().id_token
 
-
+    var self = this
     fetch('/api/login', {
       method: 'POST',
       body: JSON.stringify({
@@ -46,7 +46,7 @@ class LoginPopup extends React.Component {
     }).then(function(resp){
       return resp.json();
     }).then(function(body){
-      console.log(body)
+      self.setState({id: body.id})
     })
 
     console.log('Name: ' + profile.getName());
