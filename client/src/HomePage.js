@@ -88,7 +88,6 @@ class HomePage extends React.Component {
           journaling for a porpoise
         </Subtitle>
         <div style={{'textAlign': "center", 'topMargin': '25px'}}>
-<<<<<<< HEAD
           <Link to='/signup'>
             <Button text="sign up" />
           </Link>
@@ -96,14 +95,6 @@ class HomePage extends React.Component {
           <Link to = '/about'>
             <Button text="learn more" />
           </Link>
-=======
-        <Link to={{ pathname: '/journal', state: { id: this.state.id} }}>
-          <Button text="lets go" />
-        </Link>
-        <Link to = '/about'>
-          <Button text="learn more" />
-        </Link>
->>>>>>> 80b9d6e5c8c4216dddadce2c7f6585a085e98172
         </div>
       </div>
     )
