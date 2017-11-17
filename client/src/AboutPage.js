@@ -39,13 +39,13 @@ class AboutPage extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      pages: [ ['Help', '/'], ['Settings', '/' ], ['Groups', '/'], ['Journal', '/journal']],
-      isOpen: false
+      isOpen: false,
+      pages: [ ['Help', this.toggleDialog.bind(this)], ['Settings', '/' ], ['Groups', '/'], ['Journal', '/journal']]
+
     }
     this.toggleDialog = this.toggleDialog.bind(this)
 
   }
-
 
   toggleDialog() {
     this.setState({isOpen: !this.state.isOpen })

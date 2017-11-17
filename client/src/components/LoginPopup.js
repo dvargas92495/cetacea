@@ -11,7 +11,6 @@ const PopupText = styled.h2`
   font-family: Allerta;
   color: #616161;
   font-weight: lighter;`
-
 const LoginDialog = styled(Dialog)`
   background: #FFFFFF;
   .pt-dialog-header {
@@ -37,17 +36,20 @@ class LoginPopup extends React.Component {
     var profile = googleUser.getBasicProfile()
     var id_token = googleUser.getAuthResponse().id_token
 
-    fetch('/login', {
+
+    fetch('/api/login', {
       method: 'POST',
       body: JSON.stringify({
-        idtoken: id_token
+        idtoken: id_token,
+        isSignup: "false"
       })
+    }).then(function(resp){
+      return resp.json();
+    }).then(function(body){
+      console.log(body)
     })
 
-    console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
     console.log('Name: ' + profile.getName());
-    console.log('Image URL: ' + profile.getImageUrl());
-    console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
   }
 
   render () {

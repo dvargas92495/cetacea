@@ -11,8 +11,10 @@ const Attempt = styled.button`
   border: 1px solid #757575;
   border-radius: 10px;
   display: inline-block;
-  margin-right: 25px;
-  margin-left: 25px;`
+  &:hover {
+    cursor: pointer;
+    cursor: hand;
+  }`
 
 class Button extends React.Component {
   render () {
