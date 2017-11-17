@@ -4,8 +4,6 @@ import main.java.Application;
 import main.java.data.tables.pojos.Groups;
 import main.java.endpoints.EmailServlet;
 import main.java.endpoints.GroupServlet;
-import org.jooq.Record;
-import org.jooq.Result;
 
 import javax.servlet.ServletException;
 import java.time.*;

@@ -51,14 +51,16 @@ public class LoginServlet extends HttpServlet {
                 String firstName = (String) payload.get("given_name");
                 String userEmail = payload.getEmail();
 
-                if (isSignup) {
-                    Repository.getDsl().insertInto(USERS, USERS.FIRST_NAME, USERS.LAST_NAME, USERS.EMAIL, USERS.OAUTH_ID)
-                            .values(firstName, lastName, userEmail, userId)
-                            .execute();
-                }
+                Users userInfo = Repository.getDsl().selectFrom(USERS)
+                        .where(USERS.OAUTH_ID.eq(userId))
+                        .fetchOneInto(Users.class);
 
-                Users checkUser = Repository.getDsl().selectFrom(USERS).where(USERS.OAUTH_ID.eq(userId)).fetchOneInto(Users.class);
-                if (checkUser == null) {
+                if (isSignup && userInfo == null) {
+                    userInfo = Repository.getDsl().insertInto(USERS, USERS.FIRST_NAME, USERS.LAST_NAME, USERS.EMAIL, USERS.OAUTH_ID)
+                            .values(firstName, lastName, userEmail, userId)
+                            .returning().fetchOne().into(Users.class);
+                }
+                if (userInfo == null) {
                     JsonObject resBody = new JsonObject();
                     resBody.addProperty("isAuthenticated", false);
                     resBody.addProperty("message", "Valid google account is not registered.");
@@ -67,7 +69,7 @@ public class LoginServlet extends HttpServlet {
                 }
                 else {
                     response.setStatus(HttpServletResponse.SC_OK);
-                    JsonObject user = new Gson().toJsonTree(checkUser, Users.class).getAsJsonObject();
+                    JsonObject user = new Gson().toJsonTree(userInfo, Users.class).getAsJsonObject();
                     user.remove("oauthId");
                     user.addProperty("isAuthenticated", true);
                     response.getWriter().println(user.toString());
