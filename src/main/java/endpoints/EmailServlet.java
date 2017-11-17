@@ -1,6 +1,7 @@
 package main.java.endpoints;
 
 import main.java.Application;
+import main.java.data.tables.pojos.Groups;
 
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
@@ -9,7 +10,6 @@ import javax.servlet.http.HttpServlet;
 import javax.mail.*;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
@@ -19,15 +19,16 @@ import java.util.Properties;
  */
 public class EmailServlet extends HttpServlet {
 
-    public static void sendEmail(int groupId) {
-        String FROM = "noreply@cetacea.xyz"; //TODO: Magic String
-        String FROMNAME = "No Reply"; //TODO: Groupname
+    private static final String FROM = "noreply@cetacea.xyz";
+    private static final String SUBJECT_PREFIX = "Daily Journal";
+
+    public static void sendEmail(Groups group) {
+        String FROMNAME = group.getName();
 
         if (Application.MAIL_USER == null) {
             System.out.println("Missing SMTP username, please set the CETACEA_MAIL_USER environment variable");
             return;
         }
-        String SMTP_PASSWORD = System.getenv("CETACEA_MAIL_PASSWORD");
         if (Application.MAIL_PASSWORD == null) {
             System.out.println("Missing SMTP password, please set the CETACEA_MAIL_PASSWORD environment variable");
             return;
@@ -37,9 +38,9 @@ public class EmailServlet extends HttpServlet {
         int PORT = 587; //TODO: Magic Int
 
         try {
-            List<String> TO = GroupServlet.getEmailAddressesByGroup(groupId);
+            List<String> TO = GroupServlet.getEmailAddressesByGroup(group.getId());
 
-            String SUBJECT = "Daily Journal"; //TODO: Magic String & Missing Date
+            String SUBJECT = SUBJECT_PREFIX; //TODO: Missing Date
             List<String> journals = JournalServlet.getJournalsByEmails(TO);
             String BODY = formatJournalsToEmail(journals);
 
