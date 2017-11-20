@@ -5,8 +5,6 @@ import com.google.gson.reflect.TypeToken;
 import main.java.data.tables.pojos.Groups;
 import main.java.util.Repository;
 import main.java.util.RequestHelper;
-import org.jooq.Record;
-import org.jooq.Result;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -51,14 +49,23 @@ public class GroupServlet extends HttpServlet {
         //First Create the group
         String name = params.get("name");
         String description = params.get("description");
-        OffsetDateTime timestampCreated = OffsetDateTime.parse(params.get("timestamp_created"));
-        int user_id = Integer.parseInt(params.get("created_by")); // user id for cetacea
-        Groups group = Repository.getDsl().insertInto(GROUPS, GROUPS.NAME, GROUPS.DESCRIPTION, GROUPS.TIMESTAMP_CREATED, GROUPS.CREATED_BY)
-                .values(name, description, timestampCreated, user_id)
-                .returning(GROUPS.ID).fetchOne().into(Groups.class);
+        String groupId = params.get("id");
+        if (groupId != null){
+            Repository.getDsl().update(GROUPS)
+                    .set(GROUPS.NAME, name)
+                    .set(GROUPS.DESCRIPTION, description)
+                    .where(GROUPS.ID.eq(Integer.parseInt(groupId)))
+                    .execute();
+        } else {
+            OffsetDateTime timestampCreated = OffsetDateTime.parse(params.get("timestamp_created"));
+            int userId = Integer.parseInt(params.get("created_by")); // user id for cetacea
+            Groups group = Repository.getDsl().insertInto(GROUPS, GROUPS.NAME, GROUPS.DESCRIPTION, GROUPS.TIMESTAMP_CREATED, GROUPS.CREATED_BY)
+                    .values(name, description, timestampCreated, userId)
+                    .returning(GROUPS.ID).fetchOne().into(Groups.class);
 
-        //Then create the group-user link
-        UserGroupServlet.addUserToGroup(user_id, group.getId(), timestampCreated, true);
+            //Then create the group-user link
+            UserGroupServlet.addUserToGroup(userId, group.getId(), timestampCreated, true);
+        }
     }
 
     static List<String> getEmailAddressesByGroup(int groupId) throws ServletException {

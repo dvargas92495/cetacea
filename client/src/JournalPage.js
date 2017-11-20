@@ -36,16 +36,20 @@ class JournalPage extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      pages: [ ['Help', '/'], ['Settings', '/' ], ['Groups', '/group'], ['Journal', '/journal']],
-      value: ''
-      // id: props.location.state.id
+      pages: [ ['Help', '/'], ['Settings', '/' ], ['Groups', '/'], ['Journal', '/journal']],
+      value: '',
+      userId: props.match.params.userId
     }
 
     var self = this
-    fetch('/api/journal?id='+this.state.id).then(function(resp){
+    fetch('/api/journal?id='+this.state.userId).then(function(resp){
       return resp.json();
     }).then(function(body){
-      self.setState({value: body.entry})
+      if (body.isError) {
+        console.log(body.message);
+      } else {
+        self.setState({value: body.entry});
+      }
     });
 
     this.handleChange = this.handleChange.bind(this)
@@ -60,7 +64,7 @@ class JournalPage extends React.Component {
     fetch('/api/journal', {
       method: 'POST',
       body: JSON.stringify({
-        user_id: this.state.id,
+        user_id: this.state.userId,
         entry: this.state.value,
         timestamp: moment().toDate(),
       })

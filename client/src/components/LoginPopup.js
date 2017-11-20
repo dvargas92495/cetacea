@@ -36,7 +36,6 @@ class LoginPopup extends React.Component {
   }
 
   onSignIn(googleUser) {
-    var profile = googleUser.getBasicProfile()
     var id_token = googleUser.getAuthResponse().id_token
 
     var self = this
@@ -49,7 +48,9 @@ class LoginPopup extends React.Component {
     }).then(function(resp){
       return resp.json();
     }).then(function(body){
-      self.setState({id: body.id})
+      self.setState({id: body.id});
+      self.props.updateUser(body.id);
+      self.props.onClose();
     })
 
   }
