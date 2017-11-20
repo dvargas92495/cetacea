@@ -103,7 +103,7 @@ public class JournalServlet extends HttpServlet{
                 .where(JOURNALS.USER_ID.eq(userId))
                 .and(JOURNALS.TIMESTAMP.ge(dateRange[0]))
                 .and(JOURNALS.TIMESTAMP.le(dateRange[1]))
-                .fetchOneInto(Journals.class);
+                .limit(1).fetchOneInto(Journals.class);
     }
 
     private static OffsetDateTime[] getDateRange(){
