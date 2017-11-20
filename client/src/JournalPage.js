@@ -45,7 +45,11 @@ class JournalPage extends React.Component {
     fetch('/api/journal?id='+this.state.userId).then(function(resp){
       return resp.json();
     }).then(function(body){
-      self.setState({value: body.entry})
+      if (body.isError) {
+        console.log(body.message);
+      } else {
+        self.setState({value: body.entry});
+      }
     });
 
     this.handleChange = this.handleChange.bind(this)

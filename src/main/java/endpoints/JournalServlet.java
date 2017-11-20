@@ -3,6 +3,7 @@ package main.java.endpoints;
 import static main.java.data.Tables.*;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import main.java.data.tables.pojos.*;
 import main.java.util.Repository;
 import main.java.util.RequestHelper;
@@ -29,6 +30,10 @@ public class JournalServlet extends HttpServlet{
         String idParam = request.getParameter("id");
         if (idParam == null) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            JsonObject resBody = new JsonObject();
+            resBody.addProperty("isError", true);
+            resBody.addProperty("message", "No id sent on journal get");
+            response.getWriter().println(resBody.toString());
             return;
         }
         int queryId;
@@ -36,6 +41,10 @@ public class JournalServlet extends HttpServlet{
             queryId = Integer.parseInt(idParam);
         } catch(NumberFormatException e){
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            JsonObject resBody = new JsonObject();
+            resBody.addProperty("isError", true);
+            resBody.addProperty("message", "Invalid id sent on journal get");
+            response.getWriter().println(resBody.toString());
             return;
         }
         response.setStatus(HttpServletResponse.SC_OK);
