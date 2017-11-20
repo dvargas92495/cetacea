@@ -36,9 +36,9 @@ class JournalPage extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      pages: [ ['Help', '/'], ['Settings', '/' ], ['Groups', '/'], ['Journal', '/journal']],
-      value: '',
-      id: props.location.state.id
+      pages: [ ['Help', '/'], ['Settings', '/' ], ['Groups', '/group'], ['Journal', '/journal']],
+      value: ''
+      // id: props.location.state.id
     }
 
     var self = this

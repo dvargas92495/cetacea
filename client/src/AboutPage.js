@@ -40,7 +40,7 @@ class AboutPage extends React.Component {
     super(props)
     this.state = {
       isOpen: false,
-      pages: [ ['Help', this.toggleDialog.bind(this)], ['Settings', '/' ], ['Groups', '/'], ['Journal', '/journal']]
+      pages: [ ['Help', this.toggleDialog.bind(this)], ['Settings', '/' ], ['Groups', '/group'], ['Journal', '/journal']]
 
     }
     this.toggleDialog = this.toggleDialog.bind(this)
