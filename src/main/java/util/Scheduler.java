@@ -1,10 +1,9 @@
 package main.java.util;
 
 import main.java.Application;
+import main.java.data.tables.pojos.Groups;
 import main.java.endpoints.EmailServlet;
 import main.java.endpoints.GroupServlet;
-import org.jooq.Record;
-import org.jooq.Result;
 
 import javax.servlet.ServletException;
 import java.time.*;
@@ -27,13 +26,13 @@ public class Scheduler {
         public void run(){
             System.out.println(new Date() + ": Scheduling Emails");
             try {
-                Result<Record> groups = GroupServlet.getAllGroups();
+                List<Groups> groups = GroupServlet.getAllGroups();
                 groups.forEach(g -> {
                     LocalTime timeToSend = LocalTime.of(6, 0); //TODO: Get from group configuration
                     long delay = Application.PRODUCTION.equals(Application.ENVIRONMENT) ?
                             computeNextDelay(timeToSend.getHour(), timeToSend.getMinute(), timeToSend.getSecond()): 0;
                     executorService.schedule(
-                        new EmailSender(g.get(GROUPS.ID)),
+                        new EmailSender(g),
                         delay,
                         TimeUnit.SECONDS
                     );
@@ -45,13 +44,13 @@ public class Scheduler {
     }
 
     private static class EmailSender implements Runnable {
-        private int groupId;
-        EmailSender(int gId) {
-            groupId = gId;
+        private Groups group;
+        EmailSender(Groups g) {
+            group = g;
         }
         public void run() {
-            System.out.println(new Date() + ": Sending Email to " + groupId);
-            EmailServlet.sendEmail(groupId);
+            System.out.println(new Date() + ": Sending Email to " + group.toString());
+            EmailServlet.sendEmail(group);
         }
     }
 

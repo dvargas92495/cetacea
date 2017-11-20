@@ -68,7 +68,7 @@ public class GroupServlet extends HttpServlet {
                 .fetch(USERS.EMAIL);
     }
 
-    public static Result<Record> getAllGroups() throws ServletException{
-        return Repository.getDsl().select().from(GROUPS).fetch();
+    public static List<Groups> getAllGroups() throws ServletException{
+        return Repository.getDsl().select().from(GROUPS).fetchInto(Groups.class);
     }
 }
