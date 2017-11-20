@@ -14,7 +14,7 @@ class HomeRoutes extends React.Component {
       <Switch>
         <Route exact path='/' component={HomePage}/>
         <Route path='/about' component={AboutPage}/>
-        <Route path='/journal' component={JournalPage}/>
+        <Route path='/journal/:userId' component={JournalPage}/>
         <Route path='/signup' component={SignupPage} />
       </Switch>
     )

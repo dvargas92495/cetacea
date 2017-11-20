@@ -49,7 +49,9 @@ class LoginPopup extends React.Component {
     }).then(function(resp){
       return resp.json();
     }).then(function(body){
-      self.setState({id: body.id})
+      self.setState({id: body.id});
+      self.props.updateUser(body.id);
+      self.props.onClose();
     })
 
   }

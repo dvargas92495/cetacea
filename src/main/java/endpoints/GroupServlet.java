@@ -5,8 +5,6 @@ import com.google.gson.reflect.TypeToken;
 import main.java.data.tables.pojos.Groups;
 import main.java.util.Repository;
 import main.java.util.RequestHelper;
-import org.jooq.Record;
-import org.jooq.Result;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
