@@ -15,7 +15,7 @@ const Title = styled.h1`
   margin-right: 0;
   font-family: Allerta;
   color: #FFFFFF;
-  font-weight: bold;`
+  font-weight: bold;`;
 const Subtitle = styled.h2`
   display: block;
   text-align: center;
@@ -26,7 +26,7 @@ const Subtitle = styled.h2`
   margin-right: 0;
   font-family: Allerta;
   color: #FFFFFF;
-  font-weight: normal;`
+  font-weight: normal;`;
 const Space = styled.div`
   margin-right: 50px;
   display: inline-block;`;
@@ -35,13 +35,38 @@ class HomePage extends React.Component {
 
   constructor(props) {
     super(props);
-    this.loggedOutPages = [ ['about', '/about'], ['log in', this.openDialog.bind(this)]];
-    this.loggedInPages = [ ['about', '/about'], ['log out', '/journal'], ['journal', '/journal'], ['groups', '/group']];
+    this.loggedOutPages = [ ['About', '/about'], ['Log In', this.openDialog.bind(this)]];
+    this.loggedInPages = [ ['About', '/about'], ['Log Out', '/journal'], ['Groups', '/group'], ['Journal', '/journal']];
     this.state = {
       isOpen: false,
       pages: this.loggedOutPages,
       userId: 0
     };
+
+    var self = this;
+    gapi.load('auth2', function(){
+      var a2 = gapi.auth2.init({
+        client_id: '548992550759-kmikahq1pkfhffgps85151j5o2a6gduu.apps.googleusercontent.com',
+        scope: 'https://www.googleapis.com/auth/plus.login'
+      });
+      a2.then(function(){
+        if(a2.isSignedIn.get()) {
+          var id_token = a2.currentUser.get().getAuthResponse().id_token;
+          fetch('/api/login', {
+            method: 'POST',
+            body: JSON.stringify({
+              idtoken: id_token,
+              isSignup: "false"
+            })
+          }).then(function(resp){
+            return resp.json();
+          }).then(function(body){
+            self.setState({id: body.id});
+            self.updateUser(body.id);
+          });
+        }
+      })
+    });
   }
 
   openDialog() {
