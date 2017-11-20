@@ -1,7 +1,6 @@
 import React from 'react'
 import Button from './components/Button.js'
 import NavBar from './components/NavBar.js'
-import Rectangle from './components/Rectangle.js'
 
 import styled from 'styled-components'
 import { Menu, MenuItem, MenuDivider, Tab2, Tabs2, Card } from '@blueprintjs/core'
