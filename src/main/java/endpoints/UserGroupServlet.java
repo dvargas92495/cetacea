@@ -1,6 +1,7 @@
 package main.java.endpoints;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.google.gson.reflect.TypeToken;
 import main.java.data.tables.pojos.Users;
 import main.java.util.Repository;
@@ -32,7 +33,9 @@ public class UserGroupServlet extends HttpServlet {
                 .where(USERS.ID.in(userIds))
                 .fetchInto(Users.class);
         Type listType = new TypeToken<List<Users>>(){}.getType();
-        response.getWriter().println(new Gson().toJson(users, listType));
+        JsonArray json = new Gson().toJsonTree(users, listType).getAsJsonArray();
+        json.forEach(j -> j.getAsJsonObject().remove("oauthId"));
+        response.getWriter().println(json.toString());
     }
 
     @Override
