@@ -23,6 +23,7 @@ import static main.java.data.Tables.*;
  */
 public class UserGroupServlet extends HttpServlet {
 
+    // get all users in a group
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         int groupId = Integer.parseInt(request.getParameter("group_id"));

@@ -25,6 +25,7 @@ import static main.java.data.Tables.*;
  */
 public class GroupServlet extends HttpServlet {
 
+    //get all groups for user
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         //First get the group Ids
@@ -51,7 +52,7 @@ public class GroupServlet extends HttpServlet {
         String name = params.get("name");
         String description = params.get("description");
         OffsetDateTime timestampCreated = OffsetDateTime.parse(params.get("timestamp_created"));
-        int user_id = Integer.parseInt(params.get("created_by"));
+        int user_id = Integer.parseInt(params.get("created_by")); // user id for cetacea
         Groups group = Repository.getDsl().insertInto(GROUPS, GROUPS.NAME, GROUPS.DESCRIPTION, GROUPS.TIMESTAMP_CREATED, GROUPS.CREATED_BY)
                 .values(name, description, timestampCreated, user_id)
                 .returning(GROUPS.ID).fetchOne().into(Groups.class);

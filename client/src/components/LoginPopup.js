@@ -20,6 +20,9 @@ const LoginDialog = styled(Dialog)`
 class LoginPopup extends React.Component {
   constructor(props) {
     super(props)
+    this.state = {
+      id: null
+    }
     this.onSignIn = this.onSignIn.bind(this)
   }
 
@@ -49,7 +52,6 @@ class LoginPopup extends React.Component {
       self.setState({id: body.id})
     })
 
-    console.log('Name: ' + profile.getName());
   }
 
   render () {
