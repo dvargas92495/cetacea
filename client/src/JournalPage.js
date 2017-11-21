@@ -30,30 +30,35 @@ const SmallText = styled.h3`
   font-size: 12px;
   font-family: Allerta;
   color: #FFFFFF;
-  font-weight: lighter;`
+  font-weight: lighter;`;
 
 class JournalPage extends React.Component {
   constructor(props) {
-    super(props)
+    super(props);
     this.state = {
       pages: [ ['Help', '/'], ['Settings', '/' ], ['Groups', '/'], ['Journal', '/journal']],
       value: '',
-      userId: props.match.params.userId
-    }
+      userId: props.match.params.userId,
+      lastSubmit: ''
+    };
 
-    var self = this
+    var self = this;
     fetch('/api/journal?id='+this.state.userId).then(function(resp){
       return resp.json();
     }).then(function(body){
       if (body.isError) {
-        console.log(body.message);
+        self.handleErrorMessage(body.message);
       } else {
         self.setState({value: body.entry});
       }
     });
 
-    this.handleChange = this.handleChange.bind(this)
-    this.handleSubmit = this.handleSubmit.bind(this)
+    this.handleChange = this.handleChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+
+  handleErrorMessage(msg){
+    console.log(msg);
   }
 
   handleChange(event) {
@@ -61,14 +66,17 @@ class JournalPage extends React.Component {
   }
 
   handleSubmit(event) {
+    var timestamp = moment().toDate();
     fetch('/api/journal', {
       method: 'POST',
       body: JSON.stringify({
         user_id: this.state.userId,
         entry: this.state.value,
-        timestamp: moment().toDate(),
+        timestamp: timestamp
       })
-    })
+    }).then(function(){
+
+    });
   }
 
   render() {
