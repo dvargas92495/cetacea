@@ -91,16 +91,22 @@ const GroupDescription = styled.span`
 class GroupPage extends React.Component {
   constructor(props) {
     super(props)
+    const userId = props.location.state.userId;
+    const helpPage = {text: 'Help', path:'/help', params: {userId: userId}};
+    const settingsPage = {text: 'Settings', path: '/settings', params: {userId: userId}};
+    const logoutPage = {text: 'Log Out', path: '/journal', params: {userId: userId}};
+    const groupPage = {text: 'Groups', path: '/group', params: {userId: userId}};
+    const homePage = {text: 'Home', path: '/', params: {userId: userId}};
     this.state = {
-      pages: [ ['Help', '/'], ['Settings', '/' ], ['Groups', '/group'], ['Journal', '/journal']],
-      id: 6,
+      pages: [ helpPage, settingsPage, logoutPage, groupPage, homePage],
+      userId: userId,
       groups: [],
       currentGroupId: null,
       currentGroupMembers: null
     }
 
     var self = this
-    fetch('/api/group?user_id='+this.state.id).then(function(resp){
+    fetch('/api/group?user_id='+this.state.userId).then(function(resp){
       return resp.json();
     }).then(function(body){
       var i

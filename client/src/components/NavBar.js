@@ -42,16 +42,16 @@ class NavBar extends React.Component {
   renderList () {
     return(
       <div>
-        {this.props.pages.map(function(listValue){
+        {this.props.pages.map(function(listValue, i){
           if (listValue.path) {
             return (
-              <List key={listValue.text}>
+              <List key={i}>
                 <Page key={listValue.text} to={{pathname: listValue.path, state: listValue.params}}>{listValue.text}</Page>
               </List>
             )
           }
           else {
-            return <List key={listValue.text} onClick={listValue.method}>{listValue.text}</List>
+            return <List key={i} onClick={listValue.method}>{listValue.text}</List>
           }
         })}
       </div>
