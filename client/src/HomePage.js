@@ -38,11 +38,13 @@ class HomePage extends React.Component {
     const userId = props.location.state ? props.location.state.userId || 0:0;
     const aboutPage = {text: 'About', path:'/about'};
     const loginPage = {text: 'Log In', method:this.openDialog.bind(this)};
+    const helpPage = {text: 'Help', path:'/help', params: {userId: userId}};
+    const settingsPage = {text: 'Settings', path: '/settings', params: {userId: userId}};
     const logoutPage = {text: 'Log Out', path: '/journal'};
     const groupPage = {text: 'Groups', path: '/group', params: {userId: userId}};
     const journalPage = {text: 'Journal', path: '/journal', params: {userId: userId}};
     this.loggedOutPages = [ aboutPage, loginPage];
-    this.loggedInPages = [ aboutPage, logoutPage, groupPage, journalPage];
+    this.loggedInPages = [ helpPage, settingsPage, logoutPage, groupPage, journalPage];
     this.state = {
       isOpen: false,
       pages: userId > 0 ? this.loggedInPages: this.loggedOutPages,

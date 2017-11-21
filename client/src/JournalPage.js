@@ -45,7 +45,7 @@ class JournalPage extends React.Component {
       pages: [ helpPage, settingsPage, logoutPage, groupPage, homePage],
       value: '',
       userId: userId,
-      lastSubmit: ''
+      lastSubmit: moment().toDate()
     };
 
     var self = this;
@@ -54,10 +54,10 @@ class JournalPage extends React.Component {
     }).then(function(body){
       if (body.isError) {
         self.handleErrorMessage(body.message);
-      } else {
+      } else if (body.entry) {
         self.setState({
           value: body.entry,
-          lastSubmit: moment(moment.utc(body.timestamp,"MMM DD, YYYY hh:mm:ss a").toDate()).format("M/D/YY hh:mm a")
+          lastSubmit: moment(moment.utc(body.timestamp, "MMM DD, YYYY hh:mm:ss a").toDate()).format("M/D/YY hh:mm a")
         });
       }
     });
