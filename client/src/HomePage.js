@@ -40,7 +40,7 @@ class HomePage extends React.Component {
     const loginPage = {text: 'Log In', method:this.openDialog.bind(this)};
     const helpPage = {text: 'Help', path:'/help', params: {userId: userId}};
     const settingsPage = {text: 'Settings', path: '/settings', params: {userId: userId}};
-    const logoutPage = {text: 'Log Out', path: '/journal'};
+    const logoutPage = {text: 'Log Out', method: this.logout.bind(this)};
     const groupPage = {text: 'Groups', path: '/group', params: {userId: userId}};
     const journalPage = {text: 'Journal', path: '/journal', params: {userId: userId}};
     this.loggedOutPages = [ aboutPage, loginPage];
@@ -56,28 +56,20 @@ class HomePage extends React.Component {
     }
 
     var self = this;
-    gapi.load('auth2', function(){
-      var a2 = gapi.auth2.init({
-        client_id: '548992550759-kmikahq1pkfhffgps85151j5o2a6gduu.apps.googleusercontent.com',
-        scope: 'https://www.googleapis.com/auth/plus.login'
+    self.isAuthenticated(function(a2){
+      var id_token = a2.currentUser.get().getAuthResponse().id_token;
+      fetch('/api/login', {
+        method: 'POST',
+        body: JSON.stringify({
+          idtoken: id_token,
+          isSignup: "false"
+        })
+      }).then(function(resp){
+        return resp.json();
+      }).then(function(body){
+        self.setState({id: body.id});
+        self.updateUser(body.id);
       });
-      a2.then(function(){
-        if(a2.isSignedIn.get()) {
-          var id_token = a2.currentUser.get().getAuthResponse().id_token;
-          fetch('/api/login', {
-            method: 'POST',
-            body: JSON.stringify({
-              idtoken: id_token,
-              isSignup: "false"
-            })
-          }).then(function(resp){
-            return resp.json();
-          }).then(function(body){
-            self.setState({id: body.id});
-            self.updateUser(body.id);
-          });
-        }
-      })
     });
   }
 
@@ -93,8 +85,31 @@ class HomePage extends React.Component {
     this.loggedInPages[3].params = {userId: id};
     this.loggedInPages[4].params = {userId: id};
     this.setState({
-      'pages': this.loggedInPages,
+      'pages': id > 0 ? this.loggedInPages : this.loggedOutPages,
       'userId': id
+    });
+  }
+
+  logout(){
+    var self = this;
+    self.isAuthenticated(function(a2){
+      a2.signOut().then(function(){
+        self.updateUser(0);
+      });
+    });
+  }
+
+  isAuthenticated(callback){
+    gapi.load('auth2', function(){
+      var a2 = gapi.auth2.init({
+        client_id: '548992550759-kmikahq1pkfhffgps85151j5o2a6gduu.apps.googleusercontent.com',
+        scope: 'https://www.googleapis.com/auth/plus.login'
+      });
+      a2.then(function(){
+        if(a2.isSignedIn.get()) {
+          callback(a2);
+        }
+      });
     });
   }
 
