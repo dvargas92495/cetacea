@@ -12,7 +12,7 @@ const Entry = styled.textarea`
   width: 95%;
   height: 400px;
   resize: none;
-  outline: none;`
+  outline: none;`;
 const DateHeader = styled.h1`
   display: block;
   text-align: right;
@@ -23,37 +23,51 @@ const DateHeader = styled.h1`
   margin-right: 1.5em;
   font-family: Allerta;
   color: #FFFFFF;
-  font-weight: lighter;`
+  font-weight: lighter;`;
 const SmallText = styled.h3`
   display: inline-block;
   text-align: right;
   font-size: 12px;
   font-family: Allerta;
   color: #FFFFFF;
-  font-weight: lighter;`
+  font-weight: lighter;`;
 
 class JournalPage extends React.Component {
   constructor(props) {
-    super(props)
+    super(props);
+    const userId = props.location.state.userId;
+    const helpPage = {text: 'Help', path:'/help', params: {userId: userId}};
+    const settingsPage = {text: 'Settings', path: '/settings', params: {userId: userId}};
+    const logoutPage = {text: 'Log Out', path: '/journal', params: {userId: userId}};
+    const groupPage = {text: 'Groups', path: '/group', params: {userId: userId}};
+    const homePage = {text: 'Home', path: '/', params: {userId: userId}};
     this.state = {
-      pages: [ ['Help', '/'], ['Settings', '/' ], ['Groups', '/'], ['Journal', '/journal']],
+      pages: [ helpPage, settingsPage, logoutPage, groupPage, homePage],
       value: '',
-      userId: props.match.params.userId
-    }
+      userId: userId,
+      lastSubmit: moment().toDate()
+    };
 
-    var self = this
+    var self = this;
     fetch('/api/journal?id='+this.state.userId).then(function(resp){
       return resp.json();
     }).then(function(body){
       if (body.isError) {
-        console.log(body.message);
-      } else {
-        self.setState({value: body.entry});
+        self.handleErrorMessage(body.message);
+      } else if (body.entry) {
+        self.setState({
+          value: body.entry,
+          lastSubmit: moment(moment.utc(body.timestamp, "MMM DD, YYYY hh:mm:ss a").toDate()).format("M/D/YY hh:mm a")
+        });
       }
     });
 
-    this.handleChange = this.handleChange.bind(this)
-    this.handleSubmit = this.handleSubmit.bind(this)
+    this.handleChange = this.handleChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+
+  handleErrorMessage(msg){
+    console.log(msg);
   }
 
   handleChange(event) {
@@ -61,14 +75,18 @@ class JournalPage extends React.Component {
   }
 
   handleSubmit(event) {
+    var self = this;
+    var timestamp = moment().toDate();
     fetch('/api/journal', {
       method: 'POST',
       body: JSON.stringify({
         user_id: this.state.userId,
         entry: this.state.value,
-        timestamp: moment().toDate(),
+        timestamp: timestamp
       })
-    })
+    }).then(function(){
+      self.setState({lastSubmit: timestamp});
+    });
   }
 
   render() {
@@ -81,7 +99,7 @@ class JournalPage extends React.Component {
         <Entry value={this.state.value} onChange={this.handleChange} placeholder="Start writing here!"/>
         <div style={{'textAlign':'right', 'marginRight':'10px'}}>
           <SmallText>
-            {"Last submit: " + moment().format("M/D/YY h:m a")}
+            {"Last submit: " + moment(this.state.lastSubmit).format("M/D/YY hh:mm a")}
           </SmallText>
           <Button text="submit" press={this.handleSubmit}/>
         </div>

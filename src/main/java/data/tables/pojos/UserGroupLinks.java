@@ -5,7 +5,7 @@ package main.java.data.tables.pojos;
 
 
 import java.io.Serializable;
-import java.time.OffsetDateTime;
+import java.sql.Timestamp;
 
 import javax.annotation.Generated;
 
@@ -23,13 +23,13 @@ import javax.annotation.Generated;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class UserGroupLinks implements Serializable {
 
-    private static final long serialVersionUID = 1773811443;
+    private static final long serialVersionUID = 1155871538;
 
-    private Integer        id;
-    private Integer        userId;
-    private Integer        groupId;
-    private Boolean        isAdmin;
-    private OffsetDateTime timestampJoined;
+    private Integer   id;
+    private Integer   userId;
+    private Integer   groupId;
+    private Boolean   isAdmin;
+    private Timestamp timestampJoined;
 
     public UserGroupLinks() {}
 
@@ -42,11 +42,11 @@ public class UserGroupLinks implements Serializable {
     }
 
     public UserGroupLinks(
-        Integer        id,
-        Integer        userId,
-        Integer        groupId,
-        Boolean        isAdmin,
-        OffsetDateTime timestampJoined
+        Integer   id,
+        Integer   userId,
+        Integer   groupId,
+        Boolean   isAdmin,
+        Timestamp timestampJoined
     ) {
         this.id = id;
         this.userId = userId;
@@ -87,11 +87,11 @@ public class UserGroupLinks implements Serializable {
         this.isAdmin = isAdmin;
     }
 
-    public OffsetDateTime getTimestampJoined() {
+    public Timestamp getTimestampJoined() {
         return this.timestampJoined;
     }
 
-    public void setTimestampJoined(OffsetDateTime timestampJoined) {
+    public void setTimestampJoined(Timestamp timestampJoined) {
         this.timestampJoined = timestampJoined;
     }
 

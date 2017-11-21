@@ -5,7 +5,7 @@ package main.java.data.tables.pojos;
 
 
 import java.io.Serializable;
-import java.time.OffsetDateTime;
+import java.sql.Timestamp;
 
 import javax.annotation.Generated;
 
@@ -23,12 +23,12 @@ import javax.annotation.Generated;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Journals implements Serializable {
 
-    private static final long serialVersionUID = -1874417711;
+    private static final long serialVersionUID = 1746872876;
 
-    private Integer        id;
-    private String         entry;
-    private OffsetDateTime timestamp;
-    private Integer        userId;
+    private Integer   id;
+    private String    entry;
+    private Timestamp timestamp;
+    private Integer   userId;
 
     public Journals() {}
 
@@ -40,10 +40,10 @@ public class Journals implements Serializable {
     }
 
     public Journals(
-        Integer        id,
-        String         entry,
-        OffsetDateTime timestamp,
-        Integer        userId
+        Integer   id,
+        String    entry,
+        Timestamp timestamp,
+        Integer   userId
     ) {
         this.id = id;
         this.entry = entry;
@@ -67,11 +67,11 @@ public class Journals implements Serializable {
         this.entry = entry;
     }
 
-    public OffsetDateTime getTimestamp() {
+    public Timestamp getTimestamp() {
         return this.timestamp;
     }
 
-    public void setTimestamp(OffsetDateTime timestamp) {
+    public void setTimestamp(Timestamp timestamp) {
         this.timestamp = timestamp;
     }
 

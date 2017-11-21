@@ -35,13 +35,25 @@ class HomePage extends React.Component {
 
   constructor(props) {
     super(props);
-    this.loggedOutPages = [ ['About', '/about'], ['Log In', this.openDialog.bind(this)]];
-    this.loggedInPages = [ ['About', '/about'], ['Log Out', '/journal'], ['Groups', '/group'], ['Journal', '/journal']];
+    const userId = props.location.state ? props.location.state.userId || 0:0;
+    const aboutPage = {text: 'About', path:'/about'};
+    const loginPage = {text: 'Log In', method:this.openDialog.bind(this)};
+    const helpPage = {text: 'Help', path:'/help', params: {userId: userId}};
+    const settingsPage = {text: 'Settings', path: '/settings', params: {userId: userId}};
+    const logoutPage = {text: 'Log Out', path: '/journal'};
+    const groupPage = {text: 'Groups', path: '/group', params: {userId: userId}};
+    const journalPage = {text: 'Journal', path: '/journal', params: {userId: userId}};
+    this.loggedOutPages = [ aboutPage, loginPage];
+    this.loggedInPages = [ helpPage, settingsPage, logoutPage, groupPage, journalPage];
     this.state = {
       isOpen: false,
-      pages: this.loggedOutPages,
-      userId: 0
+      pages: userId > 0 ? this.loggedInPages: this.loggedOutPages,
+      userId: userId
     };
+
+    if (this.state.userId != null && this.state.userId > 0) {
+      return;
+    }
 
     var self = this;
     gapi.load('auth2', function(){
@@ -78,8 +90,12 @@ class HomePage extends React.Component {
   }
 
   updateUser(id){
-    this.setState({'pages': this.loggedInPages});
-    this.setState({'userId': id});
+    this.loggedInPages[3].params = {userId: id};
+    this.loggedInPages[4].params = {userId: id};
+    this.setState({
+      'pages': this.loggedInPages,
+      'userId': id
+    });
   }
 
   render () {
@@ -98,7 +114,7 @@ class HomePage extends React.Component {
             <Link to='/signup'>
               <Button text="sign up"/>
             </Link> :
-            <Link to={"/journal/"+this.state.userId}>
+            <Link to={{pathname: "/journal", state:{userId: this.state.userId}}}>
               <Button text="let's go"/>
             </Link>
           }

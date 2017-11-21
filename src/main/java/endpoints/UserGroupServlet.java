@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.sql.Timestamp;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
@@ -50,8 +51,9 @@ public class UserGroupServlet extends HttpServlet {
     }
 
     static void addUserToGroup(int userId, int groupId, OffsetDateTime time, boolean isAdmin) throws ServletException {
+        Timestamp timestamp = Timestamp.valueOf(time.toLocalDateTime());
         Repository.getDsl().insertInto(USER_GROUP_LINKS, USER_GROUP_LINKS.USER_ID, USER_GROUP_LINKS.GROUP_ID, USER_GROUP_LINKS.TIMESTAMP_JOINED, USER_GROUP_LINKS.IS_ADMIN)
-                .values(userId, groupId, time, isAdmin)
+                .values(userId, groupId, timestamp, isAdmin)
                 .execute();
     }
 
