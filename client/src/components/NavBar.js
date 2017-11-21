@@ -43,15 +43,15 @@ class NavBar extends React.Component {
     return(
       <div>
         {this.props.pages.map(function(listValue){
-          if (typeof(listValue[1]) === 'string') {
+          if (listValue.path) {
             return (
-              <List key={listValue[0]}>
-                <Page key={listValue[0]} to={listValue[1]}>{listValue[0]}</Page>
+              <List key={listValue.text}>
+                <Page key={listValue.text} to={{pathname: listValue.path, state: listValue.params}}>{listValue.text}</Page>
               </List>
             )
           }
           else {
-            return <List key={listValue[0]} onClick={listValue[1]}>{listValue[0]}</List>
+            return <List key={listValue.text} onClick={listValue.method}>{listValue.text}</List>
           }
         })}
       </div>

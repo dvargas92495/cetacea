@@ -12,7 +12,7 @@ const Entry = styled.textarea`
   width: 95%;
   height: 400px;
   resize: none;
-  outline: none;`
+  outline: none;`;
 const DateHeader = styled.h1`
   display: block;
   text-align: right;
@@ -23,7 +23,7 @@ const DateHeader = styled.h1`
   margin-right: 1.5em;
   font-family: Allerta;
   color: #FFFFFF;
-  font-weight: lighter;`
+  font-weight: lighter;`;
 const SmallText = styled.h3`
   display: inline-block;
   text-align: right;
@@ -35,10 +35,16 @@ const SmallText = styled.h3`
 class JournalPage extends React.Component {
   constructor(props) {
     super(props);
+    const userId = props.location.state.userId;
+    const helpPage = {text: 'Help', path:'/help', params: {userId: userId}};
+    const settingsPage = {text: 'Settings', path: '/settings', params: {userId: userId}};
+    const logoutPage = {text: 'Log Out', path: '/journal', params: {userId: userId}};
+    const groupPage = {text: 'Groups', path: '/group', params: {userId: userId}};
+    const homePage = {text: 'Home', path: '/', params: {userId: userId}};
     this.state = {
-      pages: [ ['Help', '/'], ['Settings', '/' ], ['Groups', '/'], ['Journal', '/journal']],
+      pages: [ helpPage, settingsPage, logoutPage, groupPage, homePage],
       value: '',
-      userId: props.match.params.userId,
+      userId: userId,
       lastSubmit: ''
     };
 
