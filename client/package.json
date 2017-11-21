@@ -1,5 +1,6 @@
 {
   "name": "cetacea",
+  "description": "journaling for a porpoise",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
@@ -31,12 +32,5 @@
     "react-router-dom": "^4.2.2",
     "styled-components": "^2.2.1",
     "webpack": "^3.6.0"
-  },
-  "devDependencies": {
-    "babel-core": "^6.26.0",
-    "babel-loader": "^7.1.2",
-    "babel-preset-env": "^1.6.0",
-    "webpack": "^3.6.0"
-  },
-  "description": ""
+  }
 }

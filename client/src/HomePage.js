@@ -90,8 +90,8 @@ class HomePage extends React.Component {
   }
 
   updateUser(id){
-    this.loggedInPages[2].params = {userId: id};
     this.loggedInPages[3].params = {userId: id};
+    this.loggedInPages[4].params = {userId: id};
     this.setState({
       'pages': this.loggedInPages,
       'userId': id
