@@ -49,7 +49,10 @@ class JournalPage extends React.Component {
       if (body.isError) {
         self.handleErrorMessage(body.message);
       } else {
-        self.setState({value: body.entry});
+        self.setState({
+          value: body.entry,
+          lastSubmit: moment(moment.utc(body.timestamp,"MMM DD, YYYY hh:mm:ss a").toDate()).format("M/D/YY hh:mm a")
+        });
       }
     });
 
@@ -66,6 +69,7 @@ class JournalPage extends React.Component {
   }
 
   handleSubmit(event) {
+    var self = this;
     var timestamp = moment().toDate();
     fetch('/api/journal', {
       method: 'POST',
@@ -75,7 +79,7 @@ class JournalPage extends React.Component {
         timestamp: timestamp
       })
     }).then(function(){
-
+      self.setState({lastSubmit: timestamp});
     });
   }
 
@@ -89,7 +93,7 @@ class JournalPage extends React.Component {
         <Entry value={this.state.value} onChange={this.handleChange} placeholder="Start writing here!"/>
         <div style={{'textAlign':'right', 'marginRight':'10px'}}>
           <SmallText>
-            {"Last submit: " + moment().format("M/D/YY h:m a")}
+            {"Last submit: " + moment(this.state.lastSubmit).format("M/D/YY hh:mm a")}
           </SmallText>
           <Button text="submit" press={this.handleSubmit}/>
         </div>
