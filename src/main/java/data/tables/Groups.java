@@ -4,7 +4,7 @@
 package main.java.data.tables;
 
 
-import java.time.OffsetDateTime;
+import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.List;
 
@@ -41,7 +41,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Groups extends TableImpl<GroupsRecord> {
 
-    private static final long serialVersionUID = 1383704311;
+    private static final long serialVersionUID = -1387715733;
 
     /**
      * The reference instance of <code>public.groups</code>
@@ -79,7 +79,7 @@ public class Groups extends TableImpl<GroupsRecord> {
     /**
      * The column <code>public.groups.timestamp_created</code>.
      */
-    public final TableField<GroupsRecord, OffsetDateTime> TIMESTAMP_CREATED = createField("timestamp_created", org.jooq.impl.SQLDataType.TIMESTAMPWITHTIMEZONE.nullable(false), this, "");
+    public final TableField<GroupsRecord, Timestamp> TIMESTAMP_CREATED = createField("timestamp_created", org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false), this, "");
 
     /**
      * Create a <code>public.groups</code> table reference

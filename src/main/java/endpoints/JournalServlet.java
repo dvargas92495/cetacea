@@ -13,6 +13,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.sql.Time;
+import java.sql.Timestamp;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
@@ -59,7 +61,8 @@ public class JournalServlet extends HttpServlet{
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Map<String, String> params = RequestHelper.getBodyAsMap(request);
         String entry = params.get("entry");
-        OffsetDateTime timestamp = OffsetDateTime.parse(params.get("timestamp"));
+        OffsetDateTime timeFromClient = OffsetDateTime.parse(params.get("timestamp"));
+        Timestamp timestamp = Timestamp.valueOf(timeFromClient.toLocalDateTime());
         int userId = Integer.parseInt(params.get("user_id"));
         Journals journalRecord = getJournalById(userId);
         if (journalRecord != null) {
@@ -99,10 +102,13 @@ public class JournalServlet extends HttpServlet{
 
     private static Journals getJournalById(int userId) throws ServletException{
         OffsetDateTime[] dateRange = getDateRange();
+        System.out.println("Getting a journal for " + userId + " between " + dateRange[0].toString() + " and " + dateRange[1].toString());
+        Timestamp t0 = Timestamp.valueOf(dateRange[0].toLocalDateTime());
+        Timestamp t1 = Timestamp.valueOf(dateRange[1].toLocalDateTime());
         return Repository.getDsl().selectFrom(JOURNALS)
                 .where(JOURNALS.USER_ID.eq(userId))
-                .and(JOURNALS.TIMESTAMP.ge(dateRange[0]))
-                .and(JOURNALS.TIMESTAMP.le(dateRange[1]))
+                .and(JOURNALS.TIMESTAMP.ge(t0))
+                .and(JOURNALS.TIMESTAMP.le(t1))
                 .limit(1).fetchOneInto(Journals.class);
     }
 
@@ -111,9 +117,11 @@ public class JournalServlet extends HttpServlet{
         LocalTime timeToSend = LocalTime.of(6, 0); //TODO: Get from group configuration
         OffsetDateTime[] dateRange = new OffsetDateTime[2];
         dateRange[1] = OffsetDateTime.now();
+        dateRange[1] = dateRange[1].minusSeconds(dateRange[1].getOffset().getTotalSeconds());
         dateRange[0] = dateRange[1].withHour(timeToSend.getHour())
                                    .withMinute(timeToSend.getMinute())
-                                   .withSecond(timeToSend.getSecond());
+                                   .withSecond(timeToSend.getSecond())
+                                   .withNano(0);
         if (dateRange[0].compareTo(dateRange[1]) > 0){
             dateRange[0] = dateRange[0].minusDays(1);
         }

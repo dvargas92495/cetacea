@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.sql.Timestamp;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
@@ -60,7 +61,7 @@ public class GroupServlet extends HttpServlet {
             OffsetDateTime timestampCreated = OffsetDateTime.parse(params.get("timestamp_created"));
             int userId = Integer.parseInt(params.get("created_by")); // user id for cetacea
             Groups group = Repository.getDsl().insertInto(GROUPS, GROUPS.NAME, GROUPS.DESCRIPTION, GROUPS.TIMESTAMP_CREATED, GROUPS.CREATED_BY)
-                    .values(name, description, timestampCreated, userId)
+                    .values(name, description, Timestamp.valueOf(timestampCreated.toLocalDateTime()), userId)
                     .returning(GROUPS.ID).fetchOne().into(Groups.class);
 
             //Then create the group-user link
