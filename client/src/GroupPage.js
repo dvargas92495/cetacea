@@ -3,8 +3,7 @@ import Button from './components/Button.js'
 import NavBar from './components/NavBar.js'
 
 import styled from 'styled-components'
-import { Menu, MenuItem, MenuDivider, Tab2, Tabs2, Card } from '@blueprintjs/core'
-
+import { Menu, MenuItem, MenuDivider, Tab2, Tabs2, Card, Icon } from '@blueprintjs/core'
 
 const GroupMenu = styled(Menu)`
   width: 15%;
@@ -15,16 +14,17 @@ const GroupMenu = styled(Menu)`
   border-style: solid;
   border-width: 0px 1px 1px 1px;
   background: #616161;
-  .pt-menu-item {
-    line-height: 65px;
-  }
-  margin: 0px 20px 0px 0px`
+  margin: 0px 20px 0px 0px;`
 const GroupMenuItem = styled(MenuItem)`
   color: #FAFAFA;
-  font-family: Allerta;
-  font-size: 17px;
-  font-weight: thin;
-  text-align: center;`
+  text-align: center;
+  outline: 0px;
+  padding: 0px;
+  &:focus {
+    color: #106ba3;
+    background: white;
+  }
+  `
 const GroupTabs = styled(Tabs2)`
   display: block;
   margin-top: 10px;
@@ -32,18 +32,26 @@ const GroupTabs = styled(Tabs2)`
   font-family: Allerta;
   .pt-tab {
     font-size: 12px;
-    padding-right: 20px;
-    padding-left: 20px;
+    padding-right: 8%;
+    padding-left: 8%;
+    border-radius: 6px 6px 0px 0px;
+    outline: 0px;
   }
   .pt-tab[aria-selected="true"]{
     border-radius: 6px 6px 0px 0px;
     background: #FFFFFF;
+    font-color: #000000;
   }
   .pt-tab-list > *:not(:last-child) {
     margin-right: 0px;
   }
   .pt-tab-panel {
     margin-top: 0px;
+  }
+  .pt-tab[aria-selected="false"]{
+    background: #E0E0E0;
+    font-color: #424242;
+
   }
   `
 const GroupCard = styled(Card)`
@@ -59,11 +67,26 @@ const MemberCard = styled(Card)`
 const MemberName = styled.div`
   width: 30%;
   display: inline-block;
-`
+  margin-left: 35px;`
 const MemberEmail = styled.div`
   width: 30%;
-  display: inline-block;
-`
+  display: inline-block;`
+const NewGroupTitle = styled.span`
+  display: block;
+  font-family: Allerta;
+  font-size: 11px;`
+const GroupTitle = styled.span`
+  display: block;
+  font-size: 17px;
+  font-family: Allerta;
+  margin-top: 5px;`
+const GroupDescription = styled.span`
+  display:block;
+  font-size: 10px;
+  font-style: italic;
+  margin-top: 10px;
+  margin-bottom: 7px;
+  font-family: 'Open Sans', sans-serif;`
 
 class GroupPage extends React.Component {
   constructor(props) {
@@ -83,17 +106,13 @@ class GroupPage extends React.Component {
       var i
       var arr = []
       for (i = 0; i < body.length; i++){
-        console.log(body[i].name.trim())
         arr.push(body[i])
       }
       self.setState({groups: arr})
+      self.setState({currentGroupId: arr[0].id})
+      self.setState({currentGroupMembers: self.getGroupMembers(arr[0].id)})
     })
-
     this.handleClick = this.handleClick.bind(this)
-  }
-
-  componentDidMount () {
-    console.log(this.state.groups)
   }
 
   handleClick (id, e) {
@@ -106,38 +125,23 @@ class GroupPage extends React.Component {
       return resp.json();
     }).then(function(body){
       self.setState({currentGroupMembers: body})
-      console.log(self.state.currentGroupMembers)
     })
   }
 
-  pickGroup () {
-    if (!this.state.currentGroupView) {
-      return false
-    }
-    else {
-      return true
-    }
-  }
-
   renderGroupMembers () {
-    console.log(this.state.currentGroupMembers)
     if (this.state.currentGroupMembers != null) {
       return (
         <GroupCard>
-          {this.state.currentGroupMembers.map(member => <MemberCard key={member.id}><MemberName key={member.id+"n"}>{member.firstName + " " + member.lastName}</MemberName><MemberEmail key={member.id+"e"}>{member.email}</MemberEmail></MemberCard>)}
+          {this.state.currentGroupMembers.map(member => (
+            <MemberCard key={member.id}>
+              <Icon iconName="pt-icon-user" iconSize={20} />
+              <MemberName key={member.id+"n"}>{member.firstName + " " + member.lastName}</MemberName>
+              <MemberEmail key={member.id+"e"}>{member.email}</MemberEmail>
+            </MemberCard>
+          ))}
         </GroupCard>
       )
     }
-
-    // {this.state.groups.map(group => <div key={group.id+'d'}><GroupMenuItem key={group.id} text={group.name.trim()} onClick={this.handleClick.bind(this, group.id)}/><MenuDivider key={group.id+'l'} /></div>)}
-    // <MemberCard>
-    //   <MemberName>
-    //     David Vargas
-    //   </MemberName>
-    //   <MemberEmail>
-    //     {"dvargas@mit.edu"}
-    //   </MemberEmail>
-    // </MemberCard>
   }
 
   renderGroupSettings () {
@@ -148,7 +152,6 @@ class GroupPage extends React.Component {
         </MemberCard>
       </GroupCard>
     )
-
   }
 
   renderGroupContent(groupId){
@@ -162,16 +165,29 @@ class GroupPage extends React.Component {
     )
   }
 
+  renderGroupMenuItem(group) {
+    return (
+      <div>
+        <GroupTitle>{group.name.trim()}</GroupTitle>
+        <GroupDescription>{group.description}</GroupDescription>
+      </div>
+    )
+  }
+
 
   render () {
-    console.log(this.state.groups)
     return (
       <div>
         <NavBar pages={this.state.pages} />
         <GroupMenu>
-          <GroupMenuItem text="New Group" />
+          <GroupMenuItem text={<div><Icon iconName="plus" iconSize={20} style={{fontSize: "30px"}}/><NewGroupTitle>New Group</NewGroupTitle></div>} />
           <MenuDivider />
-          {this.state.groups.map(group => <div key={group.id+'d'}><GroupMenuItem key={group.id} text={group.name.trim()} onClick={this.handleClick.bind(this, group.id)}/><MenuDivider key={group.id+'l'} /></div>)}
+          {this.state.groups.map(group => (
+            <div key={group.id+'d'}>
+              <GroupMenuItem key={group.id} text={this.renderGroupMenuItem(group)} onClick={this.handleClick.bind(this, group.id)}/>
+              <MenuDivider key={group.id+'l'} />
+            </div>
+          ))}
         </GroupMenu>
         {this.renderGroupContent(this.state.currentGroupId)}
       </div>
