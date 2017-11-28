@@ -9,25 +9,26 @@ import {Link} from 'react-router-dom'
 class SignupPage extends React.Component {
 
   constructor(props) {
-    super(props)
+    super(props);
+    const aboutPage = {text: 'Learn More', path:'/about'};
+    const homePage = {text: 'Home', path: '/'};
     this.state = {
-      pages: [ ['Learn More', '/about'], ['Sign Up', '/signup']]
+      pages: [ aboutPage, homePage]
     }
   }
 
   componentDidMount() {
-    console.log('it wroked')
     gapi.signin2.render('g-signin2', {
       'scope': 'https://www.googleapis.com/auth/plus.login',
-      'onsuccess': this.onSignIn
-    })
+      'onsuccess': this.onSignIn.bind(this)
+    });
   }
 
   onSignIn(googleUser) {
-    var profile = googleUser.getBasicProfile()
-    var id_token = googleUser.getAuthResponse().id_token
+    var profile = googleUser.getBasicProfile();
+    var id_token = googleUser.getAuthResponse().id_token;
 
-
+    var self = this;
     fetch('/api/login', {
       method: 'POST',
       body: JSON.stringify({
@@ -37,19 +38,8 @@ class SignupPage extends React.Component {
     }).then(function(resp){
       return resp.json();
     }).then(function(body){
-      console.log(body)
+      self.props.history.push("/", {userId:body.id});
     })
-
-    // fetch('/api/journal?id=1').then(function(resp){
-    //   return resp.json();
-    // }).then(function(body){
-    //   self.setState({value: body.entry})
-    // });
-
-    console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
-    console.log('Name: ' + profile.getName());
-    console.log('Image URL: ' + profile.getImageUrl());
-    console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
   }
 
 
