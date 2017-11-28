@@ -38,22 +38,18 @@ class HomePage extends React.Component {
     const userId = props.location.state ? props.location.state.userId || 0:0;
     const aboutPage = {text: 'About', path:'/about'};
     const loginPage = {text: 'Log In', method:this.openDialog.bind(this)};
-    const helpPage = {text: 'Help', path:'/help', params: {userId: userId}};
-    const settingsPage = {text: 'Settings', path: '/settings', params: {userId: userId}};
+    this.helpPage = {text: 'Help', path:'/help', params: {userId: userId}};
+    this.settingsPage = {text: 'Settings', path: '/settings', params: {userId: userId}};
     const logoutPage = {text: 'Log Out', method: this.logout.bind(this)};
-    const groupPage = {text: 'Groups', path: '/group', params: {userId: userId}};
-    const journalPage = {text: 'Journal', path: '/journal', params: {userId: userId}};
+    this.groupPage = {text: 'Groups', path: '/group', params: {userId: userId}};
+    this.journalPage = {text: 'Journal', path: '/journal', params: {userId: userId}};
     this.loggedOutPages = [ aboutPage, loginPage];
-    this.loggedInPages = [ helpPage, settingsPage, logoutPage, groupPage, journalPage];
+    this.loggedInPages = [ this.helpPage, this.settingsPage, logoutPage, this.groupPage, this.journalPage];
     this.state = {
       isOpen: false,
       pages: userId > 0 ? this.loggedInPages: this.loggedOutPages,
       userId: userId
     };
-
-    if (this.state.userId != null && this.state.userId > 0) {
-      return;
-    }
 
     var self = this;
     self.isAuthenticated(function(a2){
@@ -67,7 +63,6 @@ class HomePage extends React.Component {
       }).then(function(resp){
         return resp.json();
       }).then(function(body){
-        self.setState({id: body.id});
         self.updateUser(body.id);
       });
     });
@@ -82,8 +77,10 @@ class HomePage extends React.Component {
   }
 
   updateUser(id){
-    this.loggedInPages[3].params = {userId: id};
-    this.loggedInPages[4].params = {userId: id};
+    this.journalPage.params = {userId: id};
+    this.groupPage.params = {userId: id};
+    this.settingsPage.params = {userId: id};
+    this.helpPage.params = {userId: id};
     this.setState({
       'pages': id > 0 ? this.loggedInPages : this.loggedOutPages,
       'userId': id
@@ -100,6 +97,7 @@ class HomePage extends React.Component {
   }
 
   isAuthenticated(callback){
+    var self = this;
     gapi.load('auth2', function(){
       var a2 = gapi.auth2.init({
         client_id: '548992550759-kmikahq1pkfhffgps85151j5o2a6gduu.apps.googleusercontent.com',
@@ -108,6 +106,8 @@ class HomePage extends React.Component {
       a2.then(function(){
         if(a2.isSignedIn.get()) {
           callback(a2);
+        } else {
+          self.updateUser(0);
         }
       });
     });
