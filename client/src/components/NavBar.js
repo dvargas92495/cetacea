@@ -37,34 +37,29 @@ const Page = styled(Link)`
     color: #3F51B5;
     text-decoration: none;
   }`
+const LogoContainer = styled.img`
+  height: 100%;
+`
 
 class NavBar extends React.Component {
-
-  renderList () {
-    return(
-      <div>
-        {this.props.pages.map(function(listValue, i){
-          if (listValue.path) {
-            return (
-              <List key={i}>
-                <Page key={listValue.text} to={{pathname: listValue.path, state: listValue.params}}>{listValue.text}</Page>
-              </List>
-            )
-          }
-          else {
-            return <List key={i} onClick={listValue.method}>{listValue.text}</List>
-          }
-        })}
-      </div>
-    )
-  }
 
   render () {
     return (
       <div>
-        <img src={Logo}/>
         <Bar>
-          {this.renderList()}
+          <LogoContainer src={Logo}/>
+          {this.props.pages.map(function(listValue, i){
+            if (listValue.path) {
+              return (
+                <List key={i}>
+                  <Page key={listValue.text} to={{pathname: listValue.path, state: listValue.params}}>{listValue.text}</Page>
+                </List>
+              )
+            }
+            else {
+              return <List key={i} onClick={listValue.method}>{listValue.text}</List>
+            }
+          })}
         </Bar>
       </div>
     )
