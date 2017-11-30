@@ -32,5 +32,9 @@
     "react-router-dom": "^4.2.2",
     "styled-components": "^2.2.1",
     "webpack": "^3.6.0"
+  },
+  "devDependencies": {
+    "file-loader": "^1.1.5",
+    "image-webpack-loader": "^3.4.2"
   }
 }
