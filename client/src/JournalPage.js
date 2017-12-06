@@ -36,13 +36,7 @@ class JournalPage extends React.Component {
   constructor(props) {
     super(props);
     const userId = props.location.state.userId;
-    const helpPage = {text: 'Help', path:'/help', params: {userId: userId}};
-    const settingsPage = {text: 'Settings', path: '/settings', params: {userId: userId}};
-    const logoutPage = {text: 'Log Out', path: '/journal', params: {userId: userId}};
-    const groupPage = {text: 'Groups', path: '/group', params: {userId: userId}};
-    const homePage = {text: 'Home', path: '/', params: {userId: userId}};
     this.state = {
-      pages: [ helpPage, settingsPage, logoutPage, groupPage, homePage],
       value: '',
       userId: userId,
       lastSubmit: moment().toDate()

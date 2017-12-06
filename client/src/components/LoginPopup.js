@@ -23,7 +23,7 @@ class LoginPopup extends React.Component {
     this.state = {
       id: null
     }
-    this.onSignIn = this.onSignIn.bind(this)
+    this.onSignIn = this.props.login
   }
 
   componentDidUpdate() {
@@ -33,26 +33,6 @@ class LoginPopup extends React.Component {
             'onsuccess': this.onSignIn
       })
     }
-  }
-
-  onSignIn(googleUser) {
-    var id_token = googleUser.getAuthResponse().id_token
-
-    var self = this
-    fetch('/api/login', {
-      method: 'POST',
-      body: JSON.stringify({
-        idtoken: id_token,
-        isSignup: "false"
-      })
-    }).then(function(resp){
-      return resp.json();
-    }).then(function(body){
-      self.setState({id: body.id});
-      self.props.updateUser(body.id);
-      self.props.onClose();
-    })
-
   }
 
   render () {

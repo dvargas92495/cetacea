@@ -34,90 +34,17 @@ const Space = styled.div`
 class HomePage extends React.Component {
 
   constructor(props) {
-    super(props);
-    const userId = props.location.state ? props.location.state.userId || 0:0;
-    const aboutPage = {text: 'About', path:'/about'};
-    const loginPage = {text: 'Log In', method:this.openDialog.bind(this)};
-    this.helpPage = {text: 'Help', path:'/help', params: {userId: userId}};
-    this.settingsPage = {text: 'Settings', path: '/settings', params: {userId: userId}};
-    const logoutPage = {text: 'Log Out', method: this.logout.bind(this)};
-    this.groupPage = {text: 'Groups', path: '/group', params: {userId: userId}};
-    this.journalPage = {text: 'Journal', path: '/journal', params: {userId: userId}};
-    this.loggedOutPages = [ aboutPage, loginPage];
-    this.loggedInPages = [ this.helpPage, this.settingsPage, logoutPage, this.groupPage, this.journalPage];
+    super(props)
+    const userId = props.location.state ? props.location.state.userId : 0
     this.state = {
-      isOpen: false,
-      pages: userId > 0 ? this.loggedInPages: this.loggedOutPages,
       userId: userId
-    };
-
-    var self = this;
-    self.isAuthenticated(function(a2){
-      var id_token = a2.currentUser.get().getAuthResponse().id_token;
-      fetch('/api/login', {
-        method: 'POST',
-        body: JSON.stringify({
-          idtoken: id_token,
-          isSignup: "false"
-        })
-      }).then(function(resp){
-        return resp.json();
-      }).then(function(body){
-        self.updateUser(body.id);
-      });
-    });
-  }
-
-  openDialog() {
-    this.setState({isOpen: true })
-  }
-
-  closeDialog() {
-    this.setState({isOpen: false })
-  }
-
-  updateUser(id){
-    this.journalPage.params = {userId: id};
-    this.groupPage.params = {userId: id};
-    this.settingsPage.params = {userId: id};
-    this.helpPage.params = {userId: id};
-    this.setState({
-      'pages': id > 0 ? this.loggedInPages : this.loggedOutPages,
-      'userId': id
-    });
-  }
-
-  logout(){
-    var self = this;
-    self.isAuthenticated(function(a2){
-      a2.signOut().then(function(){
-        self.updateUser(0);
-      });
-    });
-  }
-
-  isAuthenticated(callback){
-    var self = this;
-    gapi.load('auth2', function(){
-      var a2 = gapi.auth2.init({
-        client_id: '548992550759-kmikahq1pkfhffgps85151j5o2a6gduu.apps.googleusercontent.com',
-        scope: 'https://www.googleapis.com/auth/plus.login'
-      });
-      a2.then(function(){
-        if(a2.isSignedIn.get()) {
-          callback(a2);
-        } else {
-          self.updateUser(0);
-        }
-      });
-    });
+    }
   }
 
   render () {
     return (
       <div>
-        <NavBar pages={this.state.pages} userId={this.state.userId}/>
-        <LoginPopup isOpen={this.state.isOpen} onClose={this.closeDialog.bind(this)} updateUser={this.updateUser.bind(this)}/>
+        <NavBar/>
         <Title>
           welcome to cetacea
         </Title>
@@ -134,7 +61,7 @@ class HomePage extends React.Component {
             </Link>
           }
           <Space/>
-          <Link to = '/about'>
+          <Link to = {{pathname: "/about", state:{userId: this.state.userId}}}>
             <Button text="learn more" />
           </Link>
         </div>
@@ -144,4 +71,3 @@ class HomePage extends React.Component {
 }
 
 export default HomePage
-// <div id="g-signin2" data-onsuccess={this.onSignIn}></div>

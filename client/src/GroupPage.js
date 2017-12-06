@@ -93,13 +93,7 @@ class GroupPage extends React.Component {
   constructor(props) {
     super(props)
     const userId = props.location.state.userId;
-    const helpPage = {text: 'Help', path:'/help', params: {userId: userId}};
-    const settingsPage = {text: 'Settings', path: '/settings', params: {userId: userId}};
-    const logoutPage = {text: 'Log Out', path: '/journal', params: {userId: userId}};
-    const groupPage = {text: 'Groups', path: '/group', params: {userId: userId}};
-    const homePage = {text: 'Home', path: '/', params: {userId: userId}};
     this.state = {
-      pages: [ helpPage, settingsPage, logoutPage, groupPage, homePage],
       userId: userId,
       groups: [],
       currentGroupId: null,
@@ -208,7 +202,7 @@ class GroupPage extends React.Component {
   render () {
     return (
       <div>
-        <NavBar pages={this.state.pages} />
+        <NavBar/>
         <GroupMenu>
           <GroupMenuItem text={<div><Icon iconName="plus" iconSize={20} style={{fontSize: "30px"}}/><NewGroupTitle>New Group</NewGroupTitle></div>} />
           <MenuDivider />
@@ -224,5 +218,9 @@ class GroupPage extends React.Component {
     )
   }
 }
+
+// class SettingsRow extends React.Component {
+//   constructor()
+// }
 
 export default GroupPage

@@ -35,35 +35,24 @@ const Entry = styled.textarea`
   outline: none;`
 
 class AboutPage extends React.Component {
-
   constructor(props) {
     super(props)
+    const userId = props.location.state.userId;
     this.state = {
-      isOpen: false,
-      pages: [ ['Help', this.toggleDialog.bind(this)], ['Settings', '/' ], ['Groups', '/group'], ['Journal', '/journal']]
-
+      userId: userId
     }
-    this.toggleDialog = this.toggleDialog.bind(this)
-
-  }
-
-  toggleDialog() {
-    this.setState({isOpen: !this.state.isOpen })
   }
 
   render () {
     return (
       <div>
-        <NavBar pages={this.state.pages} />
+        <NavBar/>
         <DateHeader>
           {moment().format("dddd, MMMM D, YYYY").toString()}
         </DateHeader>
-        <Button press={this.toggleDialog}/>
-        <LoginPopup isOpen={this.state.isOpen} onClose={this.toggleDialog} />
       </div>
     )
   }
 }
-
 
 export default AboutPage
