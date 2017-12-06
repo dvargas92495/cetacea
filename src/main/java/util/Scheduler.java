@@ -28,7 +28,7 @@ public class Scheduler {
             try {
                 List<Groups> groups = GroupServlet.getAllGroups();
                 groups.forEach(g -> {
-                    LocalTime timeToSend = LocalTime.of(6, 0); //TODO: Get from group configuration
+                    LocalTime timeToSend = LocalTime.of(11, 0); //TODO: Get from group configuration
                     long delay = Application.PRODUCTION.equals(Application.ENVIRONMENT) ?
                             computeNextDelay(timeToSend.getHour(), timeToSend.getMinute(), timeToSend.getSecond()): 0;
                     executorService.schedule(
