@@ -13,10 +13,19 @@ import java.util.Scanner;
 public class PublicServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        response.setContentType("text/javascript;charset=utf-8");
         response.setStatus(HttpServletResponse.SC_OK);
-        String fileName = "client" + request.getRequestURI();
-        String fileContent = new Scanner(new java.io.FileInputStream(fileName), "UTF-8").useDelimiter("\\A").next();
-        response.getWriter().println(fileContent);
+        String name = request.getRequestURI();
+        if (name.endsWith(".js")){
+            response.setContentType("text/javascript;charset=utf-8");
+        } else if (name.endsWith(".css")) {
+            response.setContentType("text/css;charset=utf-8");
+        } else if (name.endsWith(".woff")) {
+            response.setContentType("application/font-woff;charset=utf-8");
+        } else if (name.endsWith(".ttf")) {
+            response.setContentType("application/octet-stream;charset=utf-8");
+        }  else if (name.endsWith(".css.map")) {
+            response.setContentType("application/json;charset=utf-8");
+        }
+        response.getWriter().println(HomeServlet.loadFile(name));
     }
 }

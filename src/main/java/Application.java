@@ -4,8 +4,11 @@ import com.amazonaws.xray.javax.servlet.AWSXRayServletFilter;
 import main.java.endpoints.*;
 import main.java.util.Scheduler;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.handler.DefaultHandler;
+import org.eclipse.jetty.servlet.DefaultServlet;
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletHandler;
+import org.eclipse.jetty.servlet.ServletHolder;
 
 import javax.servlet.DispatcherType;
 import java.util.EnumSet;

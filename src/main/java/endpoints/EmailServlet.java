@@ -42,6 +42,10 @@ public class EmailServlet extends HttpServlet {
 
             String SUBJECT = SUBJECT_PREFIX; //TODO: Missing Date
             List<String> journals = JournalServlet.getJournalsByEmails(TO);
+            if (journals.size() == 0){
+                System.out.println("No journals to send for Group: " + group.toString());
+                return;
+            }
             String BODY = formatJournalsToEmail(journals);
 
             Properties props = System.getProperties();

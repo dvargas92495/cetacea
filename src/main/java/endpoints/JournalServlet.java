@@ -117,12 +117,13 @@ public class JournalServlet extends HttpServlet{
         LocalTime timeToSend = LocalTime.of(6, 0); //TODO: Get from group configuration
         OffsetDateTime[] dateRange = new OffsetDateTime[2];
         dateRange[1] = OffsetDateTime.now();
-        dateRange[1] = dateRange[1].minusSeconds(dateRange[1].getOffset().getTotalSeconds());
+        dateRange[1] = dateRange[1].minusSeconds(dateRange[1].getOffset().getTotalSeconds())
+                                   .minusMinutes(1); //TODO: Runtime hack
         dateRange[0] = dateRange[1].withHour(timeToSend.getHour())
                                    .withMinute(timeToSend.getMinute())
                                    .withSecond(timeToSend.getSecond())
                                    .withNano(0);
-        if (dateRange[0].compareTo(dateRange[1]) > 0){
+        if (dateRange[0].compareTo(dateRange[1]) >= 0){
             dateRange[0] = dateRange[0].minusDays(1);
         }
         return dateRange;

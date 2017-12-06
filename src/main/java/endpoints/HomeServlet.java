@@ -1,12 +1,12 @@
 package main.java.endpoints;
 
+import javax.imageio.ImageIO;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import java.awt.image.BufferedImage;
+import java.io.*;
 import java.util.Scanner;
 
 /**
@@ -16,13 +16,28 @@ public class HomeServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        response.setContentType("text/html;charset=utf-8");
+        String name = request.getRequestURI();
         response.setStatus(HttpServletResponse.SC_OK);
-        response.getWriter().println(loadIndex());
+        if (name.endsWith(".ico")){
+            response.setContentType("image/x-icon;charset=utf-8");
+            response.getOutputStream().println(loadFile(name));
+        } else if (name.endsWith(".png")){
+            String fileName = "client/public" + name;
+            response.setContentType("image/png;charset=utf-8");
+            File f = new File(fileName);
+            BufferedImage bi = ImageIO.read(f);
+            OutputStream out = response.getOutputStream();
+            ImageIO.write(bi, "png", out);
+            out.close();
+        } else {
+            name = "/index.html";
+            response.setContentType("text/html;charset=utf-8");
+            response.getWriter().println(loadFile(name));
+        }
     }
 
-    private static String loadIndex() {
-        final String fileName = "client/index.html";
+    static String loadFile(String name) {
+        final String fileName = "client" + name;
         try {
             return new Scanner(new java.io.FileInputStream(fileName), "UTF-8").useDelimiter("\\A").next();
         } catch (final Exception exception) {
