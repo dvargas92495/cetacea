@@ -20,6 +20,7 @@
   "homepage": "https://github.com/stollestrup/cetacea#readme",
   "dependencies": {
     "@blueprintjs/core": "^1.33.0",
+    "@blueprintjs/datetime": "^1.24.0",
     "babel-core": "^6.26.0",
     "babel-loader": "^7.1.2",
     "babel-preset-env": "^1.6.0",

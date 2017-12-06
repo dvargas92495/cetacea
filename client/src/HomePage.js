@@ -122,7 +122,7 @@ class HomePage extends React.Component {
           welcome to cetacea
         </Title>
         <Subtitle>
-          journaling for a porpoise
+          porpoiseful journaling
         </Subtitle>
         <div style={{'textAlign': "center", 'topMargin': '25px'}}>
           {this.state.userId == 0 ?

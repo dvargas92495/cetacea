@@ -4,6 +4,7 @@ import NavBar from './components/NavBar.js'
 
 import styled from 'styled-components'
 import { Menu, MenuItem, MenuDivider, Tab2, Tabs2, Card, Icon } from '@blueprintjs/core'
+import {TimePicker} from '@blueprintjs/datetime'
 
 const GroupMenu = styled(Menu)`
   width: 15%;
@@ -153,9 +154,32 @@ class GroupPage extends React.Component {
   renderGroupSettings () {
     return (
       <GroupCard>
-        <MemberCard>
-          settings
-        </MemberCard>
+        {"Group Name: "}
+        <input className="pt-input" type="text" placeholder="get group name" />
+        {"Group Description: "}
+        <textarea className="pt-input" placeholder="get group description " />
+        {"Group Membership Model: "}
+        <div className="pt-select">
+          <select>
+            <option defaultValue>Choose a membership model...</option>
+            <option value="1">All Members Approve</option>
+            <option value="2">Group Owner Approves</option>
+            <option value="3">Any Member Can Approve</option>
+          </select>
+        </div>
+        {"Add Member"}
+        <input className="pt-input" type="text" />
+        <hr/>
+        {"Email Frequency: "}
+        <div className="pt-select">
+          <select>
+            <option defaultValue>Choose...</option>
+            <option value="1">Daily</option>
+          </select>
+        </div>
+        {"Email Send Time: "}
+        <TimePicker showArrowButtons={true}/>
+
       </GroupCard>
     )
   }
