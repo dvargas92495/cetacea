@@ -18,7 +18,7 @@ buildCmd() {
 
 zipCmd() {
     rm cetacea.zip;
-    zip -r cetacea.zip .ebextensions lib client/src client/.babelrc client/*.html client/package.json client/webpack.config.js src build.gradle Buildfile cmd.sh cron.yaml Procfile;
+    zip -r cetacea.zip .ebextensions lib client/src client/images client/favicon.ico client/.babelrc client/*.html client/package.json client/webpack.config.js src build.gradle Buildfile cmd.sh cron.yaml Procfile;
 }
 
 runCmd() {

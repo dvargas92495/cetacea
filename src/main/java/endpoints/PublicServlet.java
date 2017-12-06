@@ -15,6 +15,7 @@ public class PublicServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setStatus(HttpServletResponse.SC_OK);
         String name = request.getRequestURI();
+        System.out.println("Public Getting: " + name);
         if (name.endsWith(".js")){
             response.setContentType("text/javascript;charset=utf-8");
         } else if (name.endsWith(".css")) {

@@ -17,6 +17,7 @@ public class HomeServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String name = request.getRequestURI();
+        System.out.println("Home Getting: " + name);
         response.setStatus(HttpServletResponse.SC_OK);
         if (name.endsWith(".ico")){
             response.setContentType("image/x-icon;charset=utf-8");
