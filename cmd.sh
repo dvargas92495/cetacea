@@ -22,7 +22,7 @@ zipCmd() {
 }
 
 runCmd() {
-    java -jar build/libs/Cetacea-v0.jar;
+    java -jar -Dapple.awt.UIElement=true build/libs/Cetacea-v0.jar;
 }
 
 genCmd() {

@@ -1,21 +1,38 @@
 import React from 'react'
-import {EditableText} from '@blueprintjs/core'
-import Button from './components/Button.js'
-import NavBar from './components/NavBar.js'
+import {Card} from '@blueprintjs/core'
 import styled from 'styled-components'
-import moment from 'moment';
 import {Link} from 'react-router-dom'
+import Logo from '../images/cetacea_logo.png'
+
+const SignUpCard = styled(Card)`
+  margin: 20px 350px 20px 350px;
+  height: 300px;
+`
+const LogoContainer = styled.img`
+  margin-top: 15px;
+  width: 60%;
+  display: block;
+  margin: auto;
+`
+const HelpText = styled.h4`
+  margin-top: 30px;
+  margin-bottom: 45px;
+  text-align: center;
+  font-family: 'Open Sans';
+`
+
+const GoogleButton = styled.div`
+  .abcRioButton.abcRioButtonLightBlue { margin: 0 auto;}
+  display: block;
+  margin: auto;
+`
+const LogInText = styled.p`
+  font-family: 'Open Sans';
+  text-align: center;
+  margin-top: 40px;
+`
 
 class SignupPage extends React.Component {
-
-  constructor(props) {
-    super(props);
-    const aboutPage = {text: 'Learn More', path:'/about'};
-    const homePage = {text: 'Home', path: '/'};
-    this.state = {
-      pages: [ aboutPage, homePage]
-    }
-  }
 
   componentDidMount() {
     gapi.signin2.render('g-signin2', {
@@ -46,10 +63,16 @@ class SignupPage extends React.Component {
   render () {
     return (
       <div>
-        <NavBar pages={this.state.pages} />
-        <div id="g-signin2" data-onsuccess={this.onSignIn}></div>
-        <div style={{'textAlign': "center", 'topMargin': '25px'}}>
-        </div>
+        <SignUpCard>
+          <Link to='/'>
+            <LogoContainer src={Logo} />
+          </Link>
+          <HelpText>{"Sign up for Cetacea with your Google Account:"}</HelpText>
+          <GoogleButton id="g-signin2" data-onsuccess={this.onSignIn}></GoogleButton>
+          <Link to='/'>
+            <LogInText><b>{"Already have an account? Log in here."}</b></LogInText>
+          </Link>
+        </SignUpCard>
       </div>
     )
   }
