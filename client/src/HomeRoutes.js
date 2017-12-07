@@ -7,6 +7,7 @@ import JournalPage from './JournalPage.js'
 import AboutPage from './AboutPage.js'
 import SignupPage from './SignupPage.js'
 import GroupPage from './GroupPage.js'
+import HelpPage from './HelpPage.js'
 
 class HomeRoutes extends React.Component {
 
@@ -18,6 +19,7 @@ class HomeRoutes extends React.Component {
         <Route path='/journal' component={JournalPage} />
         <Route path='/signup' component={SignupPage} />
         <Route path='/group' component={GroupPage} />
+        <Route path='/help' component={HelpPage} />
       </Switch>
     )
   }
