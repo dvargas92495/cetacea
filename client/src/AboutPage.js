@@ -69,10 +69,14 @@ class AboutPage extends React.Component {
     }
   }
 
+  redirectToHome() { //TODO: I think this will go in the base page class
+    this.props.history.push("/", {userId:0});
+  }
+
   render () {
     return (
       <div>
-        <NavBar/>
+        <NavBar redirect={this.redirectToHome.bind(this)} onlogin={this.setState.bind(this)} userId={this.state.userId}/>
         <BackdropCard>
           <Title>
             {"About Cetacea"}
@@ -93,7 +97,7 @@ class AboutPage extends React.Component {
 
         </BackdropCard>
       </div>
-    )
+    );
   }
 }
 

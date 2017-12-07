@@ -35,26 +35,14 @@ const SmallText = styled.h3`
 class JournalPage extends React.Component {
   constructor(props) {
     super(props);
-    const userId = props.location.state.userId;
+    const userId = props.location.state ? props.location.state.userId : 0
     this.state = {
       value: '',
       userId: userId,
       lastSubmit: moment().toDate()
     };
 
-    var self = this;
-    fetch('/api/journal?id='+this.state.userId).then(function(resp){
-      return resp.json();
-    }).then(function(body){
-      if (body.isError) {
-        self.handleErrorMessage(body.message);
-      } else if (body.entry) {
-        self.setState({
-          value: body.entry,
-          lastSubmit: moment(moment.utc(body.timestamp, "MMM DD, YYYY hh:mm:ss a").toDate()).format("M/D/YY hh:mm a")
-        });
-      }
-    });
+    this.getJournal({userId: userId});
 
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -83,10 +71,32 @@ class JournalPage extends React.Component {
     });
   }
 
+  getJournal(userObj){
+    var self = this;
+    if (userObj.userId == 0) return
+    fetch('/api/journal?id='+userObj.userId).then(function(resp){
+      return resp.json();
+    }).then(function(body){
+      if (body.isError) {
+        self.handleErrorMessage(body.message);
+      } else if (body.entry) {
+        self.setState({
+          userId: userObj.userId,
+          value: body.entry,
+          lastSubmit: moment(moment.utc(body.timestamp, "MMM DD, YYYY hh:mm:ss a").toDate()).format("M/D/YY hh:mm a")
+        });
+      }
+    });
+  }
+
+  redirectToHome() { //TODO: I think this will go in the base page class
+    this.props.history.push("/", {userId:0});
+  }
+
   render() {
     return (
       <div>
-        <NavBar pages={this.state.pages} />
+        <NavBar redirect={this.redirectToHome.bind(this)}  onlogin={this.getJournal.bind(this)} userId={this.state.userId}/>
         <DateHeader>
           {moment().format("dddd, MMMM D, YYYY").toString()}
         </DateHeader>

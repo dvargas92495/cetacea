@@ -11,12 +11,16 @@ import HelpPage from './HelpPage.js'
 
 class HomeRoutes extends React.Component {
 
+  foo(){
+    console.log("Now shake dat aassss")
+  }
+
   contentRoutes () {
     return (
       <Switch>
         <Route exact path='/' component={HomePage}/>
         <Route path='/about' component={AboutPage}/>
-        <Route path='/journal' component={JournalPage} />
+        <Route path='/journal' component={JournalPage} onEnter={this.foo}/>
         <Route path='/signup' component={SignupPage} />
         <Route path='/group' component={GroupPage} />
         <Route path='/help' component={HelpPage} />

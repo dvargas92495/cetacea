@@ -92,7 +92,7 @@ const GroupDescription = styled.span`
 class GroupPage extends React.Component {
   constructor(props) {
     super(props)
-    const userId = props.location.state.userId;
+    const userId = props.location.state ? props.location.state.userId : 0
     this.state = {
       userId: userId,
       groups: [],
@@ -100,8 +100,18 @@ class GroupPage extends React.Component {
       currentGroupMembers: null
     }
 
-    var self = this
-    fetch('/api/group?user_id='+this.state.userId).then(function(resp){
+    this.getGroups({userId: userId})
+    this.handleClick = this.handleClick.bind(this)
+  }
+
+  handleClick (id, e) {
+    this.getGroupMembers(id)
+  }
+
+  getGroups(userObj){
+    var self = this;
+    if (userObj.userId == 0) return
+    fetch('/api/group?user_id='+userObj.userId).then(function(resp){
       return resp.json();
     }).then(function(body){
       var i
@@ -109,15 +119,12 @@ class GroupPage extends React.Component {
       for (i = 0; i < body.length; i++){
         arr.push(body[i])
       }
-      self.setState({groups: arr})
-      self.setState({currentGroupId: arr[0].id})
-      self.setState({currentGroupMembers: self.getGroupMembers(arr[0].id)})
+      self.setState({groups: arr, userId: userObj.userId})
+      if (arr.length > 0) {
+        self.setState({currentGroupId: arr[0].id})
+        self.setState({currentGroupMembers: self.getGroupMembers(arr[0].id)})
+      }
     })
-    this.handleClick = this.handleClick.bind(this)
-  }
-
-  handleClick (id, e) {
-    this.getGroupMembers(id)
   }
 
   getGroupMembers(groupId){
@@ -198,11 +205,15 @@ class GroupPage extends React.Component {
     )
   }
 
+  redirectToHome() { //TODO: I think this will go in the base page class
+    this.props.history.push("/", {userId:0});
+  }
+
 
   render () {
-    return (
+    return  (
       <div>
-        <NavBar/>
+        <NavBar redirect={this.redirectToHome.bind(this)} onlogin={this.getGroups.bind(this)} userId={this.state.userId}/>
         <GroupMenu>
           <GroupMenuItem text={<div><Icon iconName="plus" iconSize={20} style={{fontSize: "30px"}}/><NewGroupTitle>New Group</NewGroupTitle></div>} />
           <MenuDivider />

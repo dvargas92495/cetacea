@@ -66,9 +66,11 @@ class NavBar extends React.Component {
     }
 
     var self = this
-    this.isAuthenticated(function(a2){
-      self.login(a2.currentUser.get())
-    })
+    if (this.state.userId == 0) {
+      this.isAuthenticated(function (a2) {
+        self.login(a2.currentUser.get())
+      })
+    }
   }
 
   openDialog() {
@@ -94,6 +96,7 @@ class NavBar extends React.Component {
       self.setState({userId: body.id,
                      pages: body.id > 0 ? self.loggedInPages: self.loggedOutPages,
                      isOpen: false})
+      self.props.onlogin({userId: body.id});
     })
   }
 
@@ -102,6 +105,7 @@ class NavBar extends React.Component {
     self.isAuthenticated(function(a2){
       a2.signOut().then(function(){
         self.setState({userId: 0, pages: self.loggedOutPages})
+        self.props.redirect()
       });
     });
   }
@@ -118,6 +122,7 @@ class NavBar extends React.Component {
           callback(a2);
         } else {
           self.setState({userId: 0, pages: self.loggedOutPages})
+          self.props.redirect()
         }
       });
     });
@@ -152,7 +157,8 @@ class NavBar extends React.Component {
 }
 
 NavBar.defaultProps = {
-  userId: 0
+  userId: 0,
+  checkSignin: true
 }
 
 export default NavBar
