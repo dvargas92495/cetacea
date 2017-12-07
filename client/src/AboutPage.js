@@ -63,7 +63,7 @@ const OL = styled.ul`
 class AboutPage extends React.Component {
   constructor(props) {
     super(props)
-    const userId = props.location.state.userId;
+    const userId = props.location.state ? props.location.state.userId : 0
     this.state = {
       userId: userId
     }

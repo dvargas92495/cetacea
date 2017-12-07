@@ -71,16 +71,20 @@ const Issue = styled.li`
 class HelpPage extends React.Component {
   constructor(props) {
     super(props)
-    const userId = props.location.state.userId;
+    const userId = props.location.state ? props.location.state.userId : 0
     this.state = {
       userId: userId
     }
   }
 
+  redirectToHome() { //TODO: I think this will go in the base page class
+    this.props.history.push("/", {userId:0});
+  }
+
   render () {
     return (
       <div>
-        <NavBar/>
+        <NavBar redirect={this.redirectToHome.bind(this)} onlogin={this.setState.bind(this)} userId={this.state.userId}/>
         <BackdropCard>
           <Title>
             {"Getting Started"}
