@@ -1,5 +1,7 @@
 package main.java.endpoints;
 
+import org.eclipse.jetty.util.IO;
+
 import javax.imageio.ImageIO;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -20,11 +22,18 @@ public class HomeServlet extends HttpServlet {
         System.out.println("Home Getting: " + name);
         response.setStatus(HttpServletResponse.SC_OK);
         if (name.endsWith(".ico")){
-            response.setContentType("image/x-icon;charset=utf-8");
-            response.getOutputStream().println(loadFile(name));
+            String fileName = "client" + name;
+            response.setContentType("image/x-icon");
+            File f = new File(fileName);
+            FileInputStream fin = new FileInputStream(f);
+            byte fileContent[] = new byte[(int)f.length()];
+            fin.read(fileContent);
+            OutputStream out = response.getOutputStream();
+            out.write(fileContent);
+            out.close();
         } else if (name.endsWith(".png")){
             String fileName = "client/public" + name;
-            response.setContentType("image/png;charset=utf-8");
+            response.setContentType("image/png");
             File f = new File(fileName);
             BufferedImage bi = ImageIO.read(f);
             OutputStream out = response.getOutputStream();
