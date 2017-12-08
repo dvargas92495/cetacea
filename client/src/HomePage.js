@@ -44,7 +44,7 @@ class HomePage extends React.Component {
   render () {
     return (
       <div>
-        <NavBar redirect={function(){}} onlogin={this.setState.bind(this)} userId={this.state.userId}/>
+        <NavBar onlogin={this.setState.bind(this)} userId={this.state.userId}/>
         <Title>
           welcome to cetacea
         </Title>

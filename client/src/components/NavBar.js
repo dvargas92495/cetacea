@@ -158,7 +158,7 @@ class NavBar extends React.Component {
 
 NavBar.defaultProps = {
   userId: 0,
-  checkSignin: true
+  redirect: function(){}
 }
 
 export default NavBar

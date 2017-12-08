@@ -69,14 +69,10 @@ class AboutPage extends React.Component {
     }
   }
 
-  redirectToHome() { //TODO: I think this will go in the base page class
-    this.props.history.push("/", {userId:0});
-  }
-
   render () {
     return (
       <div>
-        <NavBar redirect={this.redirectToHome.bind(this)} onlogin={this.setState.bind(this)} userId={this.state.userId}/>
+        <NavBar onlogin={this.setState.bind(this)} userId={this.state.userId}/>
         <BackdropCard>
           <Title>
             {"About Cetacea"}
@@ -84,7 +80,7 @@ class AboutPage extends React.Component {
           <hr/>
           <OL>
             <Question> {"What is Cetacea?"} </Question>
-            <Answer>{"Cetacea is a journal sharing app meant to help communities stay connected and to encourage insightful reflection through writing. Our app allows people to keep up with their friends by writing journal entries for their groups to view through once-a-day emails. This way, journal readers will understand what’s going on with their friends while journal writers will have a chance to explain their thoughts and feelings in a productive way."}</Answer>
+            <Answer>{"Cetacea is a journal sharing app meant to help communities stay connected and to encourage insightful reflection through writing. Our app allows people to keep up with their friends by writing journal entries for their groups to view through once-a-day emails. This way, journal readers will understand what's going on with their friends while journal writers will have a chance to explain their thoughts and feelings in a productive way."}</Answer>
             <Question> {"What does the name \"Cetacea\" mean?"} </Question>
             <Answer>{"Cetaceans are an order of aquatic mammals that include whales, dolphins, and porpoises. They are known for their excellent communication skills and, in many species, their close knit pods. We wanted our users to emulate these amazing animals since our product aims to increase quality of communication and share knowledge between group members."}</Answer>
             <Question> {"What inspired Cetacea?"} </Question>
