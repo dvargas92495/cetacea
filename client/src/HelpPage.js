@@ -93,7 +93,7 @@ class HelpPage extends React.Component {
           <Answer>{"Congratulations on your new Cetacea account! We hope you enjoy the experience and have put together a quick starter guide so you can get comfortable with the website."}</Answer>
           <OL>
             <Question>{"Making an account."}</Question>
-            <Answer>{"You’ve already completed this step, just by signing up with your Google Account. As of {TODAY], a Google account is the only way to sign in and use Cetacea. If you ever have any trouble regarding your Google account, please keep in mind that you must go through Google’s processes to reset passwords and remember usernames."}</Answer>
+            <Answer>{"You’ve already completed this step, just by signing up with your Google Account. As of " + moment().format(L) + ", a Google account is the only way to sign in and use Cetacea. If you ever have any trouble regarding your Google account, please keep in mind that you must go through Google’s processes to reset passwords and remember usernames."}</Answer>
             <Question>{"Join or make a group."}</Question>
             <Answer>{"To really enjoy the benefits of Cetacea, it is important to be a part of a group. Generally, you should try to form groups with acquaintances, friends, or family that you already know or feel comfortable with."}</Answer>
             <Answer>{"Join an existing group: As of " + moment().format("L") + " it is currently impossible to join any existing groups without admin involvement."}</Answer>
@@ -109,7 +109,7 @@ class HelpPage extends React.Component {
             {"Detailed Help"}
           </Title>
           <hr/>
-          <Answer>{"In this section we will have more detailed help regarding specific components of Cetacea. As of [TODAY], not every feature is implemented so some sections may be empty or incomplete."}</Answer>
+          <Answer>{"In this section we will have more detailed help regarding specific components of Cetacea. As of" + moment().format() + ", not every feature is implemented so some sections may be empty or incomplete."}</Answer>
           <UL>
             <Question>{"Accounts"}</Question>
             <UL>

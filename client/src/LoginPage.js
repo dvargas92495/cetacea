@@ -1,5 +1,5 @@
 import React from 'react'
-import {Card, Icon} from '@blueprintjs/core'
+import {Card} from '@blueprintjs/core'
 import styled from 'styled-components'
 import {Link} from 'react-router-dom'
 import Logo from '../images/cetacea_logo.png'
@@ -32,16 +32,7 @@ const LogInText = styled.p`
   margin-top: 40px;
 `
 
-const BackButton = styled(Link)`
-  margin: 10px;
-`
-const BackButtonSpan = styled.span`
-  .pt-icon{
-    font-size: 35px;
-  }
-`
-
-class SignupPage extends React.Component {
+class LoginPage extends React.Component {
 
   componentDidMount() {
     gapi.signin2.render('g-signin2', {
@@ -72,17 +63,14 @@ class SignupPage extends React.Component {
   render () {
     return (
       <div>
-        <BackButton to='/'>
-          <BackButtonSpan><Icon iconName="pt-icon-circle-arrow-left" iconSize="35px" /></BackButtonSpan>
-        </BackButton>
         <SignUpCard>
           <Link to='/'>
             <LogoContainer src={Logo} />
           </Link>
-          <HelpText>{"Sign up for Cetacea with your Google Account:"}</HelpText>
+          <HelpText>{"Log into your Cetacea account with your Google Account: "}</HelpText>
           <GoogleButton id="g-signin2" data-onsuccess={this.onSignIn}></GoogleButton>
-          <Link to='/login'>
-            <LogInText><b>{"Already have an account? Log in here."}</b></LogInText>
+          <Link to='/signup'>
+            <LogInText><b>{"Don't have an account? Sign up here."}</b></LogInText>
           </Link>
         </SignUpCard>
       </div>
@@ -90,4 +78,4 @@ class SignupPage extends React.Component {
   }
 }
 
-export default SignupPage
+export default LoginPage
