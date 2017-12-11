@@ -1,5 +1,5 @@
 import React from 'react'
-import {Card} from '@blueprintjs/core'
+import {Card, Icon} from '@blueprintjs/core'
 import styled from 'styled-components'
 import {Link} from 'react-router-dom'
 import Logo from '../images/cetacea_logo.png'
@@ -30,6 +30,17 @@ const LogInText = styled.p`
   font-family: 'Open Sans';
   text-align: center;
   margin-top: 40px;
+`
+
+const BackButton = styled(Link)`
+  margin: 30px;
+  font-size: 35px;
+`
+const BackButtonSpan = styled.span`
+  .pt-icon{
+    font-size: 35px;
+    margin-top: 20px;
+  }
 `
 
 class LoginPage extends React.Component {
@@ -63,6 +74,9 @@ class LoginPage extends React.Component {
   render () {
     return (
       <div>
+        <BackButton to='/'>
+          <BackButtonSpan><Icon iconName="pt-icon-circle-arrow-left" iconSize="35px" /></BackButtonSpan>
+        </BackButton>
         <SignUpCard>
           <Link to='/'>
             <LogoContainer src={Logo} />

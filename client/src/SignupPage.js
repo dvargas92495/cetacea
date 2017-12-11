@@ -33,11 +33,13 @@ const LogInText = styled.p`
 `
 
 const BackButton = styled(Link)`
-  margin: 10px;
+  margin: 30px;
+  font-size: 35px;
 `
 const BackButtonSpan = styled.span`
   .pt-icon{
     font-size: 35px;
+    margin-top: 20px;
   }
 `
 

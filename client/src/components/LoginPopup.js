@@ -7,15 +7,22 @@ const PopupText = styled.h2`
   display: block;
   text-align: center;
   font-size: 1.2em;
-  margin-top: 1em;
+  margin-top: 30px;
   font-family: Allerta;
   color: #616161;
-  font-weight: lighter;`
+  font-weight: lighter;
+  margin-bottom: 30px;`
 const LoginDialog = styled(Dialog)`
   background: #FFFFFF;
   .pt-dialog-header {
     background: #D4EDF0;
   }`
+const GoogleButton = styled.div`
+  .abcRioButton.abcRioButtonLightBlue { margin: 0 auto;}
+  display: block;
+  margin: auto;
+  margin-bottom: 30px;
+`
 
 class LoginPopup extends React.Component {
   constructor(props) {
@@ -44,7 +51,7 @@ class LoginPopup extends React.Component {
               {"Please login with your Google account below."}
             </PopupText>
 
-            <div id="g-signin2" data-onsuccess={this.onSignIn}></div>
+            <GoogleButton id="g-signin2" data-onsuccess={this.onSignIn}></GoogleButton>
           </div>
         </LoginDialog>
       </div>

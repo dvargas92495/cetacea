@@ -3,7 +3,7 @@ import Button from './components/Button.js'
 import NavBar from './components/NavBar.js'
 
 import styled from 'styled-components'
-import { Menu, MenuItem, MenuDivider, Tab2, Tabs2, Card, Icon } from '@blueprintjs/core'
+import { Menu, MenuItem, MenuDivider, Tab2, Tabs2, Card, Icon, Tooltip, Position } from '@blueprintjs/core'
 import {TimePicker} from '@blueprintjs/datetime'
 
 const GroupMenu = styled(Menu)`
@@ -88,6 +88,9 @@ const GroupDescription = styled.span`
   margin-top: 10px;
   margin-bottom: 7px;
   font-family: 'Open Sans', sans-serif;`
+const TooltipFix = styled(Tooltip)`
+  display: block;
+`
 
 class GroupPage extends React.Component {
   constructor(props) {
@@ -190,7 +193,7 @@ class GroupPage extends React.Component {
       <GroupContent>
         <GroupTabs id="group">
           <Tab2 id="members" title="Members" panel={this.renderGroupMembers()}/>
-          <Tab2 id="settings" title="Settings" panel={this.renderGroupSettings()}/>
+          <Tab2 id="settings" disabled title="Settings" panel={this.renderGroupSettings()}/>
         </GroupTabs>
       </GroupContent>
     )
@@ -215,7 +218,9 @@ class GroupPage extends React.Component {
       <div>
         <NavBar redirect={this.redirectToHome.bind(this)} onlogin={this.getGroups.bind(this)} userId={this.state.userId}/>
         <GroupMenu>
-          <GroupMenuItem text={<div><Icon iconName="plus" iconSize={20} style={{fontSize: "30px"}}/><NewGroupTitle>New Group</NewGroupTitle></div>} />
+          <TooltipFix content={"This feature is not yet functional."} position={Position.RIGHT}>
+            <GroupMenuItem text={<div><Icon iconName="plus" iconSize={20} style={{fontSize: "30px"}} /><NewGroupTitle>New Group</NewGroupTitle></div>} />
+          </TooltipFix>
           <MenuDivider />
           {this.state.groups.map(group => (
             <div key={group.id+'d'}>
