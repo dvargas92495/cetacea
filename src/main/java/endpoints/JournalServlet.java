@@ -78,29 +78,7 @@ public class JournalServlet extends HttpServlet{
         }
     }
 
-    static List<String> getJournalsByEmails(List<String> emails) throws ServletException{
-        ArrayList<String> journals = new ArrayList<String>();
-        if (emails.size() == 0){
-            return journals;
-        }
-        List<Integer> userIds = Repository.getDsl().selectFrom(USERS)
-                .where(USERS.EMAIL.in(emails))
-                .fetch(USERS.ID);
-
-        userIds.forEach(u -> {
-            try {
-                Journals journalRecord = JournalServlet.getJournalById(u);
-                if (journalRecord != null) {
-                    journals.add(journalRecord.getEntry());
-                }
-            } catch (ServletException ex) {
-                ex.printStackTrace();
-            }
-        });
-        return journals;
-    }
-
-    private static Journals getJournalById(int userId) throws ServletException{
+    static Journals getJournalById(int userId) throws ServletException{
         OffsetDateTime[] dateRange = getDateRange();
         System.out.println("Getting a journal for " + userId + " between " + dateRange[0].toString() + " and " + dateRange[1].toString());
         Timestamp t0 = Timestamp.valueOf(dateRange[0].toLocalDateTime());
