@@ -68,6 +68,12 @@ const Issue = styled.li`
   font-family: Allerta;
 `
 
+const ContactText = styled.p`
+  margin: 10px 0px 25px 0px;
+  text-indent: 15px;
+  text-align: center;
+`
+
 class HelpPage extends React.Component {
   constructor(props) {
     super(props)
@@ -86,6 +92,21 @@ class HelpPage extends React.Component {
       <div>
         <NavBar redirect={this.redirectToHome.bind(this)} onlogin={this.setState.bind(this)} userId={this.state.userId}/>
         <BackdropCard>
+          <Title>
+            {"Contact Us"}
+          </Title>
+          <hr/>
+          <ContactText>
+            {"Found a bug? Have a question? "}
+            <a href="https://goo.gl/forms/HFezgnIYdKMsnflg2">{"Click here"}</a>
+            {" to get in contact with us."}
+          </ContactText>
+          <ContactText>
+            {"Alternatively, you can email us at "}
+            <a href="mailto:cetacea@mit.edu?Subject=Cetacea%20Bug">{"cetacea@mit.edu"}</a>
+            {" with any more questions, comments, or concerns."}
+          </ContactText>
+          <OL/>
           <Title>
             {"Getting Started"}
           </Title>
@@ -143,15 +164,6 @@ class HelpPage extends React.Component {
               <Answer>{"Email send time is when your cetacea group resets. The default time for a group is 5am (after most people have gone to sleep and before most people wake up), but this option gives groups the ability to customize their journal reset time and when the group email gets sent out."}</Answer>
             </UL>
           </UL>
-          <Title>
-            {"Contact Us"}
-          </Title>
-          <hr/>
-          <Answer>
-            {"Have a question or found a bug? Let us know by emailing "}
-            <a href="mailto:cetacea@mit.edu?Subject=Cetacea%20Bug">{"cetacea@mit.edu"}</a>
-            {" with details."}
-          </Answer>
         </BackdropCard>
       </div>
     )
