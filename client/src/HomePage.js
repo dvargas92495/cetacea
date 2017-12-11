@@ -30,6 +30,10 @@ const Subtitle = styled.h2`
 const Space = styled.div`
   margin-right: 50px;
   display: inline-block;`;
+const ButtonStyling = styled.div`
+  text-align: center;
+  margin-top: 30px;
+`
 
 class HomePage extends React.Component {
 
@@ -51,7 +55,7 @@ class HomePage extends React.Component {
         <Subtitle>
           porpoiseful journaling
         </Subtitle>
-        <div style={{'textAlign': "center", 'topMargin': '25px'}}>
+        <ButtonStyling>
           {this.state.userId == 0 ?
             <Link to='/signup'>
               <Button text="sign up"/>
@@ -64,7 +68,7 @@ class HomePage extends React.Component {
           <Link to = {{pathname: "/about", state:{userId: this.state.userId}}}>
             <Button text="learn more" />
           </Link>
-        </div>
+        </ButtonStyling>
       </div>
     )
   }

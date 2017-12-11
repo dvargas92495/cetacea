@@ -3,6 +3,7 @@ import Button from './components/Button.js'
 import NavBar from './components/NavBar.js'
 import styled from 'styled-components'
 import moment from 'moment';
+import {Toaster, Position} from '@blueprintjs/core'
 
 const Entry = styled.textarea`
   display: block;
@@ -30,7 +31,18 @@ const SmallText = styled.h3`
   font-size: 12px;
   font-family: Allerta;
   color: #FFFFFF;
-  font-weight: lighter;`;
+  font-weight: lighter;
+  margin-right: 15px`;
+
+const ButtonDiv = styled.div`
+  margin-right: 30px;
+  margin-bottom: 20px;
+  text-align: right;
+`
+
+const ToasterDiv = styled(Toaster)`
+  text-align: center;
+`
 
 class JournalPage extends React.Component {
   constructor(props) {
@@ -39,14 +51,26 @@ class JournalPage extends React.Component {
     this.state = {
       value: '',
       userId: userId,
-      lastSubmit: moment().toDate()
+      lastSubmit: moment().toDate(),
+      toaster: Toaster,
+      refHandlers: {
+        toaster: (ref: Toaster) => this.toaster = ref
+      }
     };
 
     this.getJournal({userId: userId});
 
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+
+ //    private toaster: Toaster;
+ // private refHandlers = {
+ //     toaster: (ref: Toaster) => this.toaster = ref,
+ // };
+
   }
+
+
 
   handleErrorMessage(msg){
     console.log(msg);
@@ -68,6 +92,7 @@ class JournalPage extends React.Component {
       })
     }).then(function(){
       self.setState({lastSubmit: timestamp});
+      self.toaster.show({ message: "Your journal has been saved."})
     });
   }
 
@@ -96,17 +121,18 @@ class JournalPage extends React.Component {
   render() {
     return (
       <div>
+        <Toaster position={Position.TOP_CENTER} ref={this.state.refHandlers.toaster} />
         <NavBar redirect={this.redirectToHome.bind(this)}  onlogin={this.getJournal.bind(this)} userId={this.state.userId}/>
         <DateHeader>
           {moment().format("dddd, MMMM D, YYYY").toString()}
         </DateHeader>
         <Entry value={this.state.value} onChange={this.handleChange} placeholder="Start writing here!"/>
-        <div style={{'textAlign':'right', 'marginRight':'10px'}}>
+        <ButtonDiv>
           <SmallText>
             {"Last submit: " + moment(this.state.lastSubmit).format("M/D/YY hh:mm a")}
           </SmallText>
-          <Button text="submit" press={this.handleSubmit}/>
-        </div>
+          <Button text="save" press={this.handleSubmit}/>
+        </ButtonDiv>
       </div>
     )
   }

@@ -9,6 +9,7 @@ import SignupPage from './SignupPage.js'
 import GroupPage from './GroupPage.js'
 import HelpPage from './HelpPage.js'
 import LoginPage from './LoginPage.js'
+import SettingsPage from './SettingsPage.js'
 
 class HomeRoutes extends React.Component {
 
@@ -22,6 +23,7 @@ class HomeRoutes extends React.Component {
         <Route path='/group' component={GroupPage} />
         <Route path='/help' component={HelpPage} />
         <Route path='/login' component={LoginPage} />
+        <Route path='/settings' component={SettingsPage} />
       </Switch>
     )
   }
