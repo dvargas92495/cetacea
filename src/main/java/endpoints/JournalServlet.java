@@ -92,7 +92,7 @@ public class JournalServlet extends HttpServlet{
 
     private static OffsetDateTime[] getDateRange(){
         //TODO: Get range based on Group configuration (Daily, Weekly, etc...)
-        LocalTime timeToSend = LocalTime.of(6, 0); //TODO: Get from group configuration
+        LocalTime timeToSend = LocalTime.of(11, 0); //TODO: Get from group configuration
         OffsetDateTime[] dateRange = new OffsetDateTime[2];
         dateRange[1] = OffsetDateTime.now();
         dateRange[1] = dateRange[1].minusSeconds(dateRange[1].getOffset().getTotalSeconds())

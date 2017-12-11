@@ -12,6 +12,7 @@ helpCmd() {
 buildCmd() {
     gradle build;
     cd client;
+    npm install npm@latest -g;
     npm install;
     npm run build;
 }
