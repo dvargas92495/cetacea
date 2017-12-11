@@ -14,6 +14,9 @@ import javax.servlet.http.HttpServlet;
 import javax.mail.*;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -49,7 +52,7 @@ public class EmailServlet extends HttpServlet {
             DateTime today = DateTime.now();
 
             String SUBJECT = SUBJECT_PREFIX + " for " + (today.getMonthOfYear()) + "/" + today.getDayOfMonth(); //TODO: Missing Date
-            List<UserJournal> journals = getJournalsByEmails(TO);
+            List<UserJournal> journals = getJournalsByEmails(TO); //TODO: Pass in group time
             if (journals.size() == 0){
                 System.out.println("No journals to send for Group: " + group.toString());
                 return;
@@ -114,13 +117,16 @@ public class EmailServlet extends HttpServlet {
         if (emails.size() == 0){
             return journals;
         }
+        OffsetDateTime end = OffsetDateTime.now().withHour(6).withMinute(0)
+                .withSecond(0).withNano(0).withOffsetSameLocal(ZoneOffset.UTC); //TODO: edit to be parameter
+        OffsetDateTime start = end.minusDays(1);
         List<Users> users = Repository.getDsl().selectFrom(USERS)
                 .where(USERS.EMAIL.in(emails))
                 .fetchInto(Users.class);
 
         users.forEach(u -> {
             try {
-                Journals journalRecord = JournalServlet.getJournalById(u.getId());
+                Journals journalRecord = JournalServlet.getJournalById(u.getId(), start, end);
                 if (journalRecord != null) {
                     UserJournal uj = new UserJournal(journalRecord.getEntry(), u.getFirstName(), u.getLastName());
                     journals.add(uj);

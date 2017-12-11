@@ -80,9 +80,13 @@ public class JournalServlet extends HttpServlet{
 
     static Journals getJournalById(int userId) throws ServletException{
         OffsetDateTime[] dateRange = getDateRange();
-        System.out.println("Getting a journal for " + userId + " between " + dateRange[0].toString() + " and " + dateRange[1].toString());
-        Timestamp t0 = Timestamp.valueOf(dateRange[0].toLocalDateTime());
-        Timestamp t1 = Timestamp.valueOf(dateRange[1].toLocalDateTime());
+        return getJournalById(userId, dateRange[0], dateRange[1]);
+    }
+
+    static Journals getJournalById(int userId, OffsetDateTime start, OffsetDateTime end) throws ServletException{
+        System.out.println("Getting a journal for " + userId + " between " + start.toString() + " and " + end.toString());
+        Timestamp t0 = Timestamp.valueOf(start.toLocalDateTime());
+        Timestamp t1 = Timestamp.valueOf(end.toLocalDateTime());
         return Repository.getDsl().selectFrom(JOURNALS)
                 .where(JOURNALS.USER_ID.eq(userId))
                 .and(JOURNALS.TIMESTAMP.ge(t0))
@@ -95,8 +99,7 @@ public class JournalServlet extends HttpServlet{
         LocalTime timeToSend = LocalTime.of(11, 0); //TODO: Get from group configuration
         OffsetDateTime[] dateRange = new OffsetDateTime[2];
         dateRange[1] = OffsetDateTime.now();
-        dateRange[1] = dateRange[1].minusSeconds(dateRange[1].getOffset().getTotalSeconds())
-                                   .minusMinutes(1); //TODO: Runtime hack
+        dateRange[1] = dateRange[1].minusSeconds(dateRange[1].getOffset().getTotalSeconds());
         dateRange[0] = dateRange[1].withHour(timeToSend.getHour())
                                    .withMinute(timeToSend.getMinute())
                                    .withSecond(timeToSend.getSecond())
