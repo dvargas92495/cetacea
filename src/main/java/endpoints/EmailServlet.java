@@ -51,7 +51,7 @@ public class EmailServlet extends HttpServlet {
             List<String> TO = GroupServlet.getEmailAddressesByGroup(group.getId());
             DateTime today = DateTime.now();
 
-            String SUBJECT = SUBJECT_PREFIX + " for " + (today.getMonthOfYear()) + "/" + today.getDayOfMonth(); //TODO: Missing Date
+            String SUBJECT = group.getName().trim() + " " + SUBJECT_PREFIX + " for " + (today.getMonthOfYear()) + "/" + today.getDayOfMonth(); //TODO: Missing Date
             List<UserJournal> journals = getJournalsByEmails(TO); //TODO: Pass in group time
             if (journals.size() == 0){
                 System.out.println("No journals to send for Group: " + group.toString());
@@ -78,6 +78,7 @@ public class EmailServlet extends HttpServlet {
                     transport.connect(HOST, Application.MAIL_USER, Application.MAIL_PASSWORD);
                     transport.sendMessage(message, message.getAllRecipients());
                 } else {
+                    System.out.println(SUBJECT);
                     System.out.println(message.getContent());
                     System.out.println(Arrays.asList(message.getAllRecipients()));
                 }
@@ -118,7 +119,7 @@ public class EmailServlet extends HttpServlet {
             return journals;
         }
         OffsetDateTime end = OffsetDateTime.now().withHour(6).withMinute(0)
-                .withSecond(0).withNano(0).withOffsetSameLocal(ZoneOffset.UTC); //TODO: edit to be parameter
+                .withSecond(0).withNano(0).withOffsetSameInstant(ZoneOffset.UTC); //TODO: edit to be parameter
         OffsetDateTime start = end.minusDays(1);
         List<Users> users = Repository.getDsl().selectFrom(USERS)
                 .where(USERS.EMAIL.in(emails))
