@@ -67,8 +67,8 @@ class NavBar extends React.Component {
 
     var self = this
     if (this.state.userId == 0) {
-      this.isAuthenticated(function (a2) {
-        self.login(a2.currentUser.get())
+      this.isAuthenticated(function () {
+        self.login(self.a2.currentUser.get())
       })
     }
   }
@@ -93,17 +93,21 @@ class NavBar extends React.Component {
     }).then(function(resp){
       return resp.json();
     }).then(function(body){
-      self.setState({userId: body.id,
-                     pages: body.id > 0 ? self.loggedInPages: self.loggedOutPages,
+      const id = body.isAuthenticated ? body.id : 0
+      self.setState({userId: id,
+                     pages: id > 0 ? self.loggedInPages: self.loggedOutPages,
                      isOpen: false})
-      self.props.onlogin({userId: body.id});
+      self.props.onlogin({userId: id});
+      if (!body.isAuthenticated){
+        self.a2.signOut()
+      }
     })
   }
 
   logout(){
     var self = this;
-    self.isAuthenticated(function(a2){
-      a2.signOut().then(function(){
+    self.isAuthenticated(function(){
+      self.a2.signOut().then(function(){
         self.setState({userId: 0, pages: self.loggedOutPages})
         self.props.redirect()
       });
@@ -113,13 +117,13 @@ class NavBar extends React.Component {
   isAuthenticated(callback){
     var self = this;
     gapi.load('auth2', function(){
-      var a2 = gapi.auth2.init({
+      self.a2 = gapi.auth2.init({
         client_id: '548992550759-kmikahq1pkfhffgps85151j5o2a6gduu.apps.googleusercontent.com',
         scope: 'https://www.googleapis.com/auth/plus.login'
       });
-      a2.then(function(){
-        if(a2.isSignedIn.get()) {
-          callback(a2);
+      self.a2.then(function(){
+        if(self.a2.isSignedIn.get()) {
+          callback();
         } else {
           self.setState({userId: 0, pages: self.loggedOutPages})
           self.props.redirect()

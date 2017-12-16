@@ -118,8 +118,8 @@ public class EmailServlet extends HttpServlet {
         if (emails.size() == 0){
             return journals;
         }
-        OffsetDateTime end = OffsetDateTime.now().withHour(6).withMinute(0)
-                .withSecond(0).withNano(0).withOffsetSameInstant(ZoneOffset.UTC); //TODO: edit to be parameter
+        OffsetDateTime end = OffsetDateTime.now().withHour(11).withMinute(0)
+                .withSecond(0).withNano(0).withOffsetSameLocal(ZoneOffset.UTC); //TODO: edit to be parameter
         OffsetDateTime start = end.minusDays(1);
         List<Users> users = Repository.getDsl().selectFrom(USERS)
                 .where(USERS.EMAIL.in(emails))

@@ -55,7 +55,7 @@ public class Scheduler {
     }
 
     public static void init(){
-        long delay = Application.PRODUCTION.equals(Application.ENVIRONMENT) ? computeNextDelay(0, 0, 0): 0;
+        long delay = Application.PRODUCTION.equals(Application.ENVIRONMENT) ? computeNextDelay(3, 0, 0): 0;
         executorService.scheduleAtFixedRate(
             new Master(),
             delay,

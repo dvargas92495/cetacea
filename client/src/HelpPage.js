@@ -121,7 +121,7 @@ class HelpPage extends React.Component {
             <Answer>{"Make group: You can create a new group by navigating to the Groups tab in the top navigation bar (www.cetacea.xyz/group), and pressing the New Group button on the left side of the screen. As of " + moment().format("L") + ", this feature has not been fully released."}</Answer>
             <Question>{"Writing a journal."}</Question>
             <Answer>{"Writing journals are at the core of Cetacea. You can start writing a journal by pressing the “Journal” tab in the top navigation bar after logging in (www.cetacea.xyz/journal)."}</Answer>
-            <Answer>{"Cetacea's default reset time is 5am, meaning that at 5am each day, your last saved journal is sent out to your group, your journal entry page is reset, and anything you subsequently write will be sent out in the next day's email. However, if it is between 5am and 4:59am the next day, your in-progress journals will be viewable from the Journals tab."}</Answer>
+            <Answer>{"Cetacea's default reset time is 6am, meaning that at 6am each day, your last saved journal is sent out to your group, your journal entry page is reset, and anything you subsequently write will be sent out in the next day's email. However, if it is between 6am and 5:59am the next day, your in-progress journals will be viewable from the Journals tab."}</Answer>
             <Answer>{"To save a journal, simply press the submit button at the bottom right of the page. Submitting a new journal will overwrite your last saved journal, so do not erase the auto populated journal entry as you add more to the entry. There is currently no autosave function, so make sure to save frequently!"}</Answer>
             <Question>{"Receive the daily email."}</Question>
             <Answer>{"Every day, cetacea will bundle up all of your group member's entries from the previous 24 hours and will send an email to the entire group. If you are in multiple groups, you will receive multiple emails. If you are not receiving emails, first make sure that you are checking the Google Account that you signed in with, and then check your spam/junk folder. If any of the Cetacea emails are marked as spam or junk, use Google's settings to unflag the emails for the future."}</Answer>
@@ -161,7 +161,7 @@ class HelpPage extends React.Component {
               <Issue>{"What is email frequency?"}</Issue>
               <Answer>{"Some groups may choose to have less frequent emails, for example once a week instead of once a day. This is an option for those groups, though we recommend daily emails for the optimal Cetacea experience."}</Answer>
               <Issue>{"What does \"email send time\" mean?"}</Issue>
-              <Answer>{"Email send time is when your cetacea group resets. The default time for a group is 5am (after most people have gone to sleep and before most people wake up), but this option gives groups the ability to customize their journal reset time and when the group email gets sent out."}</Answer>
+              <Answer>{"Email send time is when your cetacea group resets. The default time for a group is 6am (after most people have gone to sleep and before most people wake up), but this option gives groups the ability to customize their journal reset time and when the group email gets sent out."}</Answer>
             </UL>
           </UL>
         </BackdropCard>
