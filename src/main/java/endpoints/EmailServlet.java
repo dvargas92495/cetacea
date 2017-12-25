@@ -71,7 +71,7 @@ public class EmailServlet extends HttpServlet {
             message.setFrom(new InternetAddress(FROM, FROMNAME));
             TO.forEach(em -> addRecipient(message,em));
             message.setSubject(SUBJECT);
-            message.setText(BODY);
+            message.setText(BODY, "UTF-8");
             Transport transport = session.getTransport();
             try {
                 if (Application.PRODUCTION.equals(Application.ENVIRONMENT)) {
