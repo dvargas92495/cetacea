@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.sql.Timestamp;
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -78,5 +79,9 @@ public class GroupServlet extends HttpServlet {
 
     public static List<Groups> getAllGroups() throws ServletException{
         return Repository.getDsl().select().from(GROUPS).fetchInto(Groups.class);
+    }
+
+    public static List<Groups> getDevGroups() throws ServletException{
+        return new ArrayList<>();
     }
 }

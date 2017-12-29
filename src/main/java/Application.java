@@ -3,6 +3,8 @@ package main.java;
 import com.amazonaws.xray.javax.servlet.AWSXRayServletFilter;
 import main.java.endpoints.*;
 import main.java.util.Scheduler;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.DefaultHandler;
 import org.eclipse.jetty.servlet.DefaultServlet;
@@ -11,7 +13,11 @@ import org.eclipse.jetty.servlet.ServletHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 
 import javax.servlet.DispatcherType;
+import java.io.FileInputStream;
 import java.util.EnumSet;
+import java.util.Properties;
+
+import static com.amazonaws.util.ClassLoaderHelper.getResourceAsStream;
 
 public class Application {
 
@@ -37,6 +43,8 @@ public class Application {
     public static final String DB_USER = System.getenv("CETACEA_DB_USER");
     public static final String DB_PASSWORD = System.getenv("CETACEA_DB_PASSWORD");
     public static final String DB_HOST = System.getenv("CETACEA_DB_HOST");
+
+    //static Logger logger = LogManager.getLogger();
 
     public static void main(String[] args) throws Exception {
 

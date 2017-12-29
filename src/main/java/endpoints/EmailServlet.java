@@ -74,15 +74,9 @@ public class EmailServlet extends HttpServlet {
             message.setText(BODY, "UTF-8");
             Transport transport = session.getTransport();
             try {
-                if (Application.PRODUCTION.equals(Application.ENVIRONMENT)) {
-                    transport.connect(HOST, Application.MAIL_USER, Application.MAIL_PASSWORD);
-                    transport.sendMessage(message, message.getAllRecipients());
-                } else {
-                    System.out.println(SUBJECT);
-                    System.out.println(message.getContent());
-                    System.out.println(Arrays.asList(message.getAllRecipients()));
-                }
-            } catch (MessagingException | IOException mex) {
+                transport.connect(HOST, Application.MAIL_USER, Application.MAIL_PASSWORD);
+                transport.sendMessage(message, message.getAllRecipients());
+            } catch (MessagingException mex) {
                 System.out.println("Email wasn't sent");
                 mex.printStackTrace();
             } finally {
