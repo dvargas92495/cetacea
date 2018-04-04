@@ -45,10 +45,14 @@ class HomePage extends React.Component {
     }
   }
 
+  redirect(){ //lol this is so bad, we really need our BasicPage refactor
+    this.setState({userId: 0})
+  }
+
   render () {
     return (
       <div>
-        <NavBar onlogin={this.setState.bind(this)} userId={this.state.userId}/>
+        <NavBar redirect={this.redirect.bind(this)} onlogin={this.setState.bind(this)} userId={this.state.userId}/>
         <Title>
           welcome to cetacea
         </Title>

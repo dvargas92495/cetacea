@@ -4,6 +4,8 @@ import main.java.Application;
 import main.java.data.tables.pojos.Groups;
 import main.java.endpoints.EmailServlet;
 import main.java.endpoints.GroupServlet;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.servlet.ServletException;
 import java.time.*;
@@ -22,21 +24,25 @@ public class Scheduler {
     //Change pool size based on AWS
     private static ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1);
 
+    //static Logger logger = LogManager.getLogger();
+
     private static class Master implements Runnable {
         public void run(){
+            //logger.info(new Date() + ": Scheduling Emails");
             System.out.println(new Date() + ": Scheduling Emails");
             try {
-                List<Groups> groups = GroupServlet.getAllGroups();
+                List<Groups> groups = Application.PRODUCTION.equals(Application.ENVIRONMENT) ?
+                        GroupServlet.getAllGroups() : GroupServlet.getDevGroups();
                 groups.forEach(g -> {
                     LocalTime timeToSend = LocalTime.of(11, 0); //TODO: Get from group configuration
-                    long delay = Application.PRODUCTION.equals(Application.ENVIRONMENT) ?
-                            computeNextDelay(timeToSend.getHour(), timeToSend.getMinute(), timeToSend.getSecond()): 0;
+                    long delay = computeNextDelay(timeToSend.getHour(), timeToSend.getMinute(), timeToSend.getSecond());
                     executorService.schedule(
                         new EmailSender(g),
                         delay,
                         TimeUnit.SECONDS
                     );
                 });
+                //logger.info(new Date() + ": Scheduled Emails For " + groups.size() + " Groups");
             } catch(ServletException ex) {
                 ex.printStackTrace();
             }
@@ -49,13 +55,14 @@ public class Scheduler {
             group = g;
         }
         public void run() {
+            //logger.info(new Date() + ": Sending Email to " + group.toString());
             System.out.println(new Date() + ": Sending Email to " + group.toString());
             EmailServlet.sendEmail(group);
         }
     }
 
     public static void init(){
-        long delay = Application.PRODUCTION.equals(Application.ENVIRONMENT) ? computeNextDelay(0, 0, 0): 0;
+        long delay = computeNextDelay(3, 0, 0);
         executorService.scheduleAtFixedRate(
             new Master(),
             delay,

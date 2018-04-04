@@ -14,6 +14,9 @@ import javax.servlet.http.HttpServlet;
 import javax.mail.*;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -48,8 +51,8 @@ public class EmailServlet extends HttpServlet {
             List<String> TO = GroupServlet.getEmailAddressesByGroup(group.getId());
             DateTime today = DateTime.now();
 
-            String SUBJECT = SUBJECT_PREFIX + " for " + (today.getMonthOfYear()) + "/" + today.getDayOfMonth(); //TODO: Missing Date
-            List<UserJournal> journals = getJournalsByEmails(TO);
+            String SUBJECT = group.getName().trim() + " " + SUBJECT_PREFIX + " for " + (today.getMonthOfYear()) + "/" + today.getDayOfMonth(); //TODO: Missing Date
+            List<UserJournal> journals = getJournalsByEmails(TO); //TODO: Pass in group time
             if (journals.size() == 0){
                 System.out.println("No journals to send for Group: " + group.toString());
                 return;
@@ -68,17 +71,12 @@ public class EmailServlet extends HttpServlet {
             message.setFrom(new InternetAddress(FROM, FROMNAME));
             TO.forEach(em -> addRecipient(message,em));
             message.setSubject(SUBJECT);
-            message.setText(BODY);
+            message.setText(BODY, "UTF-8");
             Transport transport = session.getTransport();
             try {
-                if (Application.PRODUCTION.equals(Application.ENVIRONMENT)) {
-                    transport.connect(HOST, Application.MAIL_USER, Application.MAIL_PASSWORD);
-                    transport.sendMessage(message, message.getAllRecipients());
-                } else {
-                    System.out.println(message.getContent());
-                    System.out.println(Arrays.asList(message.getAllRecipients()));
-                }
-            } catch (MessagingException | IOException mex) {
+                transport.connect(HOST, Application.MAIL_USER, Application.MAIL_PASSWORD);
+                transport.sendMessage(message, message.getAllRecipients());
+            } catch (MessagingException mex) {
                 System.out.println("Email wasn't sent");
                 mex.printStackTrace();
             } finally {
@@ -115,12 +113,14 @@ public class EmailServlet extends HttpServlet {
             return journals;
         }
 
-
+        OffsetDateTime end = OffsetDateTime.now().withHour(11).withMinute(0)
+                .withSecond(0).withNano(0).withOffsetSameLocal(ZoneOffset.UTC); //TODO: edit to be parameter
+        OffsetDateTime start = end.minusDays(1);
         List<Users> users = getUserIdFromEmail(emails);
 
         users.forEach(u -> {
             try {
-                Journals journalRecord = JournalServlet.getJournalById(u.getId());
+                Journals journalRecord = JournalServlet.getJournalById(u.getId(), start, end);
                 if (journalRecord != null) {
                     UserJournal uj = new UserJournal(journalRecord.getEntry(), u.getFirstName(), u.getLastName());
                     journals.add(uj);

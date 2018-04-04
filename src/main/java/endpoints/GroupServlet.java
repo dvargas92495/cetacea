@@ -96,13 +96,16 @@ public class GroupServlet extends HttpServlet {
         String[] membersArr = membersString.split(",");
 
         List<String> cleanEmails = new ArrayList();
-        for(String s : membersArr){
+        for (String s : membersArr) {
             s = s.replaceAll("\\s", "");
             s.toLowerCase();
             cleanEmails.add(s);
         }
 
         return cleanEmails;
+    }
 
+    public static List<Groups> getDevGroups() throws ServletException{
+        return new ArrayList<>();
     }
 }
