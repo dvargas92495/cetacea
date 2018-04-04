@@ -3,6 +3,7 @@ package main.java.endpoints;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import main.java.data.tables.pojos.Groups;
+import main.java.data.tables.pojos.Users;
 import main.java.util.Repository;
 import main.java.util.RequestHelper;
 
@@ -14,8 +15,10 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.sql.Timestamp;
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Arrays;
 
 import static main.java.data.Tables.*;
 
@@ -66,6 +69,15 @@ public class GroupServlet extends HttpServlet {
 
             //Then create the group-user link
             UserGroupServlet.addUserToGroup(userId, group.getId(), timestampCreated, true);
+
+            String membersString = params.get("members");
+            List<String> members = memberStringsToList(membersString);
+            List<Users> users = EmailServlet.getUserIdFromEmail(members);
+
+            for(Users user : users){
+                UserGroupServlet.addUserToGroup(user.getId(), group.getId(), timestampCreated, false);
+            }
+
         }
     }
 
@@ -78,5 +90,19 @@ public class GroupServlet extends HttpServlet {
 
     public static List<Groups> getAllGroups() throws ServletException{
         return Repository.getDsl().select().from(GROUPS).fetchInto(Groups.class);
+    }
+
+    static List<String> memberStringsToList(String membersString) throws ServletException {
+        String[] membersArr = membersString.split(",");
+
+        List<String> cleanEmails = new ArrayList();
+        for(String s : membersArr){
+            s = s.replaceAll("\\s", "");
+            s.toLowerCase();
+            cleanEmails.add(s);
+        }
+
+        return cleanEmails;
+
     }
 }

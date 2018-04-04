@@ -114,9 +114,9 @@ public class EmailServlet extends HttpServlet {
         if (emails.size() == 0){
             return journals;
         }
-        List<Users> users = Repository.getDsl().selectFrom(USERS)
-                .where(USERS.EMAIL.in(emails))
-                .fetchInto(Users.class);
+
+
+        List<Users> users = getUserIdFromEmail(emails);
 
         users.forEach(u -> {
             try {
@@ -151,5 +151,13 @@ public class EmailServlet extends HttpServlet {
         } catch (MessagingException e) {
             System.out.println(String.format("Error adding recipient %s",to));
         }
+    }
+
+    static List<Users> getUserIdFromEmail(List<String> emails) throws ServletException {
+        List<Users> users = Repository.getDsl().selectFrom(USERS)
+                .where(USERS.EMAIL.in(emails))
+                .fetchInto(Users.class);
+
+        return users;
     }
 }

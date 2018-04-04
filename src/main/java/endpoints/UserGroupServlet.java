@@ -29,14 +29,27 @@ public class UserGroupServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         int groupId = Integer.parseInt(request.getParameter("group_id"));
-        List<Integer> userIds = getUserIdsByGroupId(groupId);
-        List<Users> users = Repository.getDsl().selectFrom(USERS)
-                .where(USERS.ID.in(userIds))
-                .fetchInto(Users.class);
-        Type listType = new TypeToken<List<Users>>(){}.getType();
-        JsonArray json = new Gson().toJsonTree(users, listType).getAsJsonArray();
-        json.forEach(j -> j.getAsJsonObject().remove("oauthId"));
-        response.getWriter().println(json.toString());
+        String userIdString = request.getParameter("user_id");
+
+        if (userIdString == null){
+            List<Integer> userIds = getUserIdsByGroupId(groupId);
+            List<Users> users = Repository.getDsl().selectFrom(USERS)
+                    .where(USERS.ID.in(userIds))
+                    .fetchInto(Users.class);
+            Type listType = new TypeToken<List<Users>>(){}.getType();
+            JsonArray json = new Gson().toJsonTree(users, listType).getAsJsonArray();
+            json.forEach(j -> j.getAsJsonObject().remove("oauthId"));
+            response.getWriter().println(json.toString());
+        }
+        else {
+            int userId = Integer.parseInt(userIdString);
+            Boolean isAdmin = Repository.getDsl().selectFrom(USER_GROUP_LINKS)
+                    .where(USER_GROUP_LINKS.USER_ID.eq(userId))
+                    .and(USER_GROUP_LINKS.GROUP_ID.eq(groupId))
+                    .fetchOne(USER_GROUP_LINKS.IS_ADMIN);
+            response.getWriter().println(isAdmin.toString());
+        }
+
     }
 
     @Override
