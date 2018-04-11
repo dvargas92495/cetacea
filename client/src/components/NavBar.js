@@ -12,8 +12,9 @@ const Bar = styled.ul`
   background-color: #D4EDF0;
   height: 40px;
   font-family: Allerta;
-  border: 1px solid #616161;
+  border-bottom: 1px solid #616161;
   border-radius: 0px;`
+
 const List = styled.li`
   float: right;
   display: block;

@@ -9,15 +9,13 @@ import { Menu, MenuItem, MenuDivider, Tab2, Tabs2, Card, Icon, Tooltip, Position
 import {TimePicker} from '@blueprintjs/datetime'
 
 const GroupMenu = styled(Menu)`
-  width: 15%;
-  height: 100vh;
   display: inline-block;
   border-radius: 0px;
   border-color: #424242;
   border-style: solid;
   border-width: 0px 1px 1px 1px;
   background: #616161;
-  margin: 0px 20px 0px 0px;`
+`
 const GroupMenuItem = styled(MenuItem)`
   color: #FAFAFA;
   text-align: center;
@@ -54,17 +52,18 @@ const GroupTabs = styled(Tabs2)`
   .pt-tab[aria-selected="false"]{
     background: #E0E0E0;
     font-color: #424242;
-
   }
+
   `
 const GroupCard = styled(Card)`
   display: block;
-  height: 80vh;
-  border-radius: 0px 3px 3px 3px;`
+  border-radius: 0px 3px 3px 3px;
+  `
 const GroupContent = styled.div`
   display: inline-block;
   vertical-align: top;
-  width: 80%;`
+  width: 100%;
+  padding: 0px 15px 25px 15px;`
 const MemberCard = styled(Card)`
   border: gray;`
 const MemberName = styled.div`
@@ -113,6 +112,15 @@ const CaptionText = styled.div`
 const SaveButton = styled(Button)`
   float: right;
 `
+const PageContainer = styled.div`
+  display: grid;
+  grid-template-columns: 15% auto;
+  grid-template-rows: auto 1fr;
+  height: 100vh;
+`
+const NavBarGrid = styled.div`
+  grid-column: 1 / 3;
+`
 
 
 class GroupPage extends React.Component {
@@ -127,7 +135,8 @@ class GroupPage extends React.Component {
       newGroupIsOpen: false,
       newGroupName: '',
       newGroupDescription: '',
-      newGroupMembers: ''
+      newGroupMembers: '',
+      isAdmin: null
     }
 
     this.getGroups({userId: userId})
@@ -240,44 +249,33 @@ class GroupPage extends React.Component {
     )
   }
 
-  isUserAdmin(user_id, group_id){
-    fetch('/api/usergroup?group_id='+group_id+'&user_id='+user_id).then(function(resp){
-      return resp.json();
-    }).then(function(body){
-      console.log(body);
-    })
-  }
+  // isUserAdmin(user_id, group_id){
+  //   var result = null
+  //   var self = this
+  //   fetch('/api/usergroup?group_id='+group_id+'&user_id='+user_id).then(function(resp){
+  //     return resp.json();
+  //   }).then(function(body){
+  //     self.setState({isAdmin: body})
+  //   })
+  //
+  //   return this.state.isAdmin
+  // }
 
-  memberButton(id) {
-    this.isUserAdmin(id, this.state.currentGroupId)
-
-    // var self = this
-    // fetch('/api/usergroup?group_id='+groupId).then(function(resp){
-    //   return resp.json();
-    // }).then(function(body){
-    //   self.setState({currentGroupMembers: body})
-    //   self.setState({currentGroupId: groupId})
-    // })
-    //
-    // var self = this
-    // var isAdmin = false
-    //
-    // fetch('/api/usergroup?group_id='+this.state.currentGroupId+'&user_id='+id).then(function(resp){
-    //   isAdmin =
-    // })
-    //
-    //
-    // if (isAdmin && id != this.state.userId){
-    //   return(
-    //     <Button text="Remove" />
-    //   )
-    // }
-    //
-    // else if (!isAdmin && id == this.state.userId) {
-    //   return(
-    //     <Button text="Leave Group" />
-    //   )
-    // }
+  // memberButton(id) {
+  //   // var isAdmin = this.isUserAdmin(id, this.state.currentGroupId)
+  //   // console.log("is admin? " + isAdmin)
+  //
+  //   if (isAdmin && id != this.state.userId){
+  //     return(
+  //       <Button text="Remove" />
+  //     )
+  //   }
+  //
+  //   else if (!isAdmin && id == this.state.userId) {
+  //     return(
+  //       <Button text="Leave Group" />
+  //     )
+  //   }
     //
     //
     // console.log(this.state.currentGroupMembers)
@@ -297,7 +295,7 @@ class GroupPage extends React.Component {
     // return (
     //   <Button text={id}/>
     // )
-  }
+  // }
 
   renderGroupMembers () {
     if (this.state.currentGroupMembers != null) {
@@ -308,7 +306,6 @@ class GroupPage extends React.Component {
               <Icon iconName="pt-icon-user" iconSize={20} />
               <MemberName key={member.id+"n"}>{member.firstName + " " + member.lastName}</MemberName>
               <MemberEmail key={member.id+"e"}>{member.email}</MemberEmail>
-              {this.memberButton(member.id)}
             </MemberCard>
           ))}
         </GroupCard>
@@ -377,18 +374,23 @@ class GroupPage extends React.Component {
   render () {
     return  (
       <div>
-        <NavBar redirect={this.redirectToHome.bind(this)} onlogin={this.getGroups.bind(this)} userId={this.state.userId}/>
-        <GroupMenu>
-          <GroupMenuItem text={<div><Icon iconName="plus" iconSize={20} style={{fontSize: "30px"}} onClick={this.handleNewGroupClick.bind(this)} /><NewGroupTitle>New Group</NewGroupTitle></div>} />
-          <MenuDivider />
-          {this.state.groups.map(group => (
-            <div key={group.id+'d'}>
-              <GroupMenuItem key={group.id} text={this.renderGroupMenuItem(group)} onClick={this.handleClick.bind(this, group.id)}/>
-              <MenuDivider key={group.id+'l'} />
-            </div>
-          ))}
-        </GroupMenu>
-        {this.renderGroupContent(this.state.currentGroupId)}
+        <PageContainer>
+          <NavBarGrid>
+            <NavBar redirect={this.redirectToHome.bind(this)} onlogin={this.getGroups.bind(this)} userId={this.state.userId}/>
+          </NavBarGrid>
+          <GroupMenu>
+            <GroupMenuItem text={<div><Icon iconName="plus" iconSize={20} style={{fontSize: "30px"}} onClick={this.handleNewGroupClick.bind(this)} /><NewGroupTitle>New Group</NewGroupTitle></div>} />
+            <MenuDivider />
+            {this.state.groups.map(group => (
+              <div key={group.id+'d'}>
+                <GroupMenuItem key={group.id} text={this.renderGroupMenuItem(group)} onClick={this.handleClick.bind(this, group.id)}/>
+                <MenuDivider key={group.id+'l'} />
+              </div>
+            ))}
+          </GroupMenu>
+          {this.renderGroupContent(this.state.currentGroupId)}
+        </PageContainer>
+
         {this.renderNewGroupForm()}
       </div>
     )
