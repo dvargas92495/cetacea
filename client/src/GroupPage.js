@@ -136,7 +136,7 @@ class GroupPage extends React.Component {
       newGroupName: '',
       newGroupDescription: '',
       newGroupMembers: '',
-      isAdmin: null
+      isAdmin: []
     }
 
     this.getGroups({userId: userId})
@@ -176,6 +176,7 @@ class GroupPage extends React.Component {
         self.setState({currentGroupId: arr[0].id})
         self.setState({currentGroupMembers: self.getGroupMembers(arr[0].id)})
       }
+      // self.getAdminStatus()
     })
   }
 
@@ -188,6 +189,25 @@ class GroupPage extends React.Component {
       self.setState({currentGroupId: groupId})
     })
   }
+  //
+  // getAdminStatus(){
+  //   var self = this
+  //   var user_id = this.state.userId
+  //
+  //   for (var i = 0; i < this.state.groups.length; i++) {
+  //     var group_id = this.state.groups[i].id
+  //     var currentAdmins = self.state.isAdmin
+  //     fetch('/api/usergroup?group_id='+group_id+'&user_id='+user_id).then(function(resp){
+  //       return resp.json();
+  //     }).then(function(body){
+  //       console.log(body)
+  //       // if (body){
+  //       //   currentAdmins.push(group_id)
+  //       //   self.setState({isAdmin: currentAdmins})
+  //       // }
+  //     })
+  //   }
+  // }
 
   toggleNewGroupDialog() {
     this.setState({newGroupIsOpen: !this.state.newGroupIsOpen})
@@ -242,24 +262,15 @@ class GroupPage extends React.Component {
               </div>
               <textarea className="pt-input" rows="4" value={this.state.newGroupMembers} onChange={this.handleNewMembersChange}/>
             </NewGroupLabel>
-            <SaveButton text="Save" press={this.handleNewGroupSubmit}></SaveButton>
+            <div style={{float: "right"}}>
+              <SaveButton text="Save" press={this.handleNewGroupSubmit}></SaveButton>
+            </div>
           </GridContainer>
         </Dialog>
       </div>
     )
   }
 
-  // isUserAdmin(user_id, group_id){
-  //   var result = null
-  //   var self = this
-  //   fetch('/api/usergroup?group_id='+group_id+'&user_id='+user_id).then(function(resp){
-  //     return resp.json();
-  //   }).then(function(body){
-  //     self.setState({isAdmin: body})
-  //   })
-  //
-  //   return this.state.isAdmin
-  // }
 
   // memberButton(id) {
   //   // var isAdmin = this.isUserAdmin(id, this.state.currentGroupId)
@@ -298,6 +309,11 @@ class GroupPage extends React.Component {
   // }
 
   renderGroupMembers () {
+    // console.log(this.state.isAdmin)
+    // console.log(this.state.currentGroupId)
+    // if (this.state.isAdmin.includes(this.state.currentGroupId)){
+    //   // console.log("hello")
+    // }
     if (this.state.currentGroupMembers != null) {
       return (
         <GroupCard>
@@ -351,7 +367,7 @@ class GroupPage extends React.Component {
       <GroupContent>
         <GroupTabs id="group">
           <Tab2 id="members" title="Members" panel={this.renderGroupMembers()}/>
-          <Tab2 id="settings" title="Settings" panel={this.renderGroupSettings()}/>
+          <Tab2 id="settings" disabled title="Settings" panel={this.renderGroupSettings()}/>
         </GroupTabs>
       </GroupContent>
     )
@@ -379,7 +395,9 @@ class GroupPage extends React.Component {
             <NavBar redirect={this.redirectToHome.bind(this)} onlogin={this.getGroups.bind(this)} userId={this.state.userId}/>
           </NavBarGrid>
           <GroupMenu>
-            <GroupMenuItem text={<div><Icon iconName="plus" iconSize={20} style={{fontSize: "30px"}} onClick={this.handleNewGroupClick.bind(this)} /><NewGroupTitle>New Group</NewGroupTitle></div>} />
+            <TooltipFix content={"This feature is not yet functional."} position={Position.RIGHT}>
+              <GroupMenuItem text={<div><Icon iconName="plus" iconSize={20} style={{fontSize: "30px"}} /><NewGroupTitle>New Group</NewGroupTitle></div>} />
+            </TooltipFix>
             <MenuDivider />
             {this.state.groups.map(group => (
               <div key={group.id+'d'}>
