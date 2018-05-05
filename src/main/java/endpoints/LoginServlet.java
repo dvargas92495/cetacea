@@ -17,6 +17,7 @@ import com.google.api.client.json.gson.GsonFactory;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import main.java.data.tables.pojos.Users;
+import main.java.queries.UsersQueries;
 import main.java.util.Repository;
 import main.java.util.RequestHelper;
 
@@ -51,14 +52,10 @@ public class LoginServlet extends HttpServlet {
                 String firstName = (String) payload.get("given_name");
                 String userEmail = payload.getEmail();
 
-                Users userInfo = Repository.getDsl().selectFrom(USERS)
-                        .where(USERS.OAUTH_ID.eq(userId))
-                        .fetchOneInto(Users.class);
+                Users userInfo = UsersQueries.getUserInfoByOAuth(userId);
 
                 if (isSignup && userInfo == null) {
-                    userInfo = Repository.getDsl().insertInto(USERS, USERS.FIRST_NAME, USERS.LAST_NAME, USERS.EMAIL, USERS.OAUTH_ID)
-                            .values(firstName, lastName, userEmail, userId)
-                            .returning().fetchOne().into(Users.class);
+                    userInfo = UsersQueries.createUser(firstName, lastName, userEmail, userId);
                 }
                 if (userInfo == null) {
                     JsonObject resBody = new JsonObject();

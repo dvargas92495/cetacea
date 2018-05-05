@@ -4,6 +4,8 @@ import main.java.Application;
 import main.java.data.tables.pojos.Groups;
 import main.java.data.tables.pojos.Journals;
 import main.java.data.tables.pojos.Users;
+import main.java.queries.UserGroupLinksQueries;
+import main.java.queries.UsersQueries;
 import main.java.util.Repository;
 import org.joda.time.DateTime;
 
@@ -48,7 +50,9 @@ public class EmailServlet extends HttpServlet {
         int PORT = 587; //TODO: Magic Int
 
         try {
-            List<String> TO = GroupServlet.getEmailAddressesByGroup(group.getId());
+            List<Integer> userIds = UserGroupLinksQueries.getUserIdsByGroupId(group.getId());
+            List<String> TO = UsersQueries.getEmailsByUserIds(userIds);
+
             DateTime today = DateTime.now();
 
             String SUBJECT = group.getName().trim() + " " + SUBJECT_PREFIX + " for " + (today.getMonthOfYear()) + "/" + today.getDayOfMonth(); //TODO: Missing Date

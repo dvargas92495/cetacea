@@ -1,11 +1,18 @@
 package main.java.endpoints;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.google.gson.reflect.TypeToken;
 import main.java.data.tables.pojos.Groups;
+import main.java.data.tables.pojos.UserGroupLinks;
 import main.java.data.tables.pojos.Users;
+import main.java.queries.GroupsQueries;
+import main.java.queries.UserGroupLinksQueries;
+import main.java.queries.UsersQueries;
 import main.java.util.Repository;
 import main.java.util.RequestHelper;
+import org.jooq.tools.json.JSONArray;
+import org.jooq.tools.json.JSONObject;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -15,10 +22,8 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.sql.Timestamp;
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Arrays;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static main.java.data.Tables.*;
 
@@ -30,20 +35,55 @@ public class GroupServlet extends HttpServlet {
     //get all groups for user
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        //First get the group Ids
+
         int userId = Integer.parseInt(request.getParameter("user_id"));
-        List<Integer> groupIds = Repository.getDsl().select()
-                .from(USER_GROUP_LINKS)
-                .where(USER_GROUP_LINKS.USER_ID.eq(userId))
-                .fetch(USER_GROUP_LINKS.GROUP_ID);
 
-        //Then the groups
-        List<Groups> groups = Repository.getDsl().selectFrom(GROUPS)
-                .where(GROUPS.ID.in(groupIds))
-                .fetchInto(Groups.class);
+        // get group ids and is_admin for user_id
+        List<UserGroupLinks> userGroupLinksList = UserGroupLinksQueries.getUserGroupLinksByUserId(userId);
 
-        Type listType = new TypeToken<List<Groups>>(){}.getType();
-        response.getWriter().println(new Gson().toJson(groups, listType));
+        // create just group ids
+        List<Integer> groupIds = userGroupLinksList.stream().map( x -> x.getGroupId()).collect(Collectors.toList());
+
+        // get group information
+        List<Groups> groups = GroupsQueries.getGroupInfoByGroupIds(groupIds);
+
+
+        // create json object
+        JSONObject fullGroups = new JSONObject();
+
+
+        for(int i = 0; i < groups.size(); i++){
+            int currentGroupId = groups.get(i).getId();
+            List<Integer> userIds = UserGroupLinksQueries.getUserIdsByGroupId(currentGroupId);
+            List<Users> users = UsersQueries.getUserInfoByUserIds(userIds);
+
+            JSONObject newEntry = new JSONObject();
+
+            Boolean isAdmin = userGroupLinksList.stream().filter(x -> x.getGroupId().equals(currentGroupId)).findFirst().get().getIsAdmin();
+            newEntry.put("isAdmin", isAdmin);
+            newEntry.put("name", groups.get(i).getName());
+            newEntry.put("description", groups.get(i).getDescription());
+
+            JSONArray userArray = new JSONArray();
+            for(int j = 0; j < users.size(); j++){
+                JSONObject newUser = new JSONObject();
+                Users currentUser = users.get(j);
+                newUser.put("id", currentUser.getId());
+                newUser.put("firstName", currentUser.getFirstName());
+                newUser.put("lastName", currentUser.getLastName());
+                newUser.put("email", currentUser.getEmail());
+
+                userArray.add(newUser);
+
+            }
+            newEntry.put("members", userArray);
+
+            fullGroups.put(currentGroupId, newEntry);
+
+        }
+
+        response.getWriter().println(fullGroups);
+
     }
 
     @Override
@@ -55,41 +95,25 @@ public class GroupServlet extends HttpServlet {
         String description = params.get("description");
         String groupId = params.get("id");
         if (groupId != null){
-            Repository.getDsl().update(GROUPS)
-                    .set(GROUPS.NAME, name)
-                    .set(GROUPS.DESCRIPTION, description)
-                    .where(GROUPS.ID.eq(Integer.parseInt(groupId)))
-                    .execute();
+            GroupsQueries.updateGroup(name, description, groupId);
         } else {
             OffsetDateTime timestampCreated = OffsetDateTime.parse(params.get("timestamp_created"));
             int userId = Integer.parseInt(params.get("created_by")); // user id for cetacea
-            Groups group = Repository.getDsl().insertInto(GROUPS, GROUPS.NAME, GROUPS.DESCRIPTION, GROUPS.TIMESTAMP_CREATED, GROUPS.CREATED_BY)
-                    .values(name, description, Timestamp.valueOf(timestampCreated.toLocalDateTime()), userId)
-                    .returning(GROUPS.ID).fetchOne().into(Groups.class);
+
+            Groups group = GroupsQueries.createGroup(name, description, timestampCreated, userId);
 
             //Then create the group-user link
-            UserGroupServlet.addUserToGroup(userId, group.getId(), timestampCreated, true);
+            UserGroupLinksQueries.addUserToGroup(userId, group.getId(), timestampCreated, true);
 
             String membersString = params.get("members");
             List<String> members = memberStringsToList(membersString);
             List<Users> users = EmailServlet.getUserIdFromEmail(members);
 
             for(Users user : users){
-                UserGroupServlet.addUserToGroup(user.getId(), group.getId(), timestampCreated, false);
+                UserGroupLinksQueries.addUserToGroup(user.getId(), group.getId(), timestampCreated, false);
             }
 
         }
-    }
-
-    static List<String> getEmailAddressesByGroup(int groupId) throws ServletException {
-        List<Integer> userIds = UserGroupServlet.getUserIdsByGroupId(groupId);
-        return Repository.getDsl().selectFrom(USERS)
-                .where(USERS.ID.in(userIds))
-                .fetch(USERS.EMAIL);
-    }
-
-    public static List<Groups> getAllGroups() throws ServletException{
-        return Repository.getDsl().select().from(GROUPS).fetchInto(Groups.class);
     }
 
     static List<String> memberStringsToList(String membersString) throws ServletException {

@@ -122,6 +122,21 @@ const NavBarGrid = styled.div`
   grid-column: 1 / 3;
 `
 
+const RemoveButtons = styled.button`
+  width: 100px;
+  height: 40px;
+  color: #757575;
+  font-family: 'Allerta';
+  font-size: 12px;
+  background: #FFFFFF;
+  border: 1px solid #757575;
+  border-radius: 10px;
+  display: inline-block;
+  &:hover {
+    cursor: pointer;
+    cursor: hand;
+  }`
+
 
 class GroupPage extends React.Component {
   constructor(props) {
@@ -129,14 +144,13 @@ class GroupPage extends React.Component {
     const userId = props.location.state ? props.location.state.userId : 0
     this.state = {
       userId: userId,
-      groups: [],
+      groups: {},
       currentGroupId: null,
-      currentGroupMembers: null,
       newGroupIsOpen: false,
       newGroupName: '',
       newGroupDescription: '',
       newGroupMembers: '',
-      isAdmin: []
+      addMember: ''
     }
 
     this.getGroups({userId: userId})
@@ -150,10 +164,14 @@ class GroupPage extends React.Component {
     this.toggleNewGroupDialog = this.toggleNewGroupDialog.bind(this)
     this.handleNewGroupSubmit = this.handleNewGroupSubmit.bind(this)
 
+    this.handleAddMemberChange = this.handleAddMemberChange.bind(this)
+    this.handleAddMemberSubmit = this.handleAddMemberSubmit.bind(this)
+
   }
 
   handleClick (id, e) {
-    this.getGroupMembers(id)
+    this.setState({currentGroupId: id})
+
   }
 
   handleNewGroupClick(e) {
@@ -166,48 +184,13 @@ class GroupPage extends React.Component {
     fetch('/api/group?user_id='+userObj.userId).then(function(resp){
       return resp.json();
     }).then(function(body){
-      var i
-      var arr = []
-      for (i = 0; i < body.length; i++){
-        arr.push(body[i])
-      }
-      self.setState({groups: arr, userId: userObj.userId})
-      if (arr.length > 0) {
-        self.setState({currentGroupId: arr[0].id})
-        self.setState({currentGroupMembers: self.getGroupMembers(arr[0].id)})
-      }
-      // self.getAdminStatus()
-    })
-  }
+      self.setState({groups: body, userId: userObj.userId})
 
-  getGroupMembers(groupId){
-    var self = this
-    fetch('/api/usergroup?group_id='+groupId).then(function(resp){
-      return resp.json();
-    }).then(function(body){
-      self.setState({currentGroupMembers: body})
-      self.setState({currentGroupId: groupId})
+      if (Object.keys(body).length > 0){
+        self.setState({currentGroupId: Object.keys(body)[0]})
+      }
     })
   }
-  //
-  // getAdminStatus(){
-  //   var self = this
-  //   var user_id = this.state.userId
-  //
-  //   for (var i = 0; i < this.state.groups.length; i++) {
-  //     var group_id = this.state.groups[i].id
-  //     var currentAdmins = self.state.isAdmin
-  //     fetch('/api/usergroup?group_id='+group_id+'&user_id='+user_id).then(function(resp){
-  //       return resp.json();
-  //     }).then(function(body){
-  //       console.log(body)
-  //       // if (body){
-  //       //   currentAdmins.push(group_id)
-  //       //   self.setState({isAdmin: currentAdmins})
-  //       // }
-  //     })
-  //   }
-  // }
 
   toggleNewGroupDialog() {
     this.setState({newGroupIsOpen: !this.state.newGroupIsOpen})
@@ -271,62 +254,89 @@ class GroupPage extends React.Component {
     )
   }
 
+  handleRemove(userId, e){
+    var self = this;
+    fetch('/api/usergroup', {
+      method: 'POST',
+      body: JSON.stringify({
+        purpose: "delete",
+        user_id: userId,
+        group_id: this.state.currentGroupId
+      })
+    }).then(function(){
+      console.log('removed')
+    })
+  }
 
-  // memberButton(id) {
-  //   // var isAdmin = this.isUserAdmin(id, this.state.currentGroupId)
-  //   // console.log("is admin? " + isAdmin)
-  //
-  //   if (isAdmin && id != this.state.userId){
-  //     return(
-  //       <Button text="Remove" />
-  //     )
-  //   }
-  //
-  //   else if (!isAdmin && id == this.state.userId) {
-  //     return(
-  //       <Button text="Leave Group" />
-  //     )
-  //   }
-    //
-    //
-    // console.log(this.state.currentGroupMembers)
-    // console.log(this.state.currentGroupId)
-
-    //
-    // if (id == this.state.userId) {
-    //   return (
-    //     <Button text="Leave Group" />
-    //   )
-    // }
-    //
-    // else if (true) {
-    //
-    // }
-    //
-    // return (
-    //   <Button text={id}/>
-    // )
-  // }
-
-  renderGroupMembers () {
-    // console.log(this.state.isAdmin)
-    // console.log(this.state.currentGroupId)
-    // if (this.state.isAdmin.includes(this.state.currentGroupId)){
-    //   // console.log("hello")
-    // }
-    if (this.state.currentGroupMembers != null) {
+  isUser(userId, isAdmin){
+    if (isAdmin){
+      if (userId != this.state.userId){
+        return (
+          <RemoveButtons onClick={this.handleRemove.bind(this, userId)}>{"Remove"}</RemoveButtons>
+        )
+      }
+    }
+    else if (!isAdmin && userId == this.state.userId) {
       return (
-        <GroupCard>
-          {this.state.currentGroupMembers.map(member => (
-            <MemberCard key={member.id}>
-              <Icon iconName="pt-icon-user" iconSize={20} />
-              <MemberName key={member.id+"n"}>{member.firstName + " " + member.lastName}</MemberName>
-              <MemberEmail key={member.id+"e"}>{member.email}</MemberEmail>
-            </MemberCard>
-          ))}
-        </GroupCard>
+        <RemoveButtons onClick={this.handleRemove.bind(this, userId)}>{"Leave Group"}</RemoveButtons>
       )
     }
+  }
+
+  renderGroupMembers () {
+    if (this.state.currentGroupId != null) {
+      if (this.state.groups[this.state.currentGroupId].isAdmin){
+        return (
+          <GroupCard>
+            {this.state.groups[this.state.currentGroupId].members.map(member => (
+              <MemberCard key={member.id}>
+                <Icon iconName="pt-icon-user" iconSize={20} />
+                <MemberName key={member.id+"n"}>{member.firstName + " " + member.lastName}</MemberName>
+                <MemberEmail key={member.id+"e"}>{member.email}</MemberEmail>
+                {this.isUser(member.id, true)}
+              </MemberCard>
+            ))}
+          </GroupCard>
+        )
+      }
+      else {
+        return (
+          <GroupCard>
+            {this.state.groups[this.state.currentGroupId].members.map(member => (
+              <MemberCard key={member.id}>
+                <Icon iconName="pt-icon-user" iconSize={20} />
+                <MemberName key={member.id+"n"}>{member.firstName + " " + member.lastName}</MemberName>
+                <MemberEmail key={member.id+"e"}>{member.email}</MemberEmail>
+                {this.isUser(member.id, false)}
+              </MemberCard>
+            ))}
+          </GroupCard>
+        )
+      }
+    }
+  }
+
+  handleAddMemberChange(e){
+    this.setState({addMember: e.target.value})
+    // console.log(this.state.addMember)
+  }
+
+  handleAddMemberSubmit(e){
+    var self = this;
+    var timestamp = moment().toDate();
+    console.log(this.state.currentGroupId)
+
+    fetch('/api/usergroup', {
+      method: 'POST',
+      body: JSON.stringify({
+        purpose: "add",
+        email: this.state.addMember,
+        group_id: this.state.currentGroupId,
+        timestamp_joined: timestamp
+      })
+    }).then(function(){
+      console.log("new member added")
+    })
   }
 
   renderGroupSettings () {
@@ -346,7 +356,8 @@ class GroupPage extends React.Component {
           </select>
         </div>
         {"Add Member"}
-        <input className="pt-input" type="text" />
+        <input className="pt-input" type="text" value={this.state.addMember} onChange={this.handleAddMemberChange}/>
+        <button onClick={this.handleAddMemberSubmit}>{"Add Member"}</button>
         <hr/>
         {"Email Frequency: "}
         <div className="pt-select">
@@ -367,7 +378,7 @@ class GroupPage extends React.Component {
       <GroupContent>
         <GroupTabs id="group">
           <Tab2 id="members" title="Members" panel={this.renderGroupMembers()}/>
-          <Tab2 id="settings" disabled title="Settings" panel={this.renderGroupSettings()}/>
+          <Tab2 id="settings" title="Settings" panel={this.renderGroupSettings()}/>
         </GroupTabs>
       </GroupContent>
     )
@@ -379,6 +390,18 @@ class GroupPage extends React.Component {
         <GroupTitle>{group.name.trim()}</GroupTitle>
         <GroupDescription>{group.description}</GroupDescription>
       </div>
+    )
+  }
+
+  makeMenu() {
+    var groupIter = Object.entries(this.state.groups)
+    return (
+      groupIter.map(group => (
+        <div key={group[0]+'d'}>
+          <GroupMenuItem key={group[0]} text={this.renderGroupMenuItem(group[1])} onClick={this.handleClick.bind(this, group[0])}/>
+          <MenuDivider key={group[0]+'l'} />
+        </div>
+      ))
     )
   }
 
@@ -395,16 +418,9 @@ class GroupPage extends React.Component {
             <NavBar redirect={this.redirectToHome.bind(this)} onlogin={this.getGroups.bind(this)} userId={this.state.userId}/>
           </NavBarGrid>
           <GroupMenu>
-            <TooltipFix content={"This feature is not yet functional."} position={Position.RIGHT}>
-              <GroupMenuItem text={<div><Icon iconName="plus" iconSize={20} style={{fontSize: "30px"}} /><NewGroupTitle>New Group</NewGroupTitle></div>} />
-            </TooltipFix>
+            <GroupMenuItem text={<div><Icon iconName="plus" iconSize={20} style={{fontSize: "30px"}} onClick={this.handleNewGroupClick.bind(this)} /><NewGroupTitle>New Group</NewGroupTitle></div>} />
             <MenuDivider />
-            {this.state.groups.map(group => (
-              <div key={group.id+'d'}>
-                <GroupMenuItem key={group.id} text={this.renderGroupMenuItem(group)} onClick={this.handleClick.bind(this, group.id)}/>
-                <MenuDivider key={group.id+'l'} />
-              </div>
-            ))}
+            {this.makeMenu()}
           </GroupMenu>
           {this.renderGroupContent(this.state.currentGroupId)}
         </PageContainer>
@@ -414,9 +430,5 @@ class GroupPage extends React.Component {
     )
   }
 }
-
-// class SettingsRow extends React.Component {
-//   constructor()
-// }
 
 export default GroupPage

@@ -5,6 +5,7 @@ import static main.java.data.Tables.*;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import main.java.data.tables.pojos.*;
+import main.java.queries.JournalsQueries;
 import main.java.util.Repository;
 import main.java.util.RequestHelper;
 
@@ -66,15 +67,9 @@ public class JournalServlet extends HttpServlet{
         int userId = Integer.parseInt(params.get("user_id"));
         Journals journalRecord = getJournalById(userId);
         if (journalRecord != null) {
-            Repository.getDsl().update(JOURNALS)
-                    .set(JOURNALS.ENTRY, entry)
-                    .set(JOURNALS.TIMESTAMP, timestamp)
-                    .where(JOURNALS.ID.eq(journalRecord.getId()))
-                    .execute();
+            JournalsQueries.updateJournal(entry, timestamp, journalRecord);
         } else {
-            Repository.getDsl().insertInto(JOURNALS, JOURNALS.ENTRY, JOURNALS.TIMESTAMP, JOURNALS.USER_ID)
-                    .values(entry, timestamp, userId)
-                    .execute();
+            JournalsQueries.createJournal(entry, timestamp, userId);
         }
     }
 
@@ -87,11 +82,7 @@ public class JournalServlet extends HttpServlet{
         System.out.println("Getting a journal for " + userId + " between " + start.toString() + " and " + end.toString());
         Timestamp t0 = Timestamp.valueOf(start.toLocalDateTime());
         Timestamp t1 = Timestamp.valueOf(end.toLocalDateTime());
-        return Repository.getDsl().selectFrom(JOURNALS)
-                .where(JOURNALS.USER_ID.eq(userId))
-                .and(JOURNALS.TIMESTAMP.ge(t0))
-                .and(JOURNALS.TIMESTAMP.le(t1))
-                .limit(1).fetchOneInto(Journals.class);
+        return JournalsQueries.getJournalForUserBetweenTimestamps(userId, t0, t1);
     }
 
     private static OffsetDateTime[] getDateRange(){

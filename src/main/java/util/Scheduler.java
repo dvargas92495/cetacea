@@ -4,6 +4,7 @@ import main.java.Application;
 import main.java.data.tables.pojos.Groups;
 import main.java.endpoints.EmailServlet;
 import main.java.endpoints.GroupServlet;
+import main.java.queries.GroupsQueries;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -32,7 +33,7 @@ public class Scheduler {
             System.out.println(new Date() + ": Scheduling Emails");
             try {
                 List<Groups> groups = Application.PRODUCTION.equals(Application.ENVIRONMENT) ?
-                        GroupServlet.getAllGroups() : GroupServlet.getDevGroups();
+                        GroupsQueries.getAllGroups() : GroupServlet.getDevGroups();
                 groups.forEach(g -> {
                     LocalTime timeToSend = LocalTime.of(11, 0); //TODO: Get from group configuration
                     long delay = computeNextDelay(timeToSend.getHour(), timeToSend.getMinute(), timeToSend.getSecond());
