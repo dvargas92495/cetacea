@@ -1,12 +1,14 @@
 import React from 'react'
 import Button from './components/Button.js'
 import NavBar from './components/NavBar.js'
-import {Dialog} from '@blueprintjs/core'
+import {Dialog, Popover} from '@blueprintjs/core'
 import moment from 'moment';
 
 import styled from 'styled-components'
 import { Menu, MenuItem, MenuDivider, Tab2, Tabs2, Card, Icon, Tooltip, Position } from '@blueprintjs/core'
 import {TimePicker} from '@blueprintjs/datetime'
+import { DatePicker } from "@blueprintjs/datetime";
+
 
 const GroupMenu = styled(Menu)`
   display: inline-block;
@@ -93,7 +95,7 @@ const TooltipFix = styled(Tooltip)`
   display: block;
 `
 
-const GridContainer = styled.form`
+const GridContainer = styled.div`
   padding: 15px 30px 10px 30px;
   font-family: Allerta;
 `
@@ -137,6 +139,63 @@ const RemoveButtons = styled.button`
     cursor: hand;
   }`
 
+const SavePopover = styled(Popover)`
+  .pt-popover {
+    width: 320px;
+    padding: 10px;
+    padding-right: 3px;
+    background-color: white;
+    color: indianred;
+  }
+`
+const TextWrapper = styled.div`
+  text-align: center;
+`
+const ButtonWrapper = styled.div`
+  display: flex;
+  margin-top: 20px;
+  justify-content: space-around;
+
+`
+const ButtonRed = styled.button`
+  color: indianred;
+  width: 100px;
+  height: 40px;
+  font-family: 'Allerta';
+  font-size: 12px;
+  background: #FFFFFF;
+  border: 1px solid #757575;
+  border-radius: 10px;
+  display: inline-block;
+  &:hover {
+    cursor: pointer;
+    cursor: hand;
+  }
+`
+const Vertical = styled.div`
+  border-left: 2px solid #424242;
+  margin-left: 10px;
+`
+const CalendarWrapper = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 20px 4fr;
+`
+const JournalDisplay = styled.div`
+  padding-left: 10px;
+`
+const Journal = styled.div`
+  white-space: pre-wrap;
+  font-family: 'Open Sans';
+`
+const DateHeader = styled.h1`
+  font-size: 25px;
+  text-align: right;
+`
+const NoJournal = styled.div`
+  text-align: center;
+  padding-top: 75px;
+`
+
 
 class GroupPage extends React.Component {
   constructor(props) {
@@ -150,7 +209,15 @@ class GroupPage extends React.Component {
       newGroupName: '',
       newGroupDescription: '',
       newGroupMembers: '',
-      addMember: ''
+      addMember: '',
+      savePopover: false,
+      currentTabId: "members",
+      deleteWarningIsOpen: false,
+      maxDate: moment().subtract(1, "day").toDate(),
+      minDate: moment("2017-11-01").toDate(),
+      selectedDate: moment().subtract(1, "day").format("dddd, MMMM D, YYYY").toString(),
+      currentJournal: "There are no journals for your selected day. Please select a new date."
+
     }
 
     this.getGroups({userId: userId})
@@ -167,11 +234,15 @@ class GroupPage extends React.Component {
     this.handleAddMemberChange = this.handleAddMemberChange.bind(this)
     this.handleAddMemberSubmit = this.handleAddMemberSubmit.bind(this)
 
+    this.toggleDeleteWarningDialog = this.toggleDeleteWarningDialog.bind(this)
+
+    // this.popoverInteraction =
+
   }
 
   handleClick (id, e) {
     this.setState({currentGroupId: id})
-
+    this.handleTabChange("members")
   }
 
   handleNewGroupClick(e) {
@@ -194,6 +265,7 @@ class GroupPage extends React.Component {
 
   toggleNewGroupDialog() {
     this.setState({newGroupIsOpen: !this.state.newGroupIsOpen})
+    console.log('refresh')
   }
 
   handleNewNameChange(e) {
@@ -209,46 +281,60 @@ class GroupPage extends React.Component {
   }
 
   handleNewGroupSubmit(e) {
-    var self = this;
-    var timestamp = moment().toDate();
-    fetch('/api/group', {
-      method: 'POST',
-      body: JSON.stringify({
-        name: this.state.newGroupName,
-        description: this.state.newGroupDescription,
-        timestamp_created: timestamp,
-        created_by: this.state.userId,
-        members: this.state.newGroupMembers
-      })
-    }).then(function(){
-      self.toggleNewGroupDialog()
-    });
+    var sanitizeName = this.state.newGroupName.trim()
+    var sanitizeBlurb = this.state.newGroupDescription.trim()
+
+    if (sanitizeName != "" && sanitizeBlurb != ""){
+      var self = this;
+      var timestamp = moment().toDate();
+      fetch('/api/group', {
+        method: 'POST',
+        body: JSON.stringify({
+          name: this.state.newGroupName,
+          description: this.state.newGroupDescription,
+          timestamp_created: timestamp,
+          created_by: this.state.userId,
+          members: this.state.newGroupMembers
+        })
+      }).then(function(){
+        self.toggleNewGroupDialog()
+      });
+    }
+    else {
+      this.setState({savePopover: true})
+    }
+  }
+
+  popoverInteraction(popoverChange){
+    this.setState({savePopover: popoverChange})
   }
 
   renderNewGroupForm() {
     return (
       <div>
         <Dialog isOpen={this.state.newGroupIsOpen} onClose={this.toggleNewGroupDialog} title='Create New Group'>
-          <GridContainer>
-            <NewGroupLabel>{"Group Name:"}<input className="pt-input" type="text" value={this.state.newGroupName} onChange={this.handleNewNameChange}/></NewGroupLabel>
-            <NewGroupLabel>{"Group Blurb:"}<textarea className="pt-input" value={this.state.newGroupDescription} onChange={this.handleNewDescriptionChange}/></NewGroupLabel>
-            <NewGroupLabel>
-              <div>
-                {"Add Members:"}
-                <CaptionText>
-                <i>
-                  {"Enter emails separated "}
-                  <br/>
-                  {"by commas."}
-                </i>
-                </CaptionText>
-              </div>
-              <textarea className="pt-input" rows="4" value={this.state.newGroupMembers} onChange={this.handleNewMembersChange}/>
-            </NewGroupLabel>
-            <div style={{float: "right"}}>
-              <SaveButton text="Save" press={this.handleNewGroupSubmit}></SaveButton>
+        <GridContainer>
+          <NewGroupLabel>{"Group Name:"}<input required className="pt-input" type="text" value={this.state.newGroupName} onChange={this.handleNewNameChange}/></NewGroupLabel>
+          <NewGroupLabel>{"Group Blurb:"}<textarea className="pt-input" value={this.state.newGroupDescription} onChange={this.handleNewDescriptionChange}/></NewGroupLabel>
+          <NewGroupLabel>
+            <div>
+              {"Add Members:"}
+              <CaptionText>
+              <i>
+                {"Enter emails separated "}
+                <br/>
+                {"by commas."}
+              </i>
+              </CaptionText>
             </div>
-          </GridContainer>
+            <textarea className="pt-input" rows="4" value={this.state.newGroupMembers} onChange={this.handleNewMembersChange}/>
+          </NewGroupLabel>
+          <div style={{float: "right"}}>
+            <SavePopover content={"You must fill out the Group Name and Group Blurb fields before you can submit!"} isOpen={this.state.savePopover} inline={true} position={Position.LEFT}  onInteraction={this.popoverInteraction.bind(this)}>
+              <SaveButton press={this.handleNewGroupSubmit} text={"Submit"}></SaveButton>
+            </SavePopover>
+          </div>
+        </GridContainer>
         </Dialog>
       </div>
     )
@@ -264,7 +350,7 @@ class GroupPage extends React.Component {
         group_id: this.state.currentGroupId
       })
     }).then(function(){
-      console.log('removed')
+      self.forceUpdate()
     })
   }
 
@@ -339,49 +425,175 @@ class GroupPage extends React.Component {
     })
   }
 
+  toggleDeleteWarningDialog(){
+    this.setState({deleteWarningIsOpen: !this.state.deleteWarningIsOpen})
+    console.log(this.state.deleteWarningIsOpen)
+  }
+
+  handleDeleteGroup(e){
+    var self = this;
+    // console.log(e)
+
+    fetch('/api/group', {
+      method: 'DELETE',
+      body: JSON.stringify({
+        id: this.state.currentGroupId
+      })
+    }).then(function(){
+      console.log("group deleted")
+    })
+
+  }
+
+  renderGroupDeleteWarning() {
+    return (
+      <div>
+        <Dialog isOpen={this.state.deleteWarningIsOpen}
+                onClose={this.toggleDeleteWarningDialog}
+                title={"Are you sure you want to delete this group?"}>
+          <GridContainer>
+            <TextWrapper>
+              {"All deletions are permanent!"}
+            </TextWrapper>
+            <ButtonWrapper>
+              <ButtonRed onClick={this.handleDeleteGroup.bind(this)}>Delete</ButtonRed>
+              <Button press={this.toggleDeleteWarningDialog} text={"Cancel"}/>
+            </ButtonWrapper>
+          </GridContainer>
+        </Dialog>
+      </div>
+    )
+  }
+
   renderGroupSettings () {
     return (
       <GroupCard>
-        {"Group Name: "}
-        <input className="pt-input" type="text" placeholder="get group name" />
-        {"Group Description: "}
-        <textarea className="pt-input" placeholder="get group description " />
-        {"Group Membership Model: "}
-        <div className="pt-select">
-          <select>
-            <option defaultValue>Choose a membership model...</option>
-            <option value="1">All Members Approve</option>
-            <option value="2">Group Owner Approves</option>
-            <option value="3">Any Member Can Approve</option>
-          </select>
-        </div>
-        {"Add Member"}
-        <input className="pt-input" type="text" value={this.state.addMember} onChange={this.handleAddMemberChange}/>
-        <button onClick={this.handleAddMemberSubmit}>{"Add Member"}</button>
+        <GridContainer>
+          <NewGroupLabel>{"Group Name:"}<input className="pt-input" type="text" placeholder={this.state.groups[this.state.currentGroupId].name.trim()}/></NewGroupLabel>
+          <NewGroupLabel>{"Group Blurb:"}<textarea className="pt-input" placeholder={this.state.groups[this.state.currentGroupId].description} /></NewGroupLabel>
+          <NewGroupLabel>{"Group Membership Model:"}
+            <div className="pt-select pt-fill">
+              <select>
+                <option value="1">Basic Closed Model</option>
+                <option disabled value="2">Basic Open Model</option>
+                <option disabled value="3">Voting Model</option>
+              </select>
+            </div>
+          </NewGroupLabel>
+          <NewGroupLabel>
+            <div>
+              {"Add Members:"}
+              <CaptionText>
+                <i>
+                  {"Enter emails separated "}
+                  <br/>
+                  {"by commas."}
+                </i>
+              </CaptionText>
+            </div>
+            <textarea className="pt-input" rows="4" value={this.state.addMember} onChange={this.handleAddMemberChange} />
+          </NewGroupLabel>
+          <NewGroupLabel><div></div>
+            <div style={{textAlign: "right"}}>
+              <Button press={this.handleAddMemberSubmit.bind(this)} text={"Update"}></Button>
+            </div>
+          </NewGroupLabel>
+        </GridContainer>
         <hr/>
-        {"Email Frequency: "}
-        <div className="pt-select">
-          <select>
-            <option defaultValue>Choose...</option>
-            <option value="1">Daily</option>
-          </select>
-        </div>
-        {"Email Send Time: "}
-        <TimePicker showArrowButtons={true}/>
-
+        <Button text={"Delete Group"} press={this.toggleDeleteWarningDialog}/>
+        {this.renderGroupDeleteWarning()}
       </GroupCard>
     )
   }
 
-  renderGroupContent(groupId){
+  handleTabChange(e){
+    this.setState({currentTabId: e})
+    console.log("tab change")
+    if (e == "past"){
+      console.log("enter")
+      this.handleDateChange(this.state.maxDate)
+    }
+  }
+
+  displayJournal(){
     return (
-      <GroupContent>
-        <GroupTabs id="group">
-          <Tab2 id="members" title="Members" panel={this.renderGroupMembers()}/>
-          <Tab2 id="settings" title="Settings" panel={this.renderGroupSettings()}/>
-        </GroupTabs>
-      </GroupContent>
+      <JournalDisplay>
+        <DateHeader>
+          {this.state.selectedDate}
+        </DateHeader>
+        <hr/>
+        <Journal>
+          {this.state.currentJournal}
+        </Journal>
+      </JournalDisplay>
     )
+  }
+
+  handleDateChange(e){
+    console.log("date is changing")
+    console.log(e)
+    var self = this;
+    // console.log(e)
+
+    if (e == null) {
+      return
+
+    }
+    var day = moment(e).format("YYYY-MM-DDTHH:mm:ssZ").toString()
+    this.setState({selectedDate: moment(e).format("dddd, MMMM D, YYYY").toString()})
+
+    fetch('/api/journal?id='+this.state.userId+"&date="+day).then(function(resp){
+      return resp.json();
+    }).then(function(body){
+      if (body == null){
+        self.setState({currentJournal: "There are no journals for your selected day. Please select a new date."})
+      }
+      else {
+        self.setState({currentJournal: body.entry})
+      }
+    })
+
+  }
+
+  renderPastJournals(){
+    return (
+      <div>
+        <GroupCard>
+          <CalendarWrapper>
+            <DatePicker onChange={this.handleDateChange.bind(this)} minDate={this.state.minDate} maxDate={this.state.maxDate} defaultValue={this.state.maxDate}/>
+            <Vertical/>
+            {this.displayJournal()}
+          </CalendarWrapper>
+        </GroupCard>
+      </div>
+    )
+  }
+
+  renderGroupContent(groupId){
+    if (this.state.currentGroupId != null){
+      if (this.state.groups[this.state.currentGroupId].isAdmin){
+        return (
+          <GroupContent>
+            <GroupTabs id="group" selectedTabId={this.state.currentTabId} onChange={this.handleTabChange.bind(this)}>
+              <Tab2 id="members" title="Members" panel={this.renderGroupMembers()}/>
+              <Tab2 id="settings" title="Settings" panel={this.renderGroupSettings()}/>
+              <Tab2 id="past" title="Past Journals" panel={this.renderPastJournals()}/>
+            </GroupTabs>
+          </GroupContent>
+        )
+      }
+      else {
+        return (
+          <GroupContent>
+            <GroupTabs id="group" selectedTabId={this.state.currentTabId} onChange={this.handleTabChange.bind(this)}>
+              <Tab2 id="members" title="Members" panel={this.renderGroupMembers()}/>
+              <Tab2 id="settings" disabled title="Settings" panel={this.renderGroupSettings()}/>
+              <Tab2 id="past" title="Past Journals" panel={this.renderPastJournals()}/>
+            </GroupTabs>
+          </GroupContent>
+        )
+      }
+    }
   }
 
   renderGroupMenuItem(group) {

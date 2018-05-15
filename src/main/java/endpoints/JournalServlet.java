@@ -4,6 +4,7 @@ import static main.java.data.Tables.*;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.sun.scenario.effect.Offset;
 import main.java.data.tables.pojos.*;
 import main.java.queries.JournalsQueries;
 import main.java.util.Repository;
@@ -31,6 +32,29 @@ public class JournalServlet extends HttpServlet{
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("text/html;charset=utf-8");
         String idParam = request.getParameter("id");
+        String date = request.getParameter("date");
+//        System.out.println(idParam);
+//        System.out.println(date);
+
+        // return journal for specific day in past journals section
+        if (date != null && idParam != null){
+            int userId = Integer.parseInt(idParam);
+            OffsetDateTime day = OffsetDateTime.parse(date);
+//            System.out.println(day);
+            OffsetDateTime from = day.withHour(7).withMinute(0).withSecond(0);
+            OffsetDateTime to = day.plusDays(1).withHour(7).withMinute(0).withSecond(0);
+
+//            System.out.println(from);
+//            System.out.println(to);
+
+//
+            Journals journal = getJournalById(userId, from, to);
+            response.getWriter().println(new Gson().toJson(journal, Journals.class));
+            return;
+
+
+
+        }
         if (idParam == null) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             JsonObject resBody = new JsonObject();

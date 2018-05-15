@@ -13,7 +13,8 @@ const Entry = styled.textarea`
   width: 95%;
   height: 400px;
   resize: none;
-  outline: none;`;
+  outline: none;
+  `;
 const DateHeader = styled.h1`
   display: block;
   text-align: right;

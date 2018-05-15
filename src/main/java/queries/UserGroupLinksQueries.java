@@ -32,9 +32,9 @@ public class UserGroupLinksQueries {
                 .execute();
     }
 
-    public static void deleteUserFromGroup(int userId, int groupId) throws ServletException {
+    public static void deleteUsersFromGroup(List<Integer> userIds, int groupId) throws ServletException {
         Repository.getDsl().deleteFrom(USER_GROUP_LINKS)
-                .where(USER_GROUP_LINKS.USER_ID.eq(userId)).and(USER_GROUP_LINKS.GROUP_ID.eq(groupId))
+                .where(USER_GROUP_LINKS.USER_ID.in(userIds)).and(USER_GROUP_LINKS.GROUP_ID.eq(groupId))
                 .execute();
     }
 

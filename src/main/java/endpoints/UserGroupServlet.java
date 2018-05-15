@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.sql.Timestamp;
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -60,7 +61,9 @@ public class UserGroupServlet extends HttpServlet {
         }
         else if (purpose.equals("delete")){
             int userId = Integer.parseInt(params.get("user_id"));
-            UserGroupLinksQueries.deleteUserFromGroup(userId, groupId);
+            List<Integer> userIdList = new ArrayList<>();
+            userIdList.add(userId);
+            UserGroupLinksQueries.deleteUsersFromGroup(userIdList, groupId);
         }
 
 

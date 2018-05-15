@@ -116,6 +116,15 @@ public class GroupServlet extends HttpServlet {
         }
     }
 
+    protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        Map<String, String> params = RequestHelper.getBodyAsMap(request);
+
+        int groupId = Integer.parseInt(params.get("id"));
+        List<Integer> userIds = UserGroupLinksQueries.getUserIdsByGroupId(groupId);
+        UserGroupLinksQueries.deleteUsersFromGroup(userIds, groupId);
+        GroupsQueries.deleteGroup(groupId);
+    }
+
     static List<String> memberStringsToList(String membersString) throws ServletException {
         String[] membersArr = membersString.split(",");
 

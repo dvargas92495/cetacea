@@ -35,4 +35,7 @@ public class GroupsQueries {
     public static List<Groups> getAllGroups() throws ServletException{
         return Repository.getDsl().select().from(GROUPS).fetchInto(Groups.class);
     }
+    public static void deleteGroup(int groupId) throws ServletException{
+        Repository.getDsl().deleteFrom(GROUPS).where(GROUPS.ID.eq(groupId)).execute();
+    }
 }
