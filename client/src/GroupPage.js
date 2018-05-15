@@ -9,25 +9,6 @@ import { Menu, MenuItem, MenuDivider, Tab2, Tabs2, Card, Icon, Tooltip, Position
 import {TimePicker} from '@blueprintjs/datetime'
 import { DatePicker } from "@blueprintjs/datetime";
 
-
-const GroupMenu = styled(Menu)`
-  display: inline-block;
-  border-radius: 0px;
-  border-color: #424242;
-  border-style: solid;
-  border-width: 0px 1px 1px 1px;
-  background: #616161;
-`
-const GroupMenuItem = styled(MenuItem)`
-  color: #FAFAFA;
-  text-align: center;
-  outline: 0px;
-  padding: 0px;
-  &:focus {
-    color: #106ba3;
-    background: white;
-  }
-  `
 const GroupTabs = styled(Tabs2)`
   display: block;
   margin-top: 10px;
@@ -214,6 +195,9 @@ const NewGroupButton = styled.button`
     background: #6f7377;
     cursor: pointer;
   }
+  &:focus{
+    outline: 0px;
+  }
 
 `
 const UserGroupTabs = styled(Tabs2)`
@@ -346,8 +330,20 @@ class GroupPage extends React.Component {
           created_by: this.state.userId,
           members: this.state.newGroupMembers
         })
-      }).then(function(){
+      }).then(function(resp){
+        return resp.json();
+      }).then(function(body){
         self.toggleNewGroupDialog()
+        var newGroups = self.state.groups
+        var groupKey = Object.keys(body)[0]
+        newGroups[groupKey] = body[groupKey]
+        self.setState({groups: newGroups})
+        self.setState({
+          newGroupName: "",
+          newGroupDescription: "",
+          newGroupMembers: ""
+        })
+
       });
     }
     else {
@@ -392,15 +388,37 @@ class GroupPage extends React.Component {
 
   handleRemove(userId, e){
     var self = this;
+    if (userId == this.state.userId){
+      var purpose = "leave"
+    }
+    else {
+      var purpose = "remove"
+    }
     fetch('/api/usergroup', {
-      method: 'POST',
+      method: 'DELETE',
       body: JSON.stringify({
-        purpose: "delete",
+        purpose: purpose,
         user_id: userId,
         group_id: this.state.currentGroupId
       })
-    }).then(function(){
-      self.forceUpdate()
+    }).then(function(resp){
+      return resp.json();
+    }).then(function(body){
+      if (userId == self.state.userId){
+        //leave
+        var newGroups = self.state.groups
+        delete newGroups[self.state.currentGroupId]
+        var newKey = Object.keys(newGroups)[0]
+        self.setState({currentGroupId: newKey})
+        self.handleUserGroupTabChange(self.state.currentGroupId)
+      }
+      else{
+        //remove
+        self.state.groups[self.state.currentGroupId].members = body
+        console.log(body)
+        console.log(self.state.groups)
+        self.renderGroupMembers()
+      }
     })
   }
 
@@ -421,7 +439,9 @@ class GroupPage extends React.Component {
 
   renderGroupMembers () {
     if (this.state.currentGroupId != null) {
+      console.log("got into current group id not null")
       if (this.state.groups[this.state.currentGroupId].isAdmin){
+        console.log("is admin")
         return (
           <GroupCard>
             {this.state.groups[this.state.currentGroupId].members.map(member => (
@@ -463,13 +483,17 @@ class GroupPage extends React.Component {
     fetch('/api/usergroup', {
       method: 'POST',
       body: JSON.stringify({
-        purpose: "add",
         email: this.state.addMember,
         group_id: this.state.currentGroupId,
         timestamp_joined: timestamp
       })
-    }).then(function(){
+    }).then(function(resp){
+      return resp.json()
+    }).then(function(body){
       console.log("new member added")
+      self.state.groups[self.state.currentGroupId].members = body
+      self.setState({addMember: ""})
+      self.setState({currentTabId: "members"})
     })
   }
 
@@ -487,6 +511,12 @@ class GroupPage extends React.Component {
       })
     }).then(function(){
       console.log("group deleted")
+      var newGroups = self.state.groups
+      delete newGroups[self.state.currentGroupId]
+      var newKey = Object.keys(newGroups)[0]
+      self.setState({currentGroupId: newKey})
+      self.toggleDeleteWarningDialog()
+      self.handleUserGroupTabChange(self.state.currentGroupId)
     })
 
   }
@@ -645,18 +675,6 @@ class GroupPage extends React.Component {
     )
   }
 
-  makeMenu() {
-    var groupIter = Object.entries(this.state.groups)
-    return (
-      groupIter.map(group => (
-        <div key={group[0]+'d'}>
-          <GroupMenuItem key={group[0]} text={this.renderGroupMenuItem(group[1])} onClick={this.handleClick.bind(this, group[0])}/>
-          <MenuDivider key={group[0]+'l'} />
-        </div>
-      ))
-    )
-  }
-
   redirectToHome() { //TODO: I think this will go in the base page class
     this.props.history.push("/", {userId:0});
   }
@@ -676,7 +694,6 @@ class GroupPage extends React.Component {
     )
   }
 
-
   render () {
     return  (
       <div>
@@ -685,7 +702,9 @@ class GroupPage extends React.Component {
             <NavBar redirect={this.redirectToHome.bind(this)} onlogin={this.getGroups.bind(this)} userId={this.state.userId}/>
           </NavBarGrid>
           <GroupSelect>
-            <NewGroupButton onClick={this.handleNewGroupClick.bind(this)}><Icon iconName="plus" iconSize={20} style={{fontSize: "30px"}}/><NewGroupTitle>{"New Group"}</NewGroupTitle></NewGroupButton>
+            <TooltipFix content={"This feature is not yet functional."} position={Position.RIGHT}>
+              <NewGroupButton><Icon iconName="plus" iconSize={20} style={{fontSize: "30px"}}/><NewGroupTitle>{"New Group"}</NewGroupTitle></NewGroupButton>
+            </TooltipFix>
             <Horizontal/>
             <UserGroupTabs id="usergroup" animate={false} vertical={true} onChange={this.handleUserGroupTabChange.bind(this)} selectedTabId={this.state.currentUserGroupId}>
               {this.renderUserGroupTabs()}

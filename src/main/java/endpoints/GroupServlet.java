@@ -1,8 +1,5 @@
 package main.java.endpoints;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.reflect.TypeToken;
 import main.java.data.tables.pojos.Groups;
 import main.java.data.tables.pojos.UserGroupLinks;
 import main.java.data.tables.pojos.Users;
@@ -19,13 +16,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.lang.reflect.Type;
-import java.sql.Timestamp;
 import java.time.OffsetDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
-
-import static main.java.data.Tables.*;
 
 /**
  * Created by David on 11/1/2017.
@@ -86,6 +79,7 @@ public class GroupServlet extends HttpServlet {
 
     }
 
+    // create a group or update a group
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Map<String, String> params = RequestHelper.getBodyAsMap(request);
@@ -113,9 +107,41 @@ public class GroupServlet extends HttpServlet {
                 UserGroupLinksQueries.addUserToGroup(user.getId(), group.getId(), timestampCreated, false);
             }
 
+
+
+            JSONObject newEntry = new JSONObject();
+
+            newEntry.put("isAdmin", true);
+            newEntry.put("name", name);
+            newEntry.put("description", description);
+
+            List<Integer> userIds = UserGroupLinksQueries.getUserIdsByGroupId(group.getId());
+            List<Users> finalUsers = UsersQueries.getUserInfoByUserIds(userIds);
+
+            JSONArray userArray = new JSONArray();
+            for(int j = 0; j < finalUsers.size(); j++){
+                JSONObject newUser = new JSONObject();
+                Users currentUser = finalUsers.get(j);
+                newUser.put("id", currentUser.getId());
+                newUser.put("firstName", currentUser.getFirstName());
+                newUser.put("lastName", currentUser.getLastName());
+                newUser.put("email", currentUser.getEmail());
+
+                userArray.add(newUser);
+
+            }
+
+            newEntry.put("members", userArray);
+
+            JSONObject newGroup = new JSONObject();
+            newGroup.put(group.getId(), newEntry);
+
+            response.getWriter().println(newGroup);
+
         }
     }
 
+    // Delete a group
     protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Map<String, String> params = RequestHelper.getBodyAsMap(request);
 
