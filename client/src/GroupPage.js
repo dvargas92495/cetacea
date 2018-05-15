@@ -35,15 +35,14 @@ const GroupTabs = styled(Tabs2)`
   font-family: Allerta;
   .pt-tab {
     font-size: 12px;
-    padding-right: 8%;
-    padding-left: 8%;
+    padding-right: 80px;
+    padding-left: 80px;
     border-radius: 6px 6px 0px 0px;
     outline: 0px;
   }
   .pt-tab[aria-selected="true"]{
     border-radius: 6px 6px 0px 0px;
     background: #FFFFFF;
-    font-color: #000000;
   }
   .pt-tab-list > *:not(:last-child) {
     margin-right: 0px;
@@ -83,14 +82,15 @@ const GroupTitle = styled.span`
   display: block;
   font-size: 17px;
   font-family: Allerta;
-  margin-top: 5px;`
+  margin-top: 3px;
+`
 const GroupDescription = styled.span`
   display:block;
   font-size: 10px;
   font-style: italic;
-  margin-top: 10px;
-  margin-bottom: 7px;
-  font-family: 'Open Sans', sans-serif;`
+  font-family: 'Open Sans', sans-serif;
+  margin-bottom: 3px;
+  `
 const TooltipFix = styled(Tooltip)`
   display: block;
 `
@@ -195,6 +195,55 @@ const NoJournal = styled.div`
   text-align: center;
   padding-top: 75px;
 `
+const GroupSelect = styled.div`
+  display: inline-block;
+  border-color: #424242;
+  border-style: solid;
+  border-width: 0px 1px 1px 1px;
+  background: #616161;
+  padding: 5px;
+`
+const NewGroupButton = styled.button`
+  width: 100%;
+  border: none;
+  background: none;
+  border-radius: 2px;
+  color: white;
+  padding-bottom: 10px;
+  &:hover{
+    background: #6f7377;
+    cursor: pointer;
+  }
+
+`
+const UserGroupTabs = styled(Tabs2)`
+  text-align: center;
+  color: white;
+  .pt-tab-list {
+    width: 100%;
+  }
+  .pt-tab[aria-selected="true"]{
+    background: #FFFFFF;
+    box-shadow: none;
+  }
+  .pt-tab[aria-selected="false"]{
+    color: white;
+    &:hover {
+      background: #6f7377;
+    }
+  }
+  .pt-tab {
+    border-radius: 2px;
+    border-bottom: rgba(16, 22, 26, 0.15) solid thin;
+    &:focus {
+      outline: 0px;
+    }
+  }
+`
+const Horizontal = styled.hr`
+  margin: 0px;
+  margin-bottom: 5px;
+`
 
 
 class GroupPage extends React.Component {
@@ -216,7 +265,8 @@ class GroupPage extends React.Component {
       maxDate: moment().subtract(1, "day").toDate(),
       minDate: moment("2017-11-01").toDate(),
       selectedDate: moment().subtract(1, "day").format("dddd, MMMM D, YYYY").toString(),
-      currentJournal: "There are no journals for your selected day. Please select a new date."
+      currentJournal: "There are no journals for your selected day. Please select a new date.",
+      currentUserGroupId: null
 
     }
 
@@ -259,13 +309,13 @@ class GroupPage extends React.Component {
 
       if (Object.keys(body).length > 0){
         self.setState({currentGroupId: Object.keys(body)[0]})
+        self.setState({currentUserGroupId: Object.keys(body)[0]})
       }
     })
   }
 
   toggleNewGroupDialog() {
     this.setState({newGroupIsOpen: !this.state.newGroupIsOpen})
-    console.log('refresh')
   }
 
   handleNewNameChange(e) {
@@ -404,13 +454,11 @@ class GroupPage extends React.Component {
 
   handleAddMemberChange(e){
     this.setState({addMember: e.target.value})
-    // console.log(this.state.addMember)
   }
 
   handleAddMemberSubmit(e){
     var self = this;
     var timestamp = moment().toDate();
-    console.log(this.state.currentGroupId)
 
     fetch('/api/usergroup', {
       method: 'POST',
@@ -427,12 +475,10 @@ class GroupPage extends React.Component {
 
   toggleDeleteWarningDialog(){
     this.setState({deleteWarningIsOpen: !this.state.deleteWarningIsOpen})
-    console.log(this.state.deleteWarningIsOpen)
   }
 
   handleDeleteGroup(e){
     var self = this;
-    // console.log(e)
 
     fetch('/api/group', {
       method: 'DELETE',
@@ -508,9 +554,7 @@ class GroupPage extends React.Component {
 
   handleTabChange(e){
     this.setState({currentTabId: e})
-    console.log("tab change")
     if (e == "past"){
-      console.log("enter")
       this.handleDateChange(this.state.maxDate)
     }
   }
@@ -530,11 +574,7 @@ class GroupPage extends React.Component {
   }
 
   handleDateChange(e){
-    console.log("date is changing")
-    console.log(e)
     var self = this;
-    // console.log(e)
-
     if (e == null) {
       return
 
@@ -621,6 +661,21 @@ class GroupPage extends React.Component {
     this.props.history.push("/", {userId:0});
   }
 
+  handleUserGroupTabChange(e){
+    this.setState({currentGroupId: e})
+    this.setState({currentUserGroupId: e})
+    this.handleTabChange("members")
+  }
+
+  renderUserGroupTabs(){
+    var groupIter = Object.entries(this.state.groups)
+    return (
+      groupIter.map(group => (
+        <Tab2 key={group[0]} id={group[0]} title={this.renderGroupMenuItem(group[1])} />
+      ))
+    )
+  }
+
 
   render () {
     return  (
@@ -629,18 +684,20 @@ class GroupPage extends React.Component {
           <NavBarGrid>
             <NavBar redirect={this.redirectToHome.bind(this)} onlogin={this.getGroups.bind(this)} userId={this.state.userId}/>
           </NavBarGrid>
-          <GroupMenu>
-            <GroupMenuItem text={<div><Icon iconName="plus" iconSize={20} style={{fontSize: "30px"}} onClick={this.handleNewGroupClick.bind(this)} /><NewGroupTitle>New Group</NewGroupTitle></div>} />
-            <MenuDivider />
-            {this.makeMenu()}
-          </GroupMenu>
+          <GroupSelect>
+            <NewGroupButton onClick={this.handleNewGroupClick.bind(this)}><Icon iconName="plus" iconSize={20} style={{fontSize: "30px"}}/><NewGroupTitle>{"New Group"}</NewGroupTitle></NewGroupButton>
+            <Horizontal/>
+            <UserGroupTabs id="usergroup" animate={false} vertical={true} onChange={this.handleUserGroupTabChange.bind(this)} selectedTabId={this.state.currentUserGroupId}>
+              {this.renderUserGroupTabs()}
+            </UserGroupTabs>
+          </GroupSelect>
           {this.renderGroupContent(this.state.currentGroupId)}
         </PageContainer>
-
         {this.renderNewGroupForm()}
       </div>
     )
   }
 }
+
 
 export default GroupPage
