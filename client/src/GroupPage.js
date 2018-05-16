@@ -250,7 +250,8 @@ class GroupPage extends React.Component {
       minDate: moment("2017-11-01").toDate(),
       selectedDate: moment().subtract(1, "day").format("dddd, MMMM D, YYYY").toString(),
       currentJournal: "There are no journals for your selected day. Please select a new date.",
-      currentUserGroupId: null
+      currentUserGroupId: null,
+      test: true
 
     }
 
@@ -280,7 +281,9 @@ class GroupPage extends React.Component {
   }
 
   handleNewGroupClick(e) {
-    this.toggleNewGroupDialog()
+    if (this.state.userId == 6 || this.state.userId == 7){
+      this.toggleNewGroupDialog()
+    }
   }
 
   getGroups(userObj){
@@ -415,9 +418,7 @@ class GroupPage extends React.Component {
       else{
         //remove
         self.state.groups[self.state.currentGroupId].members = body
-        console.log(body)
-        console.log(self.state.groups)
-        self.renderGroupMembers()
+        self.setState({test: !self.state.test})
       }
     })
   }
@@ -439,9 +440,7 @@ class GroupPage extends React.Component {
 
   renderGroupMembers () {
     if (this.state.currentGroupId != null) {
-      console.log("got into current group id not null")
       if (this.state.groups[this.state.currentGroupId].isAdmin){
-        console.log("is admin")
         return (
           <GroupCard>
             {this.state.groups[this.state.currentGroupId].members.map(member => (
@@ -490,7 +489,6 @@ class GroupPage extends React.Component {
     }).then(function(resp){
       return resp.json()
     }).then(function(body){
-      console.log("new member added")
       self.state.groups[self.state.currentGroupId].members = body
       self.setState({addMember: ""})
       self.setState({currentTabId: "members"})
@@ -510,7 +508,6 @@ class GroupPage extends React.Component {
         id: this.state.currentGroupId
       })
     }).then(function(){
-      console.log("group deleted")
       var newGroups = self.state.groups
       delete newGroups[self.state.currentGroupId]
       var newKey = Object.keys(newGroups)[0]
@@ -703,7 +700,7 @@ class GroupPage extends React.Component {
           </NavBarGrid>
           <GroupSelect>
             <TooltipFix content={"This feature is not yet functional."} position={Position.RIGHT}>
-              <NewGroupButton><Icon iconName="plus" iconSize={20} style={{fontSize: "30px"}}/><NewGroupTitle>{"New Group"}</NewGroupTitle></NewGroupButton>
+              <NewGroupButton onClick={this.handleNewGroupClick.bind(this)}><Icon iconName="plus" iconSize={20} style={{fontSize: "30px"}}/><NewGroupTitle>{"New Group"}</NewGroupTitle></NewGroupButton>
             </TooltipFix>
             <Horizontal/>
             <UserGroupTabs id="usergroup" animate={false} vertical={true} onChange={this.handleUserGroupTabChange.bind(this)} selectedTabId={this.state.currentUserGroupId}>
