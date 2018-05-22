@@ -2,6 +2,7 @@ package main.java.queries;
 
 import main.java.util.Repository;
 import main.java.data.tables.pojos.Groups;
+import org.jooq.DSLContext;
 
 import java.sql.Timestamp;
 import java.time.OffsetDateTime;
@@ -12,30 +13,45 @@ import static main.java.data.Tables.GROUPS;
 
 
 public class GroupsQueries {
-    public static List<Groups> getGroupInfoByGroupIds(List<Integer> groupIds) throws ServletException{
 
-        return Repository.getDsl().selectFrom(GROUPS)
-                .where(GROUPS.ID.in(groupIds))
-                .fetchInto(Groups.class);
+    /*
+     * It is VERY important to close connection in each method
+     * TODO: Figure out a way to pull this out into its own method
+     */
+
+    public static List<Groups> getGroupInfoByGroupIds(List<Integer> groupIds) throws ServletException{
+        return Repository.run((DSLContext r) ->
+            r.selectFrom(GROUPS)
+             .where(GROUPS.ID.in(groupIds))
+             .fetchInto(Groups.class)
+        );
 
     }
     public static void updateGroup(String name, String description, String groupId) throws ServletException{
-        Repository.getDsl().update(GROUPS)
-                .set(GROUPS.NAME, name)
-                .set(GROUPS.DESCRIPTION, description)
-                .where(GROUPS.ID.eq(Integer.parseInt(groupId)))
-                .execute();
+        Repository.run((DSLContext r) ->
+            r.update(GROUPS)
+             .set(GROUPS.NAME, name)
+             .set(GROUPS.DESCRIPTION, description)
+             .where(GROUPS.ID.eq(Integer.parseInt(groupId)))
+             .execute()
+        );
     }
     public static Groups createGroup(String name, String description, OffsetDateTime timestampCreated, int userId) throws ServletException{
-        return Repository.getDsl().insertInto(GROUPS, GROUPS.NAME, GROUPS.DESCRIPTION, GROUPS.TIMESTAMP_CREATED, GROUPS.CREATED_BY)
-                .values(name, description, Timestamp.valueOf(timestampCreated.toLocalDateTime()), userId)
-                .returning(GROUPS.ID).fetchOne().into(Groups.class);
+        return Repository.run((DSLContext r) ->
+            r.insertInto(GROUPS, GROUPS.NAME, GROUPS.DESCRIPTION, GROUPS.TIMESTAMP_CREATED, GROUPS.CREATED_BY)
+             .values(name, description, Timestamp.valueOf(timestampCreated.toLocalDateTime()), userId)
+             .returning(GROUPS.ID).fetchOne().into(Groups.class)
+        );
 
     }
     public static List<Groups> getAllGroups() throws ServletException{
-        return Repository.getDsl().select().from(GROUPS).fetchInto(Groups.class);
+        return Repository.run((DSLContext r) ->
+            r.select().from(GROUPS).fetchInto(Groups.class)
+        );
     }
     public static void deleteGroup(int groupId) throws ServletException{
-        Repository.getDsl().deleteFrom(GROUPS).where(GROUPS.ID.eq(groupId)).execute();
+        Repository.run((DSLContext r) ->
+            r.deleteFrom(GROUPS).where(GROUPS.ID.eq(groupId)).execute()
+        );
     }
 }

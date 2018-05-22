@@ -8,6 +8,7 @@ import main.java.queries.UserGroupLinksQueries;
 import main.java.queries.UsersQueries;
 import main.java.util.Repository;
 import org.joda.time.DateTime;
+import org.jooq.DSLContext;
 
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
@@ -158,10 +159,10 @@ public class EmailServlet extends HttpServlet {
     }
 
     static List<Users> getUserIdFromEmail(List<String> emails) throws ServletException {
-        List<Users> users = Repository.getDsl().selectFrom(USERS)
-                .where(USERS.EMAIL.in(emails))
-                .fetchInto(Users.class);
-
-        return users;
+        return Repository.run( (DSLContext r) ->
+            r.selectFrom(USERS)
+             .where(USERS.EMAIL.in(emails))
+             .fetchInto(Users.class)
+        );
     }
 }
