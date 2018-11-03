@@ -1,5 +1,6 @@
 package main.java.util;
 
+import main.java.Application;
 import org.jooq.*;
 import org.jooq.impl.DSL;
 
@@ -12,12 +13,8 @@ import java.util.function.Function;
 public class Repository {
 
     public static <T> T run(Function<DSLContext, T> action) throws ServletException{
-        //TODO: Magic strings
-        String url = "jdbc:postgresql://aanlh5mrzrcgku.c2sjnb5f4d57.us-east-1.rds.amazonaws.com:5432/postgres";
-        String user = "cetacea";
-        String password = "passwerd";
         try {
-            DSLContext r = DSL.using(url, user, password);
+            DSLContext r = DSL.using(Application.DB_HOST, Application.DB_USER, Application.DB_PASSWORD);
             T result = action.apply(r);
             r.close();
             return result;

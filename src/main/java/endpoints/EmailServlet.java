@@ -15,13 +15,10 @@ import javax.mail.internet.MimeMessage;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.mail.*;
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
@@ -36,19 +33,11 @@ public class EmailServlet extends HttpServlet {
     private static final String SUBJECT_PREFIX = "Daily Journal";
 
     public static void sendEmail(Groups group) {
-        String FROMNAME = group.getName();
-
-        if (Application.MAIL_USER == null) {
-            System.out.println("Missing SMTP username, please set the CETACEA_MAIL_USER environment variable");
+        String FROM_NAME = group.getName();
+        if (!checkMailEnvironmentVairables())
+        {
             return;
         }
-        if (Application.MAIL_PASSWORD == null) {
-            System.out.println("Missing SMTP password, please set the CETACEA_MAIL_PASSWORD environment variable");
-            return;
-        }
-
-        String HOST = "email-smtp.us-east-1.amazonaws.com"; //TODO: Magic String
-        int PORT = 587; //TODO: Magic Int
 
         try {
             List<Integer> userIds = UserGroupLinksQueries.getUserIdsByGroupId(group.getId());
@@ -66,20 +55,20 @@ public class EmailServlet extends HttpServlet {
 
             Properties props = System.getProperties();
             props.put("mail.transport.protocol", "smtp");
-            props.put("mail.smtp.port", PORT);
+            props.put("mail.smtp.port", Application.MAIL_PORT);
             props.put("mail.smtp.starttls.enable", "true");
             props.put("mail.smtp.auth", "true");
             Session session = Session.getDefaultInstance(props);
 
             // Create a default MimeMessage object.
             MimeMessage message = new MimeMessage(session);
-            message.setFrom(new InternetAddress(FROM, FROMNAME));
+            message.setFrom(new InternetAddress(FROM, FROM_NAME));
             TO.forEach(em -> addRecipient(message,em));
             message.setSubject(SUBJECT);
             message.setText(BODY, "UTF-8");
             Transport transport = session.getTransport();
             try {
-                transport.connect(HOST, Application.MAIL_USER, Application.MAIL_PASSWORD);
+                transport.connect(Application.MAIL_HOST, Application.MAIL_USER, Application.MAIL_PASSWORD);
                 transport.sendMessage(message, message.getAllRecipients());
             } catch (MessagingException mex) {
                 System.out.println("Email wasn't sent");
@@ -112,7 +101,7 @@ public class EmailServlet extends HttpServlet {
         }
     }
 
-    static List<UserJournal> getJournalsByEmails(List<String> emails) throws ServletException{
+    private static List<UserJournal> getJournalsByEmails(List<String> emails) throws ServletException{
         ArrayList<UserJournal> journals = new ArrayList<>();
         if (emails.size() == 0){
             return journals;
@@ -164,5 +153,21 @@ public class EmailServlet extends HttpServlet {
              .where(USERS.EMAIL.in(emails))
              .fetchInto(Users.class)
         );
+    }
+
+    private static boolean checkMailEnvironmentVairables() {
+        if (Application.MAIL_USER == null) {
+            System.out.println("Missing SMTP username, please set the CETACEA_MAIL_USER environment variable");
+            return false;
+        }
+        if (Application.MAIL_PASSWORD == null) {
+            System.out.println("Missing SMTP password, please set the CETACEA_MAIL_PASSWORD environment variable");
+            return false;
+        }
+        if (Application.MAIL_HOST == null) {
+            System.out.println("Missing SMTP host, please set the CETACEA_MAIL_HOST environment variable");
+            return false;
+        }
+        return true;
     }
 }
