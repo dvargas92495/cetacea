@@ -14,11 +14,6 @@ import static main.java.data.Tables.GROUPS;
 
 public class GroupsQueries {
 
-    /*
-     * It is VERY important to close connection in each method
-     * TODO: Figure out a way to pull this out into its own method
-     */
-
     public static List<Groups> getGroupInfoByGroupIds(List<Integer> groupIds) throws ServletException{
         return Repository.run((DSLContext r) ->
             r.selectFrom(GROUPS)
@@ -27,6 +22,7 @@ public class GroupsQueries {
         );
 
     }
+
     public static void updateGroup(String name, String description, String groupId) throws ServletException{
         Repository.run((DSLContext r) ->
             r.update(GROUPS)
@@ -36,6 +32,7 @@ public class GroupsQueries {
              .execute()
         );
     }
+
     public static Groups createGroup(String name, String description, OffsetDateTime timestampCreated, int userId) throws ServletException{
         return Repository.run((DSLContext r) ->
             r.insertInto(GROUPS, GROUPS.NAME, GROUPS.DESCRIPTION, GROUPS.TIMESTAMP_CREATED, GROUPS.CREATED_BY)
@@ -44,11 +41,13 @@ public class GroupsQueries {
         );
 
     }
+
     public static List<Groups> getAllGroups() throws ServletException{
         return Repository.run((DSLContext r) ->
             r.select().from(GROUPS).fetchInto(Groups.class)
         );
     }
+
     public static void deleteGroup(int groupId) throws ServletException{
         Repository.run((DSLContext r) ->
             r.deleteFrom(GROUPS).where(GROUPS.ID.eq(groupId)).execute()
