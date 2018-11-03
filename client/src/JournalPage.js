@@ -25,7 +25,8 @@ const DateHeader = styled.h1`
   margin-right: 1.5em;
   font-family: Allerta;
   color: #FFFFFF;
-  font-weight: lighter;`;
+  font-weight: lighter;
+`;
 const SmallText = styled.h3`
   display: inline-block;
   text-align: right;
