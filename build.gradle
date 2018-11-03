@@ -77,17 +77,14 @@ dependencies {
     compile files("lib/transaction-api-1.1.jar")
     compile files("lib/xpp3-1.1.4c.jar")
 
-    testCompile('org.junit.jupiter:junit-jupiter-api:5.3.1')
-    testCompile('org.junit.jupiter:junit-jupiter-params:5.3.1')
-    testRuntime('org.junit.jupiter:junit-jupiter-engine:5.3.1')
+    testCompile("org.junit.jupiter:junit-jupiter-api:5.3.1")
+    testCompile("org.junit.jupiter:junit-jupiter-params:5.3.1")
+    testRuntime("org.junit.jupiter:junit-jupiter-engine:5.3.1")
 
 }
 
 test {
     useJUnitPlatform()
-    testLogging {
-        events "passed", "skipped", "failed"
-    }
 }
 
 task wrapper(type: Wrapper) {
