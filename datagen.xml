@@ -11,12 +11,12 @@
     <generator>
         <!-- The default code generator. You can override this one, to generate your own code style
              Defaults to org.jooq.util.DefaultGenerator -->
-        <name>org.jooq.util.DefaultGenerator</name>
+        <name>org.jooq.xyz.cetacea.util.DefaultGenerator</name>
 
         <database>
             <!-- The database type. The format here is:
                  org.util.[database].[database]Database -->
-            <name>org.jooq.util.postgres.PostgresDatabase</name>
+            <name>org.jooq.xyz.cetacea.util.postgres.PostgresDatabase</name>
 
             <!-- The database schema (or in the absence of schema support, in your RDBMS this
                  can be the owner, user, database name) to be generated -->
