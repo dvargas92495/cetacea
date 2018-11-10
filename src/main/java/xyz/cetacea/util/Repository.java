@@ -12,9 +12,13 @@ import java.util.function.Function;
  */
 public class Repository {
 
+    public static String host = Application.DB_HOST;
+    public static String user = Application.DB_USER;
+    public static String password = Application.DB_PASSWORD;
+
     public static <T> T run(Function<DSLContext, T> action) throws ServletException{
         try {
-            DSLContext r = DSL.using(Application.DB_HOST, Application.DB_USER, Application.DB_PASSWORD);
+            DSLContext r = DSL.using(host, user, password);
             T result = action.apply(r);
             r.close();
             return result;

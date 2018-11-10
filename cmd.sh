@@ -7,7 +7,8 @@ helpCmd() {
     echo "    zip: zips the necessary files for deployment";
     echo "    run: runs the backend server";
     echo "    gen: creates data directory for jOOQ files";
-    echo "    db: sets up local psql database mirroring production schema";
+    echo "    db: copies to the local psql database mirroring production schema";
+    echo "    dbuser: creates a local db user";
 }
 
 buildCmd() {
@@ -31,10 +32,12 @@ genCmd() {
     java -classpath "lib/jooq-3.10.1.jar;lib/jooq-meta-3.10.1.jar;lib/jooq-codegen-3.10.1.jar;lib/postgresql-9.4.1212.jar;." org.jooq.util.GenerationTool /datagen.xml
 }
 
-dbCmd() {
+dbuserCmd() {
     psql -U postgres -d postgres -c "CREATE USER cetacea WITH PASSWORD 'passwerd'";
-    pg_dump -U "$CETA" -s > tmp_dump_file;
-    rm tmp_dump_file;
+}
+
+dbCmd() {
+    pg_dump -h "aanlh5mrzrcgku.c2sjnb5f4d57.us-east-1.rds.amazonaws.com" -U "cetacea" -p 5432 -Cs postgres | psql -U cetacea postgres;
 }
 
 if [[ $1 = "help" ]]; then
@@ -49,6 +52,8 @@ elif [[ $1 = "gen" ]]; then
     genCmd;
 elif [[ $1 = "db" ]]; then
     dbCmd;
+elif [[ $1 = "dbuser" ]]; then
+    dbuserCmd;
 else
     helpCmd;
 fi
