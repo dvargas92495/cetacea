@@ -14,6 +14,14 @@ import static xyz.cetacea.data.Tables.GROUPS;
 
 public class GroupsQueries {
 
+    public static Groups createGroup(String name, String description, OffsetDateTime timestampCreated, int userId) throws ServletException{
+        return Repository.run((DSLContext r) ->
+                r.insertInto(GROUPS, GROUPS.NAME, GROUPS.DESCRIPTION, GROUPS.TIMESTAMP_CREATED, GROUPS.CREATED_BY)
+                        .values(name, description, Timestamp.valueOf(timestampCreated.toLocalDateTime()), userId)
+                        .returning().fetchOne().into(Groups.class)
+        );
+    }
+
     public static List<Groups> getGroupInfoByGroupIds(List<Integer> groupIds) throws ServletException{
         return Repository.run((DSLContext r) ->
             r.selectFrom(GROUPS)
@@ -23,33 +31,24 @@ public class GroupsQueries {
 
     }
 
-    public static void updateGroup(String name, String description, String groupId) throws ServletException{
-        Repository.run((DSLContext r) ->
+    public static List<Groups> getAllGroups() throws ServletException{
+        return Repository.run((DSLContext r) ->
+                r.select().from(GROUPS).fetchInto(Groups.class)
+        );
+    }
+
+    public static Groups updateGroup(String name, String description, int groupId) throws ServletException{
+        return Repository.run((DSLContext r) ->
             r.update(GROUPS)
              .set(GROUPS.NAME, name)
              .set(GROUPS.DESCRIPTION, description)
-             .where(GROUPS.ID.eq(Integer.parseInt(groupId)))
-             .execute()
+             .where(GROUPS.ID.eq(groupId))
+             .returning().fetchOne().into(Groups.class)
         );
     }
 
-    public static Groups createGroup(String name, String description, OffsetDateTime timestampCreated, int userId) throws ServletException{
+    public static int deleteGroup(int groupId) throws ServletException{
         return Repository.run((DSLContext r) ->
-            r.insertInto(GROUPS, GROUPS.NAME, GROUPS.DESCRIPTION, GROUPS.TIMESTAMP_CREATED, GROUPS.CREATED_BY)
-             .values(name, description, Timestamp.valueOf(timestampCreated.toLocalDateTime()), userId)
-             .returning(GROUPS.ID).fetchOne().into(Groups.class)
-        );
-
-    }
-
-    public static List<Groups> getAllGroups() throws ServletException{
-        return Repository.run((DSLContext r) ->
-            r.select().from(GROUPS).fetchInto(Groups.class)
-        );
-    }
-
-    public static void deleteGroup(int groupId) throws ServletException{
-        Repository.run((DSLContext r) ->
             r.deleteFrom(GROUPS).where(GROUPS.ID.eq(groupId)).execute()
         );
     }

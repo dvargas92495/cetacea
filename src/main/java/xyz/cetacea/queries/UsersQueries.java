@@ -5,7 +5,6 @@ import xyz.cetacea.util.Repository;
 import org.jooq.DSLContext;
 
 import javax.servlet.ServletException;
-import java.rmi.server.ServerCloneException;
 import java.util.List;
 
 import static xyz.cetacea.data.Tables.USERS;
@@ -27,7 +26,8 @@ public class UsersQueries {
              .fetchInto(Users.class)
         );
     }
-    public static List<String> getEmailsByUserIds(List<Integer> userIds) throws ServletException{
+
+    public static List<String> getEmailsByUserIds(List<Integer> userIds) throws ServletException {
         return Repository.run((DSLContext r) ->
             r.selectFrom(USERS)
              .where(USERS.ID.in(userIds))
@@ -35,15 +35,15 @@ public class UsersQueries {
         );
     }
 
-    public static Users getUserInfoByOAuth(String userId) throws ServletException {
+    public static Users getUserInfoByOAuth(String oauthId) throws ServletException {
         return Repository.run((DSLContext r) ->
             r.selectFrom(USERS)
-             .where(USERS.OAUTH_ID.eq(userId))
+             .where(USERS.OAUTH_ID.eq(oauthId))
              .fetchOneInto(Users.class)
         );
     }
 
-    public static Integer getUserIdFromEmail(String email) throws ServletException{
+    public static Integer getUserIdFromEmail(String email) throws ServletException {
         return Repository.run((DSLContext r) ->
             r.selectFrom(USERS)
              .where(USERS.EMAIL.eq(email))
@@ -51,5 +51,11 @@ public class UsersQueries {
         );
     }
 
-
+    public static int deleteUserById(int id) throws ServletException {
+        return Repository.run((DSLContext r) ->
+            r.deleteFrom(USERS)
+             .where(USERS.ID.eq(id))
+             .execute()
+        );
+    }
 }

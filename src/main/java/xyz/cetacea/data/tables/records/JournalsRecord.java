@@ -8,13 +8,13 @@ import java.sql.Timestamp;
 
 import javax.annotation.Generated;
 
-import xyz.cetacea.data.tables.Journals;
-
 import org.jooq.Field;
 import org.jooq.Record1;
 import org.jooq.Record4;
 import org.jooq.Row4;
 import org.jooq.impl.UpdatableRecordImpl;
+
+import xyz.cetacea.data.tables.Journals;
 
 
 /**
@@ -30,7 +30,7 @@ import org.jooq.impl.UpdatableRecordImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JournalsRecord extends UpdatableRecordImpl<JournalsRecord> implements Record4<Integer, String, Timestamp, Integer> {
 
-    private static final long serialVersionUID = 2009134639;
+    private static final long serialVersionUID = 130899559;
 
     /**
      * Setter for <code>public.journals.id</code>.

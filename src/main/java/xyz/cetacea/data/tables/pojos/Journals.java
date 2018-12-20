@@ -23,7 +23,7 @@ import javax.annotation.Generated;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Journals implements Serializable {
 
-    private static final long serialVersionUID = 1746872876;
+    private static final long serialVersionUID = 1409033440;
 
     private Integer   id;
     private String    entry;
@@ -81,6 +81,53 @@ public class Journals implements Serializable {
 
     public void setUserId(Integer userId) {
         this.userId = userId;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        final Journals other = (Journals) obj;
+        if (id == null) {
+            if (other.id != null)
+                return false;
+        }
+        else if (!id.equals(other.id))
+            return false;
+        if (entry == null) {
+            if (other.entry != null)
+                return false;
+        }
+        else if (!entry.equals(other.entry))
+            return false;
+        if (timestamp == null) {
+            if (other.timestamp != null)
+                return false;
+        }
+        else if (!timestamp.equals(other.timestamp))
+            return false;
+        if (userId == null) {
+            if (other.userId != null)
+                return false;
+        }
+        else if (!userId.equals(other.userId))
+            return false;
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((this.id == null) ? 0 : this.id.hashCode());
+        result = prime * result + ((this.entry == null) ? 0 : this.entry.hashCode());
+        result = prime * result + ((this.timestamp == null) ? 0 : this.timestamp.hashCode());
+        result = prime * result + ((this.userId == null) ? 0 : this.userId.hashCode());
+        return result;
     }
 
     @Override

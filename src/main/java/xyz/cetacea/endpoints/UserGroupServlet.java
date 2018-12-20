@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.sql.Timestamp;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -52,7 +53,8 @@ public class UserGroupServlet extends HttpServlet {
 
         OffsetDateTime timestampJoined = OffsetDateTime.parse(params.get("timestamp_joined"));
         boolean isAdmin = Boolean.parseBoolean(params.getOrDefault("isAdmin", "false"));
-        UserGroupLinksQueries.addUserToGroup(userId, groupId, timestampJoined, isAdmin);
+        Timestamp timestamp = Timestamp.valueOf(timestampJoined.toLocalDateTime());
+        UserGroupLinksQueries.addUserToGroup(userId, groupId, timestamp, isAdmin);
 
         response.getWriter().println(getUsersAsJSON(groupId));
 

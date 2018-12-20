@@ -6,6 +6,11 @@ package xyz.cetacea.data;
 
 import javax.annotation.Generated;
 
+import org.jooq.ForeignKey;
+import org.jooq.Identity;
+import org.jooq.UniqueKey;
+import org.jooq.impl.AbstractKeys;
+
 import xyz.cetacea.data.tables.Groups;
 import xyz.cetacea.data.tables.Journals;
 import xyz.cetacea.data.tables.UserGroupLinks;
@@ -14,11 +19,6 @@ import xyz.cetacea.data.tables.records.GroupsRecord;
 import xyz.cetacea.data.tables.records.JournalsRecord;
 import xyz.cetacea.data.tables.records.UserGroupLinksRecord;
 import xyz.cetacea.data.tables.records.UsersRecord;
-
-import org.jooq.ForeignKey;
-import org.jooq.Identity;
-import org.jooq.UniqueKey;
-import org.jooq.impl.AbstractKeys;
 
 
 /**

@@ -8,13 +8,13 @@ import java.sql.Timestamp;
 
 import javax.annotation.Generated;
 
-import xyz.cetacea.data.tables.Groups;
-
 import org.jooq.Field;
 import org.jooq.Record1;
 import org.jooq.Record5;
 import org.jooq.Row5;
 import org.jooq.impl.UpdatableRecordImpl;
+
+import xyz.cetacea.data.tables.Groups;
 
 
 /**
@@ -30,7 +30,7 @@ import org.jooq.impl.UpdatableRecordImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class GroupsRecord extends UpdatableRecordImpl<GroupsRecord> implements Record5<Integer, String, String, Integer, Timestamp> {
 
-    private static final long serialVersionUID = -663838413;
+    private static final long serialVersionUID = 193620155;
 
     /**
      * Setter for <code>public.groups.id</code>.

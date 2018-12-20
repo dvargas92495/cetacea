@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.time.OffsetDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -88,7 +89,7 @@ public class GroupServlet extends HttpServlet {
         String description = params.get("description");
         String groupId = params.get("id");
         if (groupId != null){
-            GroupsQueries.updateGroup(name, description, groupId);
+            GroupsQueries.updateGroup(name, description, Integer.parseInt(groupId));
         } else {
             OffsetDateTime timestampCreated = OffsetDateTime.parse(params.get("timestamp_created"));
             int userId = Integer.parseInt(params.get("created_by")); // user id for cetacea
@@ -96,17 +97,16 @@ public class GroupServlet extends HttpServlet {
             Groups group = GroupsQueries.createGroup(name, description, timestampCreated, userId);
 
             //Then create the group-user link
-            UserGroupLinksQueries.addUserToGroup(userId, group.getId(), timestampCreated, true);
+            Timestamp timestamp = Timestamp.valueOf(timestampCreated.toLocalDateTime());
+            UserGroupLinksQueries.addUserToGroup(userId, group.getId(), timestamp, true);
 
             String membersString = params.get("members");
             List<String> members = memberStringsToList(membersString);
             List<Users> users = EmailServlet.getUserIdFromEmail(members);
 
             for(Users user : users){
-                UserGroupLinksQueries.addUserToGroup(user.getId(), group.getId(), timestampCreated, false);
+                UserGroupLinksQueries.addUserToGroup(user.getId(), group.getId(), timestamp, false);
             }
-
-
 
             JSONObject newEntry = new JSONObject();
 

@@ -23,7 +23,7 @@ import javax.annotation.Generated;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class UserGroupLinks implements Serializable {
 
-    private static final long serialVersionUID = 1155871538;
+    private static final long serialVersionUID = -1673568816;
 
     private Integer   id;
     private Integer   userId;
@@ -93,6 +93,60 @@ public class UserGroupLinks implements Serializable {
 
     public void setTimestampJoined(Timestamp timestampJoined) {
         this.timestampJoined = timestampJoined;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        final UserGroupLinks other = (UserGroupLinks) obj;
+        if (id == null) {
+            if (other.id != null)
+                return false;
+        }
+        else if (!id.equals(other.id))
+            return false;
+        if (userId == null) {
+            if (other.userId != null)
+                return false;
+        }
+        else if (!userId.equals(other.userId))
+            return false;
+        if (groupId == null) {
+            if (other.groupId != null)
+                return false;
+        }
+        else if (!groupId.equals(other.groupId))
+            return false;
+        if (isAdmin == null) {
+            if (other.isAdmin != null)
+                return false;
+        }
+        else if (!isAdmin.equals(other.isAdmin))
+            return false;
+        if (timestampJoined == null) {
+            if (other.timestampJoined != null)
+                return false;
+        }
+        else if (!timestampJoined.equals(other.timestampJoined))
+            return false;
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((this.id == null) ? 0 : this.id.hashCode());
+        result = prime * result + ((this.userId == null) ? 0 : this.userId.hashCode());
+        result = prime * result + ((this.groupId == null) ? 0 : this.groupId.hashCode());
+        result = prime * result + ((this.isAdmin == null) ? 0 : this.isAdmin.hashCode());
+        result = prime * result + ((this.timestampJoined == null) ? 0 : this.timestampJoined.hashCode());
+        return result;
     }
 
     @Override

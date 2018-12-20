@@ -79,7 +79,7 @@ public class JournalServlet extends HttpServlet{
         int userId = Integer.parseInt(params.get("user_id"));
         Journals journalRecord = getJournalById(userId);
         if (journalRecord != null) {
-            JournalsQueries.updateJournal(entry, timestamp, journalRecord);
+            JournalsQueries.updateJournal(entry, timestamp, journalRecord.getId());
         } else {
             JournalsQueries.createJournal(entry, timestamp, userId);
         }

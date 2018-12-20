@@ -8,13 +8,13 @@ import java.sql.Timestamp;
 
 import javax.annotation.Generated;
 
-import xyz.cetacea.data.tables.UserGroupLinks;
-
 import org.jooq.Field;
 import org.jooq.Record1;
 import org.jooq.Record5;
 import org.jooq.Row5;
 import org.jooq.impl.UpdatableRecordImpl;
+
+import xyz.cetacea.data.tables.UserGroupLinks;
 
 
 /**
@@ -30,7 +30,7 @@ import org.jooq.impl.UpdatableRecordImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class UserGroupLinksRecord extends UpdatableRecordImpl<UserGroupLinksRecord> implements Record5<Integer, Integer, Integer, Boolean, Timestamp> {
 
-    private static final long serialVersionUID = -1364672836;
+    private static final long serialVersionUID = -1104781820;
 
     /**
      * Setter for <code>public.user_group_links.id</code>.

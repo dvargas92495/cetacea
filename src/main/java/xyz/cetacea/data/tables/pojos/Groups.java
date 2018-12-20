@@ -23,7 +23,7 @@ import javax.annotation.Generated;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Groups implements Serializable {
 
-    private static final long serialVersionUID = -1078904862;
+    private static final long serialVersionUID = -636941458;
 
     private Integer   id;
     private String    name;
@@ -93,6 +93,60 @@ public class Groups implements Serializable {
 
     public void setTimestampCreated(Timestamp timestampCreated) {
         this.timestampCreated = timestampCreated;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        final Groups other = (Groups) obj;
+        if (id == null) {
+            if (other.id != null)
+                return false;
+        }
+        else if (!id.equals(other.id))
+            return false;
+        if (name == null) {
+            if (other.name != null)
+                return false;
+        }
+        else if (!name.equals(other.name))
+            return false;
+        if (description == null) {
+            if (other.description != null)
+                return false;
+        }
+        else if (!description.equals(other.description))
+            return false;
+        if (createdBy == null) {
+            if (other.createdBy != null)
+                return false;
+        }
+        else if (!createdBy.equals(other.createdBy))
+            return false;
+        if (timestampCreated == null) {
+            if (other.timestampCreated != null)
+                return false;
+        }
+        else if (!timestampCreated.equals(other.timestampCreated))
+            return false;
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((this.id == null) ? 0 : this.id.hashCode());
+        result = prime * result + ((this.name == null) ? 0 : this.name.hashCode());
+        result = prime * result + ((this.description == null) ? 0 : this.description.hashCode());
+        result = prime * result + ((this.createdBy == null) ? 0 : this.createdBy.hashCode());
+        result = prime * result + ((this.timestampCreated == null) ? 0 : this.timestampCreated.hashCode());
+        return result;
     }
 
     @Override

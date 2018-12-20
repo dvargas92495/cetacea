@@ -6,14 +6,14 @@ package xyz.cetacea.data;
 
 import javax.annotation.Generated;
 
+import org.jooq.Index;
+import org.jooq.OrderField;
+import org.jooq.impl.AbstractKeys;
+
 import xyz.cetacea.data.tables.Groups;
 import xyz.cetacea.data.tables.Journals;
 import xyz.cetacea.data.tables.UserGroupLinks;
 import xyz.cetacea.data.tables.Users;
-
-import org.jooq.Index;
-import org.jooq.OrderField;
-import org.jooq.impl.AbstractKeys;
 
 
 /**

@@ -9,11 +9,6 @@ import java.util.List;
 
 import javax.annotation.Generated;
 
-import xyz.cetacea.data.Indexes;
-import xyz.cetacea.data.Keys;
-import xyz.cetacea.data.Public;
-import xyz.cetacea.data.tables.records.UsersRecord;
-
 import org.jooq.Field;
 import org.jooq.Identity;
 import org.jooq.Index;
@@ -24,6 +19,11 @@ import org.jooq.TableField;
 import org.jooq.UniqueKey;
 import org.jooq.impl.DSL;
 import org.jooq.impl.TableImpl;
+
+import xyz.cetacea.data.Indexes;
+import xyz.cetacea.data.Keys;
+import xyz.cetacea.data.Public;
+import xyz.cetacea.data.tables.records.UsersRecord;
 
 
 /**
@@ -39,7 +39,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Users extends TableImpl<UsersRecord> {
 
-    private static final long serialVersionUID = -1637220501;
+    private static final long serialVersionUID = -527194179;
 
     /**
      * The reference instance of <code>public.users</code>

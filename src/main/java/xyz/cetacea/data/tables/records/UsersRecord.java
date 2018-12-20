@@ -6,13 +6,13 @@ package xyz.cetacea.data.tables.records;
 
 import javax.annotation.Generated;
 
-import xyz.cetacea.data.tables.Users;
-
 import org.jooq.Field;
 import org.jooq.Record1;
 import org.jooq.Record5;
 import org.jooq.Row5;
 import org.jooq.impl.UpdatableRecordImpl;
+
+import xyz.cetacea.data.tables.Users;
 
 
 /**
@@ -28,7 +28,7 @@ import org.jooq.impl.UpdatableRecordImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class UsersRecord extends UpdatableRecordImpl<UsersRecord> implements Record5<Integer, String, String, String, String> {
 
-    private static final long serialVersionUID = -1627487348;
+    private static final long serialVersionUID = -1017112698;
 
     /**
      * Setter for <code>public.users.id</code>.

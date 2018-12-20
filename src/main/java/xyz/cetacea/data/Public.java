@@ -10,15 +10,15 @@ import java.util.List;
 
 import javax.annotation.Generated;
 
-import xyz.cetacea.data.tables.Groups;
-import xyz.cetacea.data.tables.Journals;
-import xyz.cetacea.data.tables.UserGroupLinks;
-import xyz.cetacea.data.tables.Users;
-
 import org.jooq.Catalog;
 import org.jooq.Sequence;
 import org.jooq.Table;
 import org.jooq.impl.SchemaImpl;
+
+import xyz.cetacea.data.tables.Groups;
+import xyz.cetacea.data.tables.Journals;
+import xyz.cetacea.data.tables.UserGroupLinks;
+import xyz.cetacea.data.tables.Users;
 
 
 /**
@@ -34,7 +34,7 @@ import org.jooq.impl.SchemaImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Public extends SchemaImpl {
 
-    private static final long serialVersionUID = -2001846068;
+    private static final long serialVersionUID = 1484975496;
 
     /**
      * The reference instance of <code>public</code>

@@ -10,11 +10,6 @@ import java.util.List;
 
 import javax.annotation.Generated;
 
-import xyz.cetacea.data.Indexes;
-import xyz.cetacea.data.Keys;
-import xyz.cetacea.data.Public;
-import xyz.cetacea.data.tables.records.JournalsRecord;
-
 import org.jooq.Field;
 import org.jooq.ForeignKey;
 import org.jooq.Identity;
@@ -26,6 +21,11 @@ import org.jooq.TableField;
 import org.jooq.UniqueKey;
 import org.jooq.impl.DSL;
 import org.jooq.impl.TableImpl;
+
+import xyz.cetacea.data.Indexes;
+import xyz.cetacea.data.Keys;
+import xyz.cetacea.data.Public;
+import xyz.cetacea.data.tables.records.JournalsRecord;
 
 
 /**
@@ -41,7 +41,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Journals extends TableImpl<JournalsRecord> {
 
-    private static final long serialVersionUID = -1122144542;
+    private static final long serialVersionUID = -2064822842;
 
     /**
      * The reference instance of <code>public.journals</code>
