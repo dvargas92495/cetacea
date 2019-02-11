@@ -1,19 +1,17 @@
-package xyz.cetacea.endpoints;
+package xyz.cetacea.util;
 
 import xyz.cetacea.Application;
 import xyz.cetacea.data.tables.pojos.Groups;
 import xyz.cetacea.data.tables.pojos.Journals;
 import xyz.cetacea.data.tables.pojos.Users;
+import xyz.cetacea.endpoints.JournalServlet;
 import xyz.cetacea.queries.UserGroupLinksQueries;
 import xyz.cetacea.queries.UsersQueries;
-import xyz.cetacea.util.Repository;
 import org.joda.time.DateTime;
-import org.jooq.DSLContext;
 
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
 import javax.mail.*;
 import java.io.UnsupportedEncodingException;
 import java.time.OffsetDateTime;
@@ -22,12 +20,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import static xyz.cetacea.data.Tables.USERS;
-
 /**
  * Created by David on 10/24/2017.
  */
-public class EmailServlet extends HttpServlet {
+public class EmailSender {
 
     private static final String FROM = "noreply@cetacea.xyz";
     private static final String SUBJECT_PREFIX = "Daily Journal";
@@ -66,15 +62,12 @@ public class EmailServlet extends HttpServlet {
             TO.forEach(em -> addRecipient(message,em));
             message.setSubject(SUBJECT);
             message.setText(BODY, "UTF-8");
-            Transport transport = session.getTransport();
-            try {
+            try (Transport transport = session.getTransport()) {
                 transport.connect(Application.MAIL_HOST, Application.MAIL_USER, Application.MAIL_PASSWORD);
                 transport.sendMessage(message, message.getAllRecipients());
             } catch (MessagingException mex) {
                 System.out.println("Email wasn't sent");
                 mex.printStackTrace();
-            } finally {
-                if (transport != null) {transport.close();}
             }
         }catch (MessagingException | UnsupportedEncodingException | ServletException mex) {
             mex.printStackTrace();
@@ -110,7 +103,7 @@ public class EmailServlet extends HttpServlet {
         OffsetDateTime end = OffsetDateTime.now().withHour(11).withMinute(0)
                 .withSecond(0).withNano(0).withOffsetSameLocal(ZoneOffset.UTC); //TODO: edit to be parameter
         OffsetDateTime start = end.minusDays(1);
-        List<Users> users = getUserIdFromEmail(emails);
+        List<Users> users = UsersQueries.getUsersByEmails(emails);
 
         users.forEach(u -> {
             try {
@@ -145,14 +138,6 @@ public class EmailServlet extends HttpServlet {
         } catch (MessagingException e) {
             System.out.println(String.format("Error adding recipient %s",to));
         }
-    }
-
-    static List<Users> getUserIdFromEmail(List<String> emails) throws ServletException {
-        return Repository.run( (DSLContext r) ->
-            r.selectFrom(USERS)
-             .where(USERS.EMAIL.in(emails))
-             .fetchInto(Users.class)
-        );
     }
 
     private static boolean checkMailEnvironmentVairables() {

@@ -35,7 +35,6 @@ public class Application {
         handler.addServletWithMapping(PublicServlet.class, "/node_modules/*");
         handler.addServletWithMapping(JournalServlet.class, "/api/journal");
         handler.addServletWithMapping(LoginServlet.class, "/api/login");
-        handler.addServletWithMapping(EmailServlet.class, "/api/email");
         handler.addServletWithMapping(GroupServlet.class, "/api/group");
         handler.addServletWithMapping(UserGroupServlet.class, "/api/usergroup");
 

@@ -2,8 +2,6 @@ package xyz.cetacea.util;
 
 import xyz.cetacea.Application;
 import xyz.cetacea.data.tables.pojos.Groups;
-import xyz.cetacea.endpoints.EmailServlet;
-import xyz.cetacea.endpoints.GroupServlet;
 import xyz.cetacea.queries.GroupsQueries;
 
 import javax.servlet.ServletException;
@@ -21,25 +19,21 @@ public class Scheduler {
     //Change pool size based on AWS
     private static ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1);
 
-    //static Logger logger = LogManager.getLogger();
-
     private static class Master implements Runnable {
         public void run(){
-            //logger.info(new Date() + ": Scheduling Emails");
             System.out.println(new Date() + ": Scheduling Emails");
             try {
                 List<Groups> groups = Application.PRODUCTION.equals(Application.ENVIRONMENT) ?
-                        GroupsQueries.getAllGroups() : GroupServlet.getDevGroups();
+                        GroupsQueries.getAllGroups() : new ArrayList<>();
                 groups.forEach(g -> {
                     LocalTime timeToSend = LocalTime.of(11, 0); //TODO: Get from group configuration
                     long delay = computeNextDelay(timeToSend.getHour(), timeToSend.getMinute(), timeToSend.getSecond());
                     executorService.schedule(
-                        new EmailSender(g),
+                        new Scheduler.EmailSender(g),
                         delay,
                         TimeUnit.SECONDS
                     );
                 });
-                //logger.info(new Date() + ": Scheduled Emails For " + groups.size() + " Groups");
             } catch(ServletException ex) {
                 ex.printStackTrace();
             }
@@ -54,7 +48,7 @@ public class Scheduler {
         public void run() {
             //logger.info(new Date() + ": Sending Email to " + group.toString());
             System.out.println(new Date() + ": Sending Email to " + group.toString());
-            EmailServlet.sendEmail(group);
+            xyz.cetacea.util.EmailSender.sendEmail(group);
         }
     }
 

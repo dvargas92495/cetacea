@@ -10,19 +10,21 @@ import java.lang.reflect.Type;
 import java.util.Map;
 
 public class RequestHelper {
-    public static Map<String, String> getBodyAsMap(HttpServletRequest request) throws IOException {
+    public static Map<String, String> getBodyAsMap(HttpServletRequest request) {
         StringBuilder buffer = new StringBuilder();
-        BufferedReader reader = request.getReader();
-        String line;
-        while ((line = reader.readLine()) != null) {
-            buffer.append(line);
+        try {
+            BufferedReader reader = request.getReader();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                buffer.append(line);
+            }
+            String postBody = buffer.toString();
+
+            Gson g = new Gson();
+            Type mapType = new TypeToken<Map<String, String>>() {}.getType();
+            return g.fromJson(postBody, mapType);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to process request");
         }
-        String postBody = buffer.toString();
-
-        Gson g = new Gson();
-        Type mapType = new TypeToken<Map<String,String>>() {}.getType();
-        return g.fromJson(postBody, mapType);
     }
-
-
 }

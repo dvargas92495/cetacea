@@ -7,6 +7,7 @@ import xyz.cetacea.data.tables.pojos.Users;
 
 import javax.servlet.ServletException;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -54,6 +55,13 @@ class UsersQueriesTest extends QueriesTest {
     void testGetUserIdFromEmail() throws ServletException {
         int userId = UsersQueries.getUserIdFromEmail(createdUser.getEmail());
         assertEquals((int)createdUser.getId(), userId, "Could not find id by email: " + createdUser.getEmail());
+    }
+
+    @Test
+    void testGetUsersFromEmails() throws ServletException {
+        List<Users> users = UsersQueries.getUsersByEmails(Collections.singletonList(createdUser.getEmail()));
+        assertEquals(1, users.size());
+        verifyUser(users.get(0));
     }
 
     @Test

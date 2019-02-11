@@ -14,8 +14,6 @@ import java.io.IOException;
 import java.sql.Timestamp;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -71,7 +69,7 @@ public class JournalServlet extends HttpServlet{
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException {
         Map<String, String> params = RequestHelper.getBodyAsMap(request);
         String entry = params.get("entry");
         OffsetDateTime timeFromClient = OffsetDateTime.parse(params.get("timestamp"));
@@ -85,12 +83,12 @@ public class JournalServlet extends HttpServlet{
         }
     }
 
-    static Journals getJournalById(int userId) throws ServletException{
+    private static Journals getJournalById(int userId) throws ServletException{
         OffsetDateTime[] dateRange = getDateRange();
         return getJournalById(userId, dateRange[0], dateRange[1]);
     }
 
-    static Journals getJournalById(int userId, OffsetDateTime start, OffsetDateTime end) throws ServletException{
+    public static Journals getJournalById(int userId, OffsetDateTime start, OffsetDateTime end) throws ServletException{
         System.out.println("Getting a journal for " + userId + " between " + start.toString() + " and " + end.toString());
         Timestamp t0 = Timestamp.valueOf(start.toLocalDateTime());
         Timestamp t1 = Timestamp.valueOf(end.toLocalDateTime());

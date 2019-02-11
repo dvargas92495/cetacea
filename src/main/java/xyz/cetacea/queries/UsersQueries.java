@@ -51,6 +51,14 @@ public class UsersQueries {
         );
     }
 
+    public static List<Users> getUsersByEmails(List<String> emails) throws ServletException {
+        return Repository.run( (DSLContext r) ->
+                r.selectFrom(USERS)
+                        .where(USERS.EMAIL.in(emails))
+                        .fetchInto(Users.class)
+        );
+    }
+
     public static int deleteUserById(int id) throws ServletException {
         return Repository.run((DSLContext r) ->
             r.deleteFrom(USERS)
