@@ -86,7 +86,7 @@ class JournalPage extends React.Component {
     var self = this;
     var timestamp = moment().toDate();
     fetch('/api/journal', {
-      method: 'POST',
+      method: 'PUT',
       body: JSON.stringify({
         user_id: this.state.userId,
         entry: this.state.value,

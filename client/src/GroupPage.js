@@ -615,10 +615,16 @@ class GroupPage extends React.Component {
     var day = moment(e).format("YYYY-MM-DDTHH:mm:ssZ").toString()
     this.setState({selectedDate: moment(e).format("dddd, MMMM D, YYYY").toString()})
 
-    fetch('/api/journal?id='+this.state.userId+"&date="+day).then(function(resp){
+    fetch('/api/journal',{
+       method: 'POST',
+       body: JSON.stringify({
+         id: this.state.userId,
+         date: day,
+       })
+    }).then(function(resp){
       return resp.json();
     }).then(function(body){
-      if (body == null){
+      if (body.entry == null){
         self.setState({currentJournal: "There are no journals for your selected day. Please select a new date."})
       }
       else {
