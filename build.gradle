@@ -88,8 +88,3 @@ dependencies {
     testRuntime files("lib/junit-vintage-engine-5.3.1.jar")
 
 }
-
-test {
-    useJUnitPlatform()
-}
-
