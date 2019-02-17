@@ -11,10 +11,9 @@ import HelpPage from './HelpPage.js'
 import LoginPage from './LoginPage.js'
 import SettingsPage from './SettingsPage.js'
 
-class HomeRoutes extends React.Component {
-
-  contentRoutes () {
-    return (
+function HomeRoutes () {
+  return (
+    <main>
       <Switch>
         <Route exact path='/' component={HomePage}/>
         <Route path='/about' component={AboutPage}/>
@@ -25,16 +24,8 @@ class HomeRoutes extends React.Component {
         <Route path='/login' component={LoginPage} />
         <Route path='/settings' component={SettingsPage} />
       </Switch>
-    )
-  }
-
-  render () {
-    return (
-      <main>
-        {this.contentRoutes()}
-      </main>
-    )
-  }
+    </main>
+  )
 }
 
 export default HomeRoutes
