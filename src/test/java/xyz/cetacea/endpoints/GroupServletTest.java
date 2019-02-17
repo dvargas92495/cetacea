@@ -41,7 +41,7 @@ class GroupServletTest extends ServletTest {
 
         assertEquals(1, groupPage.getGroups().size());
         GroupView view = groupPage.getGroups().get(0);
-        assertTrue(view.getAdmin());
+        assertTrue(view.getIsAdmin());
         assertEquals(group, view.getGroup());
         assertEquals(1, view.getMembers().size());
         Users member = view.getMembers().get(0);
@@ -75,7 +75,7 @@ class GroupServletTest extends ServletTest {
         GroupView view = groupServlet.createGroup(GROUP_NAME, GROUP_DESCRIPTION, time, user.getId(), otherMember.getEmail());
         group = new Groups(view.getGroup().getId(), GROUP_NAME, GROUP_DESCRIPTION, user.getId(), Timestamp.valueOf(time.toLocalDateTime()));
 
-        assertTrue(view.getAdmin());
+        assertTrue(view.getIsAdmin());
         assertEquals(group, view.getGroup());
         assertEquals(2, view.getMembers().size());
         assertTrue(view.getMembers().contains(user));

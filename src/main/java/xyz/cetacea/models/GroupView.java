@@ -16,5 +16,5 @@ public class GroupView {
     }
     public Groups getGroup() { return group; }
     public List<Users> getMembers() { return members; }
-    public boolean getAdmin() { return isAdmin; }
+    public boolean getIsAdmin() { return isAdmin; }
 }
