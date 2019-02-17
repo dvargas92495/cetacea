@@ -12,9 +12,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
+import java.sql.Timestamp;
 import java.time.OffsetDateTime;
 import java.util.*;
 import java.util.function.Function;
@@ -129,12 +131,20 @@ public abstract class BaseServlet extends HttpServlet {
                   String key = getFieldKey(m.getName());
                   try {
                       Object value = m.invoke(obj);
-                      if (List.class.isAssignableFrom(value.getClass())) {
+                      if (value == null) {
+                          outputMap.put(key, null);
+                      } else if (List.class.isAssignableFrom(value.getClass())) {
                           List<?> valueList = (List<?>) value;
                           List<HashMap<String, Object>> valueMapList = valueList.stream().map(this::getOutputMap).collect(Collectors.toList());
                           outputMap.put(key, valueMapList);
-                      } else {
+                      } else if (Boolean.class.isAssignableFrom(value.getClass()) ||
+                              Integer.class.isAssignableFrom(value.getClass()) ||
+                              String.class.isAssignableFrom(value.getClass()) ||
+                              OffsetDateTime.class.isAssignableFrom(value.getClass()) ||
+                              Timestamp.class.isAssignableFrom(value.getClass())) {
                           outputMap.put(key, value);
+                      } else {
+                          outputMap.put(key, getOutputMap(value));
                       }
                   } catch (IllegalAccessException | InvocationTargetException e) {
                       throw new RuntimeException(String.format("Failed to get value from field %s", m.getName()));

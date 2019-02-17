@@ -236,7 +236,7 @@ class GroupPage extends React.Component {
     const userId = props.location.state ? props.location.state.userId : 0
     this.state = {
       userId: userId,
-      groups: {},
+      groups: [],
       currentGroupId: null,
       newGroupIsOpen: false,
       newGroupName: '',
@@ -292,11 +292,11 @@ class GroupPage extends React.Component {
     fetch('/api/group?user_id='+userObj.userId).then(function(resp){
       return resp.json();
     }).then(function(body){
-      self.setState({groups: body, userId: userObj.userId})
+      self.setState({groups: body.groups, userId: userObj.userId})
 
-      if (Object.keys(body).length > 0){
-        self.setState({currentGroupId: Object.keys(body)[0]})
-        self.setState({currentUserGroupId: Object.keys(body)[0]})
+      if (body.groups.length > 0){
+        self.setState({currentGroupId: body.groups[0].group.id})
+        self.setState({currentUserGroupId: body.groups[0].group.id})
       }
     })
   }
@@ -439,11 +439,12 @@ class GroupPage extends React.Component {
   }
 
   renderGroupMembers () {
-    if (this.state.currentGroupId != null) {
-      if (this.state.groups[this.state.currentGroupId].isAdmin){
+    const groupBundle = this.getCurrentGroup();
+    if (this.state.currentGroupId != null && groupBundle != null) {
+      if (groupBundle.isAdmin){
         return (
           <GroupCard>
-            {this.state.groups[this.state.currentGroupId].members.map(member => (
+            {groupBundle.members.map(member => (
               <MemberCard key={member.id}>
                 <Icon iconName="pt-icon-user" iconSize={20} />
                 <MemberName key={member.id+"n"}>{member.firstName + " " + member.lastName}</MemberName>
@@ -457,7 +458,7 @@ class GroupPage extends React.Component {
       else {
         return (
           <GroupCard>
-            {this.state.groups[this.state.currentGroupId].members.map(member => (
+            {groupBundle.members.map(member => (
               <MemberCard key={member.id}>
                 <Icon iconName="pt-icon-user" iconSize={20} />
                 <MemberName key={member.id+"n"}>{member.firstName + " " + member.lastName}</MemberName>
@@ -518,6 +519,10 @@ class GroupPage extends React.Component {
 
   }
 
+  getCurrentGroup() {
+    return this.state.groups.find(bundle => bundle.group.id == this.state.currentGroupId);
+  }
+
   renderGroupDeleteWarning() {
     return (
       <div>
@@ -539,11 +544,12 @@ class GroupPage extends React.Component {
   }
 
   renderGroupSettings () {
-    return (
+    const currentGroup = this.getCurrentGroup();
+    return currentGroup != null && (
       <GroupCard>
         <GridContainer>
-          <NewGroupLabel>{"Group Name:"}<input className="pt-input" type="text" placeholder={this.state.groups[this.state.currentGroupId].name.trim()}/></NewGroupLabel>
-          <NewGroupLabel>{"Group Blurb:"}<textarea className="pt-input" placeholder={this.state.groups[this.state.currentGroupId].description} /></NewGroupLabel>
+          <NewGroupLabel>{"Group Name:"}<input className="pt-input" type="text" placeholder={currentGroup.group.name.trim()}/></NewGroupLabel>
+          <NewGroupLabel>{"Group Blurb:"}<textarea className="pt-input" placeholder={currentGroup.group.description} /></NewGroupLabel>
           <NewGroupLabel>{"Group Membership Model:"}
             <div className="pt-select pt-fill">
               <select>
@@ -638,7 +644,8 @@ class GroupPage extends React.Component {
 
   renderGroupContent(groupId){
     if (this.state.currentGroupId != null){
-      if (this.state.groups[this.state.currentGroupId].isAdmin){
+      const groupBundle = this.getCurrentGroup();
+      if (groupBundle != null && groupBundle.isAdmin){
         return (
           <GroupContent>
             <GroupTabs id="group" selectedTabId={this.state.currentTabId} onChange={this.handleTabChange.bind(this)}>
@@ -683,10 +690,9 @@ class GroupPage extends React.Component {
   }
 
   renderUserGroupTabs(){
-    var groupIter = Object.entries(this.state.groups)
     return (
-      groupIter.map(group => (
-        <Tab2 key={group[0]} id={group[0]} title={this.renderGroupMenuItem(group[1])} />
+      this.state.groups.map(groupBundle => groupBundle.group).map(group => (
+        <Tab2 key={group.id} id={group.id} title={this.renderGroupMenuItem(group)} />
       ))
     )
   }
