@@ -23,7 +23,7 @@ public class Scheduler {
         public void run(){
             System.out.println(new Date() + ": Scheduling Emails");
             try {
-                List<Groups> groups = Application.PRODUCTION.equals(Application.ENVIRONMENT) ?
+                List<Groups> groups = Environment.PRODUCTION.equals(Environment.ENVIRONMENT) ?
                         GroupsQueries.getAllGroups() : new ArrayList<>();
                 groups.forEach(g -> {
                     LocalTime timeToSend = LocalTime.of(11, 0); //TODO: Get from group configuration

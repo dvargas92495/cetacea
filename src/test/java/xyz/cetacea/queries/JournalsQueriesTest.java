@@ -13,7 +13,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class JournalsQueriesTest extends QueriesTest {
 
-    private static String ENTRY = getRandomString(32);
     private static Journals createdJournal;
 
     @BeforeEach

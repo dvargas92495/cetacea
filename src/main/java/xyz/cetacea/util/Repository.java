@@ -1,6 +1,5 @@
 package xyz.cetacea.util;
 
-import xyz.cetacea.Application;
 import org.jooq.*;
 import org.jooq.impl.DSL;
 
@@ -12,9 +11,9 @@ import java.util.function.Function;
  */
 public class Repository {
 
-    public static String host = Application.DB_HOST;
-    public static String user = Application.DB_USER;
-    public static String password = Application.DB_PASSWORD;
+    public static String host = Environment.DB_HOST;
+    public static String user = Environment.DB_USER;
+    public static String password = Environment.DB_PASSWORD;
 
     public static <T> T run(Function<DSLContext, T> action) throws ServletException{
         try {

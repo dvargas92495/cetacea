@@ -22,19 +22,18 @@ import static org.junit.jupiter.api.Assertions.*;
 class GroupServletTest extends ServletTest {
 
     private static GroupServlet groupServlet;
-    private static Users user;
     private static Groups group;
 
     BaseServlet getServlet() { return groupServlet; }
 
     @BeforeEach
-    void setup() throws ServletException {
+    void setup() {
         groupServlet = new GroupServlet();
-        user = givenUser(USER_EMAIL);
     }
 
     @Test
     void testGetGroupsByUserId() throws ServletException {
+        givenUser();
         givenGroup();
         UserGroupLinksQueries.addUserToGroup(user.getId(), group.getId(), Timestamp.valueOf(LocalDateTime.now()), true);
 
@@ -55,6 +54,7 @@ class GroupServletTest extends ServletTest {
 
     @Test
     void testUpdateGroupById() throws ServletException {
+        givenUser();
         givenGroup();
         String newName = getRandomString(GROUP_NAME.length());
         String newDescription = getRandomString(GROUP_DESCRIPTION.length());
@@ -69,6 +69,7 @@ class GroupServletTest extends ServletTest {
 
     @Test
     void testCreateGroup() throws ServletException {
+        givenUser();
         OffsetDateTime time = OffsetDateTime.now();
         Users otherMember = givenUser(getRandomString(USER_EMAIL.length()).toLowerCase());
         GroupView view = groupServlet.createGroup(GROUP_NAME, GROUP_DESCRIPTION, time, user.getId(), otherMember.getEmail());
@@ -82,21 +83,19 @@ class GroupServletTest extends ServletTest {
 
         UserGroupLinksQueries.deleteUsersFromGroup(Arrays.asList(user.getId(), otherMember.getId()), group.getId());
         GroupsQueries.deleteGroup(group.getId());
+        UsersQueries.deleteUserById(otherMember.getId());
         UsersQueries.deleteUserById(user.getId());
     }
 
     @Test
     void testDelete() throws ServletException {
+        givenUser();
         givenGroup();
 
         int numDeleted = groupServlet.deleteGroupById(group.getId());
 
         assertEquals(1, numDeleted);
         UsersQueries.deleteUserById(user.getId());
-    }
-
-    private Users givenUser(String email) throws ServletException{
-        return UsersQueries.createUser(FIRST_NAME, LAST_NAME, email, OAUTH_ID);
     }
 
     private void givenGroup() throws ServletException {

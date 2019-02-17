@@ -4,6 +4,7 @@ import xyz.cetacea.data.tables.pojos.Users;
 import xyz.cetacea.util.Repository;
 import org.jooq.DSLContext;
 
+import javax.annotation.Nullable;
 import javax.servlet.ServletException;
 import java.util.List;
 
@@ -35,6 +36,7 @@ public class UsersQueries {
         );
     }
 
+    @Nullable
     public static Users getUserInfoByOAuth(String oauthId) throws ServletException {
         return Repository.run((DSLContext r) ->
             r.selectFrom(USERS)

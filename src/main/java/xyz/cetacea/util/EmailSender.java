@@ -51,7 +51,7 @@ public class EmailSender {
 
             Properties props = System.getProperties();
             props.put("mail.transport.protocol", "smtp");
-            props.put("mail.smtp.port", Application.MAIL_PORT);
+            props.put("mail.smtp.port", Environment.MAIL_PORT);
             props.put("mail.smtp.starttls.enable", "true");
             props.put("mail.smtp.auth", "true");
             Session session = Session.getDefaultInstance(props);
@@ -63,7 +63,7 @@ public class EmailSender {
             message.setSubject(SUBJECT);
             message.setText(BODY, "UTF-8");
             try (Transport transport = session.getTransport()) {
-                transport.connect(Application.MAIL_HOST, Application.MAIL_USER, Application.MAIL_PASSWORD);
+                transport.connect(Environment.MAIL_HOST, Environment.MAIL_USER, Environment.MAIL_PASSWORD);
                 transport.sendMessage(message, message.getAllRecipients());
             } catch (MessagingException mex) {
                 System.out.println("Email wasn't sent");
@@ -141,15 +141,15 @@ public class EmailSender {
     }
 
     private static boolean checkMailEnvironmentVairables() {
-        if (Application.MAIL_USER == null) {
+        if (Environment.MAIL_USER == null) {
             System.out.println("Missing SMTP username, please set the CETACEA_MAIL_USER environment variable");
             return false;
         }
-        if (Application.MAIL_PASSWORD == null) {
+        if (Environment.MAIL_PASSWORD == null) {
             System.out.println("Missing SMTP password, please set the CETACEA_MAIL_PASSWORD environment variable");
             return false;
         }
-        if (Application.MAIL_HOST == null) {
+        if (Environment.MAIL_HOST == null) {
             System.out.println("Missing SMTP host, please set the CETACEA_MAIL_HOST environment variable");
             return false;
         }

@@ -4,12 +4,16 @@ import org.eclipse.jetty.http.HttpMethod;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import xyz.cetacea.CetaceaTest;
+import xyz.cetacea.mocks.MockHttpServletRequest;
+import xyz.cetacea.mocks.MockHttpServletResponse;
 import xyz.cetacea.util.Endpoint;
 import xyz.cetacea.util.Param;
 
+import javax.servlet.http.HttpServletResponse;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -18,16 +22,16 @@ class BaseServletTest extends CetaceaTest {
 
     public static class MockServlet extends BaseServlet {
         @Endpoint(HttpMethod.GET)
-        public MockResponse get(@Param("intParam") int intParam, @Param("date_time") OffsetDateTime dateTime, @Param("stringParam") String stringParam) {
-            return new MockResponse(intParam, dateTime, stringParam);
+        public MockResponse get(@Param("intParam") int intParam, @Param("date_time") OffsetDateTime dateTime, @Param("stringParam") String stringParam, @Param("booleanParam") boolean booleanParam) {
+            return new MockResponse(intParam, dateTime, stringParam, booleanParam);
         }
         @Endpoint(HttpMethod.POST)
-        public MockResponse post(@Param("intParam") int intParam, @Param("date_time") OffsetDateTime dateTime, @Param("stringParam") String stringParam) {
-            return new MockResponse(intParam, dateTime, stringParam);
+        public MockResponse post(@Param("intParam") int intParam, @Param("date_time") OffsetDateTime dateTime, @Param("stringParam") String stringParam, @Param("booleanParam") boolean booleanParam) {
+            return new MockResponse(intParam, dateTime, stringParam, booleanParam);
         }
         @Endpoint(HttpMethod.PUT)
-        public MockResponse put(@Param("intParam") int intParam, @Param("date_time") OffsetDateTime dateTime, @Param("stringParam") String stringParam) {
-            return new MockResponse(intParam, dateTime, stringParam);
+        public List<MockResponse> put(@Param("intParam") int intParam, @Param("date_time") OffsetDateTime dateTime, @Param("stringParam") String stringParam, @Param("booleanParam") boolean booleanParam) {
+            return Collections.singletonList(new MockResponse(intParam, dateTime, stringParam, booleanParam));
         }
         @Endpoint(HttpMethod.DELETE)
         public int delete(@Param("intParam") int intParam) {
@@ -42,9 +46,9 @@ class BaseServletTest extends CetaceaTest {
         private String stringParam;
         private OffsetDateTime offsetDateTime;
         private List<SubClassResponse> subClassResponsesParam;
-        MockResponse(int intParam, OffsetDateTime dateTime, String stringParam) {
+        MockResponse(int intParam, OffsetDateTime dateTime, String stringParam, boolean booleanParam) {
             this.intParam = intParam;
-            this.booleanParam = true;
+            this.booleanParam = booleanParam;
             this.stringParam = stringParam;
             this.offsetDateTime = dateTime;
             this.subClassResponsesParam = Arrays.asList(new SubClassResponse(), new SubClassResponse());
@@ -69,6 +73,12 @@ class BaseServletTest extends CetaceaTest {
     private static MockServlet mockServlet;
     private static MockHttpServletRequest request;
     private static MockHttpServletResponse response;
+    private static final String EXPECTED =
+            "{\"stringParam\":\"Value\","+
+            "\"booleanParam\":true,"+
+            "\"offsetDateTime\":\"2019-02-10T15:34Z\","+
+            "\"intParam\":5,"+
+            "\"subClassResponsesParam\":[{\"innerInt\":2,\"innerString\":\"Inner\"},{\"innerInt\":2,\"innerString\":\"Inner\"}]}";
 
     @BeforeAll
     static void setupAll() {
@@ -79,21 +89,21 @@ class BaseServletTest extends CetaceaTest {
     void testGet() {
         givenMethod(HttpMethod.GET);
         mockServlet.doGet(request, response);
-        verifyContent();
+        verifyContent(EXPECTED);
     }
 
     @Test
     void testPost() {
         givenMethod(HttpMethod.POST);
         mockServlet.doPost(request, response);
-        verifyContent();
+        verifyContent(EXPECTED);
     }
 
     @Test
     void testPut() {
         givenMethod(HttpMethod.PUT);
         mockServlet.doPut(request, response);
-        verifyContent();
+        verifyContent(String.format("[%s]", EXPECTED));
     }
 
     @Test
@@ -108,18 +118,14 @@ class BaseServletTest extends CetaceaTest {
         request = new MockHttpServletRequest(method);
         request.setAttribute("intParam", 5);
         request.setAttribute("stringParam", "Value");
+        request.setAttribute("booleanParam", true);
         request.setAttribute("date_time", OffsetDateTime.of(2019, 2, 10, 15, 34, 0, 0, ZoneOffset.UTC));
         response = new MockHttpServletResponse();
     }
 
-    private void verifyContent()
+    private void verifyContent(String expected)
     {
-        assertEquals(
-                "{\"stringParam\":\"Value\","+
-                "\"booleanParam\":true,"+
-                "\"offsetDateTime\":\"2019-02-10T15:34Z\","+
-                "\"intParam\":5,"+
-                 "\"subClassResponsesParam\":[{\"innerInt\":2,\"innerString\":\"Inner\"},{\"innerInt\":2,\"innerString\":\"Inner\"}]}",
-                response.getContent());
+        assertEquals(expected, response.getContent());
+        assertEquals(HttpServletResponse.SC_OK, response.getStatus());
     }
 }

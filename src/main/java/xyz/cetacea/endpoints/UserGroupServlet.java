@@ -3,9 +3,13 @@ package xyz.cetacea.endpoints;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.reflect.TypeToken;
+import org.eclipse.jetty.http.HttpMethod;
+import xyz.cetacea.data.tables.pojos.UserGroupLinks;
 import xyz.cetacea.data.tables.pojos.Users;
 import xyz.cetacea.queries.UserGroupLinksQueries;
 import xyz.cetacea.queries.UsersQueries;
+import xyz.cetacea.util.Endpoint;
+import xyz.cetacea.util.Param;
 import xyz.cetacea.util.RequestHelper;
 import org.jooq.tools.json.JSONArray;
 import org.jooq.tools.json.JSONObject;
@@ -19,79 +23,34 @@ import java.lang.reflect.Type;
 import java.sql.Timestamp;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 /**
  * Created by David on 11/7/2017.
  */
-public class UserGroupServlet extends HttpServlet {
+public class UserGroupServlet extends BaseServlet {
 
-    // get all users in a group
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        int groupId = Integer.parseInt(request.getParameter("group_id"));
-
+    @Endpoint(HttpMethod.GET)
+    public List<Users> getAllUsersInGroup(@Param("group_id") int groupId) throws ServletException {
         List<Integer> userIds = UserGroupLinksQueries.getUserIdsByGroupId(groupId);
-        List<Users> users = UsersQueries.getUserInfoByUserIds(userIds);
-
-        Type listType = new TypeToken<List<Users>>(){}.getType();
-        JsonArray json = new Gson().toJsonTree(users, listType).getAsJsonArray();
-        json.forEach(j -> j.getAsJsonObject().remove("oauthId"));
-        response.getWriter().println(json.toString());
-
+        return UsersQueries.getUserInfoByUserIds(userIds);
     }
 
-    // add user to group
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        Map<String, String> params = RequestHelper.getBodyAsMap(request);
-        int groupId = Integer.parseInt(params.get("group_id"));
-
-        String email = params.get("email");
+    @Endpoint(HttpMethod.POST)
+    public List<Users> addUserToGroup(@Param("group_id") int groupId, @Param("email") String email,
+                                         @Param("timestamp_joined") OffsetDateTime timestampJoined,
+                                         @Param("isAdmin") boolean isAdmin) throws ServletException {
         int userId = UsersQueries.getUserIdFromEmail(email);
-
-        OffsetDateTime timestampJoined = OffsetDateTime.parse(params.get("timestamp_joined"));
-        boolean isAdmin = Boolean.parseBoolean(params.getOrDefault("isAdmin", "false"));
         Timestamp timestamp = Timestamp.valueOf(timestampJoined.toLocalDateTime());
         UserGroupLinksQueries.addUserToGroup(userId, groupId, timestamp, isAdmin);
-
-        response.getWriter().println(getUsersAsJSON(groupId));
-
-
+        return getAllUsersInGroup(groupId);
     }
 
-    //remove user from group
-    @Override
-    protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        Map<String, String> params = RequestHelper.getBodyAsMap(request);
-        int groupId = Integer.parseInt(params.get("group_id"));
-        int userId = Integer.parseInt(params.get("user_id"));
-
-        List<Integer> userIdList = new ArrayList<>();
-        userIdList.add(userId);
-        UserGroupLinksQueries.deleteUsersFromGroup(userIdList, groupId);
-
-        response.getWriter().println(getUsersAsJSON(groupId));
+    @Endpoint(HttpMethod.DELETE)
+    public List<Users> deleteUserFromGroup(@Param("group_id") int groupId, @Param("user_id") int userId) throws ServletException {
+        UserGroupLinksQueries.deleteUsersFromGroup(Collections.singletonList(userId), groupId);
+        return getAllUsersInGroup(groupId);
     }
-
-    private static JSONArray getUsersAsJSON(int groupId) throws ServletException{
-        List<Integer> userIds = UserGroupLinksQueries.getUserIdsByGroupId(groupId);
-        List<Users> users = UsersQueries.getUserInfoByUserIds(userIds);
-
-        JSONArray userArray = new JSONArray();
-        for(int j = 0; j < users.size(); j++){
-            JSONObject newUser = new JSONObject();
-            Users currentUser = users.get(j);
-            newUser.put("id", currentUser.getId());
-            newUser.put("firstName", currentUser.getFirstName());
-            newUser.put("lastName", currentUser.getLastName());
-            newUser.put("email", currentUser.getEmail());
-
-            userArray.add(newUser);
-
-        }
-        return userArray;
-    }
-
 }

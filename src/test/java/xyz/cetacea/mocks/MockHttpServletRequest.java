@@ -1,4 +1,4 @@
-package xyz.cetacea.endpoints;
+package xyz.cetacea.mocks;
 
 import org.eclipse.jetty.http.HttpMethod;
 import org.jooq.tools.json.JSONObject;

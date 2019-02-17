@@ -15,6 +15,7 @@ public class CetaceaTest {
     protected static String OAUTH_ID = getRandomString(20);
     protected static String GROUP_NAME = getRandomString(8);
     protected static String GROUP_DESCRIPTION = getRandomString(16);
+    protected static String ENTRY = getRandomString(32);
 
     protected static String getRandomString(int length) {
         StringBuilder sb = new StringBuilder();

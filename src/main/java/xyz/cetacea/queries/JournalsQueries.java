@@ -4,6 +4,7 @@ import xyz.cetacea.data.tables.pojos.Journals;
 import xyz.cetacea.util.Repository;
 import org.jooq.DSLContext;
 
+import javax.annotation.Nullable;
 import javax.servlet.ServletException;
 import java.sql.Timestamp;
 
@@ -19,6 +20,7 @@ public class JournalsQueries {
         );
     }
 
+    @Nullable
     public static Journals getJournalForUserBetweenTimestamps(int userId, Timestamp t0, Timestamp t1) throws ServletException {
         return Repository.run((DSLContext r) ->
                 r.selectFrom(JOURNALS)

@@ -1,85 +1,55 @@
 package xyz.cetacea.endpoints;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.util.Collections;
-import java.util.Map;
 
-import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken.Payload;
-import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
-import com.google.api.client.http.javanet.NetHttpTransport;
-import com.google.api.client.json.gson.GsonFactory;
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
+import org.eclipse.jetty.http.HttpMethod;
 import xyz.cetacea.data.tables.pojos.Users;
 import xyz.cetacea.queries.UsersQueries;
-import xyz.cetacea.util.RequestHelper;
+import xyz.cetacea.util.DependencyManager;
+import xyz.cetacea.util.Endpoint;
+import xyz.cetacea.util.IGoogleClient;
+import xyz.cetacea.util.Param;
 
 /**
  * Created by David on 10/14/2017.
- *
  */
-public class LoginServlet extends HttpServlet {
+public class LoginServlet extends BaseServlet {
+    private IGoogleClient googleClient;
 
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String CLIENT_ID = "548992550759-kmikahq1pkfhffgps85151j5o2a6gduu.apps.googleusercontent.com";
+    public LoginServlet() {
+        googleClient = DependencyManager.getGoogleClient();
+    }
 
-        GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(new NetHttpTransport(), new GsonFactory())
-                .setAudience(Collections.singletonList(CLIENT_ID))
-                .build();
+    @Endpoint(HttpMethod.POST)
+    public Users createUser(@Param("idtoken") String idTokenString) throws ServletException {
+        Payload payload = getPayload(idTokenString);
+        Users user = UsersQueries.getUserInfoByOAuth(payload.getSubject());
+        if (user != null) {
+            throw new RuntimeException(String.format("Could not create user %s because it already exists", user.getId()));
+        }
+        return UsersQueries.createUser(payload.get("given_name").toString(), payload.get("family_name").toString(), payload.getEmail(), payload.getSubject());
+    }
 
+    @Endpoint(HttpMethod.PUT)
+    public Users loginUser(@Param("idtoken") String idTokenString) throws ServletException {
+        Payload payload = getPayload(idTokenString);
+        Users user = UsersQueries.getUserInfoByOAuth(payload.getSubject());
+        if (user == null) {
+            throw new RuntimeException(String.format("Could not login user %s because it doesn't exist", payload.getEmail()));
+        }
+        return user;
+    }
 
-        Map<String, String> requestMap = RequestHelper.getBodyAsMap(request);
-        String idTokenString = requestMap.get("idtoken");
-        Boolean isSignup = Boolean.valueOf(requestMap.get("isSignup"));
-
+    private Payload getPayload(String idTokenString) {
         try {
-            GoogleIdToken idToken = verifier.verify(idTokenString);
-            if (idToken != null) {
-                Payload payload = idToken.getPayload();
-
-                String userId = payload.getSubject();
-                String lastName = (String) payload.get("family_name");
-                String firstName = (String) payload.get("given_name");
-                String userEmail = payload.getEmail();
-
-                Users userInfo = UsersQueries.getUserInfoByOAuth(userId);
-
-                if (isSignup && userInfo == null) {
-                    userInfo = UsersQueries.createUser(firstName, lastName, userEmail, userId);
-                }
-                if (userInfo == null) {
-                    JsonObject resBody = new JsonObject();
-                    resBody.addProperty("isAuthenticated", false);
-                    resBody.addProperty("message", "Valid google account is not registered.");
-                    response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-                    response.getWriter().println(resBody.toString());
-                }
-                else {
-                    response.setStatus(HttpServletResponse.SC_OK);
-                    JsonObject user = new Gson().toJsonTree(userInfo, Users.class).getAsJsonObject();
-                    user.remove("oauthId");
-                    user.addProperty("isAuthenticated", true);
-                    response.getWriter().println(user.toString());
-                }
-            }
-            else {
-                JsonObject resBody = new JsonObject();
-                resBody.addProperty("isAuthenticated", false);
-                resBody.addProperty("message", "Invalid google account.");
-                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-                response.getWriter().println(resBody.toString());
-            }
+            return googleClient.verify(idTokenString);
         } catch (GeneralSecurityException e) {
-            System.out.println("General security exception thrown.");
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            response.getWriter().println("Internal Server Error");
+            throw new RuntimeException(String.format("Security Exception thrown when trying to verify: %s", idTokenString));
+        } catch (IOException | IllegalArgumentException e) {
+            throw new RuntimeException(String.format("Failed to parse: %s", idTokenString));
         }
     }
 }

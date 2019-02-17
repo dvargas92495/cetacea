@@ -1,4 +1,4 @@
-package xyz.cetacea.endpoints;
+package xyz.cetacea.mocks;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.Cookie;
@@ -29,8 +29,9 @@ public class MockHttpServletResponse implements HttpServletResponse {
     }
 
     private MockPrintWriter writer;
+    private int status;
 
-    MockHttpServletResponse() {
+    public MockHttpServletResponse() {
         writer = new MockPrintWriter();
     }
     // region implemented methods
@@ -40,8 +41,18 @@ public class MockHttpServletResponse implements HttpServletResponse {
         return writer;
     }
 
-    String getContent() {
+    public String getContent() {
         return writer.getOutput();
+    }
+
+    @Override
+    public void setStatus(int i) {
+        status = i;
+    }
+
+    @Override
+    public int getStatus() {
+        return status;
     }
 
     // endregion implemented methods
@@ -124,18 +135,8 @@ public class MockHttpServletResponse implements HttpServletResponse {
     }
 
     @Override
-    public void setStatus(int i) {
-
-    }
-
-    @Override
     public void setStatus(int i, String s) {
 
-    }
-
-    @Override
-    public int getStatus() {
-        return 0;
     }
 
     @Override

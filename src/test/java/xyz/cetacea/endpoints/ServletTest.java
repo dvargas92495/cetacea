@@ -4,10 +4,13 @@ import org.eclipse.jetty.http.HttpMethod;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import xyz.cetacea.CetaceaTest;
+import xyz.cetacea.data.tables.pojos.Users;
+import xyz.cetacea.queries.UsersQueries;
 import xyz.cetacea.util.Endpoint;
 import xyz.cetacea.util.Param;
 import xyz.cetacea.util.Repository;
 
+import javax.servlet.ServletException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
@@ -18,6 +21,8 @@ import java.util.stream.Collectors;
 import static org.junit.jupiter.api.Assertions.*;
 
 abstract class ServletTest extends CetaceaTest {
+    protected static Users user;
+
     // TODO - delete this setup when Queries have been refactored to non static
     @BeforeAll
     protected static void setupAll() {
@@ -45,7 +50,16 @@ abstract class ServletTest extends CetaceaTest {
 
     private List<Method> getDeclaredPublicMethods() {
         return Arrays.stream(getServlet().getClass().getDeclaredMethods())
-                     .filter(m -> Modifier.isPublic(m.getModifiers()))
+                     // TODO remove static qualifier once Email Sender is its own service
+                     .filter(m -> Modifier.isPublic(m.getModifiers()) && !Modifier.isStatic(m.getModifiers()))
                      .collect(Collectors.toList());
+    }
+
+    protected void givenUser() throws ServletException {
+        user = givenUser(USER_EMAIL);
+    }
+
+    protected Users givenUser(String email) throws ServletException {
+        return UsersQueries.createUser(FIRST_NAME, LAST_NAME, email, OAUTH_ID);
     }
 }

@@ -1,6 +1,7 @@
 package xyz.cetacea.endpoints;
 
 import org.eclipse.jetty.http.HttpMethod;
+import org.jooq.tools.json.JSONArray;
 import org.jooq.tools.json.JSONObject;
 import org.jooq.tools.json.JSONValue;
 import xyz.cetacea.util.Endpoint;
@@ -34,27 +35,26 @@ public abstract class BaseServlet extends HttpServlet {
                 Parameter[] params = method.getParameters();
                 servletRequests.put(annotation.value(), params);
             }
-            
         }
     }
 
     @Override
-    public void doGet(HttpServletRequest request, HttpServletResponse response) {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) {
         execute(request, response, HttpMethod.GET);
     }
 
     @Override
-    public void doPost(HttpServletRequest request, HttpServletResponse response) {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) {
         execute(request, response, HttpMethod.POST);
     }
 
     @Override
-    public void doPut(HttpServletRequest request, HttpServletResponse response) {
+    protected void doPut(HttpServletRequest request, HttpServletResponse response) {
         execute(request, response, HttpMethod.PUT);
     }
 
     @Override
-    public void doDelete(HttpServletRequest request, HttpServletResponse response) {
+    protected void doDelete(HttpServletRequest request, HttpServletResponse response) {
         execute(request, response, HttpMethod.DELETE);
     }
 
@@ -74,6 +74,8 @@ public abstract class BaseServlet extends HttpServlet {
                 String value = fieldMapper.apply(annotation.value());
                 if (int.class.isAssignableFrom(p.getType())) {
                     return Integer.parseInt(value);
+                } else if (boolean.class.isAssignableFrom(p.getType())) {
+                    return Boolean.parseBoolean(value);
                 } else if (OffsetDateTime.class.isAssignableFrom(p.getType())) {
                     return OffsetDateTime.parse(value);
                 } else {
@@ -82,8 +84,12 @@ public abstract class BaseServlet extends HttpServlet {
             }).toArray();
 
             Object output = method.invoke(this, inputs);
+            response.setStatus(HttpServletResponse.SC_OK);
             if (Integer.class.isAssignableFrom(output.getClass())) {
                 response.getWriter().println(JSONValue.toJSONString(output));
+            } else if (Collection.class.isAssignableFrom(output.getClass())) {
+                List<HashMap<String, Object>> outputList = ((Collection<?>)output).stream().map(this::getOutputMap).collect(Collectors.toList());
+                response.getWriter().println(JSONArray.toJSONString(outputList));
             } else {
                 HashMap<String, Object> outputMap = getOutputMap(output);
                 response.getWriter().println(JSONObject.toJSONString(outputMap));
@@ -118,6 +124,7 @@ public abstract class BaseServlet extends HttpServlet {
         HashMap<String, Object> outputMap = new HashMap<>();
         Arrays.stream(obj.getClass().getDeclaredMethods())
               .filter(m -> m.getName().startsWith(GETTER_PREFIX))
+              .sorted(Comparator.comparing(Method::getName))
               .forEach(m -> {
                   String key = getFieldKey(m.getName());
                   try {

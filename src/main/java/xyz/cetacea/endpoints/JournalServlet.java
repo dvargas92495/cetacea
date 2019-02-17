@@ -1,93 +1,66 @@
 package xyz.cetacea.endpoints;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
+import org.eclipse.jetty.http.HttpMethod;
 import xyz.cetacea.data.tables.pojos.*;
 import xyz.cetacea.queries.JournalsQueries;
-import xyz.cetacea.util.RequestHelper;
+import xyz.cetacea.util.Endpoint;
+import xyz.cetacea.util.Param;
 
+import javax.annotation.Nullable;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.sql.Timestamp;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
-import java.util.Map;
 
 /**
  * Created by David on 9/25/2017.
  */
-public class JournalServlet extends HttpServlet{
+public class JournalServlet extends BaseServlet {
 
-    // get journals
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        response.setContentType("text/html;charset=utf-8");
-        String idParam = request.getParameter("id");
-        String date = request.getParameter("date");
-
-        // return 1 journal for 1 user from a specific date
-        if (date != null && idParam != null) {
-            int userId = Integer.parseInt(idParam);
-            OffsetDateTime day = OffsetDateTime.parse(date);
-
-            OffsetDateTime from = day.withHour(7).withMinute(0).withSecond(0);
-            OffsetDateTime to = day.plusDays(1).withHour(7).withMinute(0).withSecond(0);
-
-            Journals journal = getJournalById(userId, from, to);
-            response.getWriter().println(new Gson().toJson(journal, Journals.class));
-            return;
-
+    @Endpoint(HttpMethod.GET)
+    public Journals getTodayJournalByUserId(@Param("id") int userId) throws ServletException {
+        Journals journal = getJournalById(userId);
+        if (journal == null) {
+            return new Journals();
         }
-        if (idParam == null) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            JsonObject resBody = new JsonObject();
-            resBody.addProperty("isError", true);
-            resBody.addProperty("message", "No id sent on journal get");
-            response.getWriter().println(resBody.toString());
-            return;
-        }
-        int queryId;
-        try {
-            queryId = Integer.parseInt(idParam);
-        } catch(NumberFormatException e){
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            JsonObject resBody = new JsonObject();
-            resBody.addProperty("isError", true);
-            resBody.addProperty("message", "Invalid id sent on journal get");
-            response.getWriter().println(resBody.toString());
-            return;
-        }
-        response.setStatus(HttpServletResponse.SC_OK);
-        Journals journalRecord = getJournalById(queryId);
-        if (journalRecord == null){
-            journalRecord = new Journals();
-        }
-        response.getWriter().println(new Gson().toJson(journalRecord, Journals.class));
+        return journal;
     }
 
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException {
-        Map<String, String> params = RequestHelper.getBodyAsMap(request);
-        String entry = params.get("entry");
-        OffsetDateTime timeFromClient = OffsetDateTime.parse(params.get("timestamp"));
+    @Endpoint(HttpMethod.POST)
+    public Journals getJournalByUserIdAndDate(@Param("id") int userId, @Param("date") OffsetDateTime day) throws ServletException {
+        OffsetDateTime from = day.withHour(7).withMinute(0).withSecond(0);
+        OffsetDateTime to = day.plusDays(1).withHour(7).withMinute(0).withSecond(0);
+        Journals journal = getJournalById(userId, from, to);
+        if (journal == null) {
+            return new Journals();
+        }
+        return journal;
+    }
+
+    @Endpoint(HttpMethod.PUT)
+    public Journals saveJournal(@Param("entry") String entry, @Param("timestamp") OffsetDateTime timeFromClient, @Param("user_id") int userId) throws ServletException {
         Timestamp timestamp = Timestamp.valueOf(timeFromClient.toLocalDateTime());
-        int userId = Integer.parseInt(params.get("user_id"));
         Journals journalRecord = getJournalById(userId);
         if (journalRecord != null) {
-            JournalsQueries.updateJournal(entry, timestamp, journalRecord.getId());
+            return JournalsQueries.updateJournal(entry, timestamp, journalRecord.getId());
         } else {
-            JournalsQueries.createJournal(entry, timestamp, userId);
+            return JournalsQueries.createJournal(entry, timestamp, userId);
         }
     }
 
+    @Endpoint(HttpMethod.DELETE)
+    public int deleteJournalById(@Param("id") int id) throws ServletException {
+        return JournalsQueries.deleteJournal(id);
+    }
+
+    @Nullable
     private static Journals getJournalById(int userId) throws ServletException{
         OffsetDateTime[] dateRange = getDateRange();
         return getJournalById(userId, dateRange[0], dateRange[1]);
     }
 
+    //TODO: Make private once Email Sender is its own service
+    @Nullable
     public static Journals getJournalById(int userId, OffsetDateTime start, OffsetDateTime end) throws ServletException{
         System.out.println("Getting a journal for " + userId + " between " + start.toString() + " and " + end.toString());
         Timestamp t0 = Timestamp.valueOf(start.toLocalDateTime());
