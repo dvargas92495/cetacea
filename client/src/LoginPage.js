@@ -58,10 +58,9 @@ class LoginPage extends React.Component {
 
     var self = this;
     fetch('/api/login', {
-      method: 'POST',
+      method: 'PUT',
       body: JSON.stringify({
-        idtoken: id_token,
-        isSignup: "true"
+        idtoken: id_token
       })
     }).then(function(resp){
       return resp.json();

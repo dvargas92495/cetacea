@@ -86,21 +86,22 @@ class NavBar extends React.Component {
     var id_token = user.getAuthResponse().id_token
     var self = this
     fetch('/api/login', {
-      method: 'POST',
+      method: 'PUT',
       body: JSON.stringify({
-        idtoken: id_token,
-        isSignup: "false"
+        idtoken: id_token
       })
     }).then(function(resp){
       return resp.json();
     }).then(function(body){
-      const id = body.isAuthenticated ? body.id : 0
-      self.setState({userId: id,
-                     pages: id > 0 ? self.loggedInPages: self.loggedOutPages,
-                     isOpen: false})
-      self.props.onlogin({userId: id});
-      if (!body.isAuthenticated){
+      const isAuthenticated = body.id != null;
+      if (!isAuthenticated){
         self.a2.signOut()
+      } else {
+        const id = body.id;
+        self.setState({userId: id,
+                       pages: isAuthenticated ? self.loggedInPages: self.loggedOutPages,
+                       isOpen: false})
+        self.props.onlogin({userId: id});
       }
     })
   }
