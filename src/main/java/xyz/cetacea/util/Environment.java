@@ -14,7 +14,7 @@ public class Environment {
     public static final int MAIL_PORT = getEnv("CETACEA_MAIL_PORT", 587);
 
     public static final String DB_USER = getEnv("CETACEA_DB_USER", null);
-    public static final String DB_PASSWORD = "passwerd";// getEnv("CETACEA_DB_PASSWORD", null);
+    public static final String DB_PASSWORD = getEnv("CETACEA_DB_PASSWORD", null);
     public static final String DB_HOST = getEnv("CETACEA_DB_HOST", null);
 
     public static final String GOOGLE_CLIENT = getEnv("CETACEA_GOOGLE_CLIENT", null);
