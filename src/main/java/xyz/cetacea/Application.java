@@ -10,7 +10,7 @@ public class Application {
     public static void main(String[] args) throws Exception {
 
         //Establish Scheduler
-        Scheduler.init();
+        // Scheduler.init();
 
         //Establish Endpoints
         Server server = new Server(Environment.PORT);
