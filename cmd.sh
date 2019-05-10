@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 helpCmd() {
     echo "You could use the following commands:";
