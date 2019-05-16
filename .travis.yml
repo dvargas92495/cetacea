@@ -1,9 +1,13 @@
+branches:
+  only:
+  - master
+
 matrix:
   include:
   - language: node_js
     node_js: 6.10.3
-    npm: 6.9.3
     name: "End to end tests"
+
     before_install:
     - cd client
     - npm install -g npm@latest
@@ -15,6 +19,7 @@ matrix:
     - ./cmd.sh run &
     - cd client
     script: npm run cypress
+
     # keep the npm cache around to speed up installs
     cache:
       directories:
