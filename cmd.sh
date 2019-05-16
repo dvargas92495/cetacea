@@ -12,10 +12,14 @@ helpCmd() {
     echo "    dbuser: creates a local db user";
 }
 
+setupNpmCmd() {
+    cd client;
+    npm install npm@6.9.0 -g;
+}
+
 buildCmd() {
     gradle build;
-    cd client;
-    npm install npm@latest -g;
+    setupNpmCmd;
     npm install;
     npm run build;
 }
@@ -45,22 +49,24 @@ dbconnectCmd() {
     psql -h "aanlh5mrzrcgku.c2sjnb5f4d57.us-east-1.rds.amazonaws.com" -U "cetacea" -p 5432 -d postgres
 }
 
-if [[ $1 = "help" ]]; then
-    helpCmd;
-elif [[ $1 = "build" ]]; then
+if [[ $1 = "build" ]]; then
     buildCmd;
-elif [[ $1 = "zip" ]]; then
-    zipCmd;
-elif [[ $1 = "run" ]]; then
-    runCmd;
-elif [[ $1 = "gen" ]]; then
-    genCmd;
 elif [[ $1 = "dbcopy" ]]; then
     dbcopyCmd;
 elif [[ $1 = "dbconnect" ]]; then
     dbconnectCmd;
 elif [[ $1 = "dbuser" ]]; then
     dbuserCmd;
+elif [[ $1 = "gen" ]]; then
+    genCmd;
+elif [[ $1 = "help" ]]; then
+    helpCmd;
+elif [[ $1 = "run" ]]; then
+    runCmd;
+elif [[ $1 = "setup-npm" ]]; then
+    setupNpmCmd;
+elif [[ $1 = "zip" ]]; then
+    zipCmd;
 else
     helpCmd;
 fi

@@ -5,11 +5,11 @@ import {Dialog, Popover} from '@blueprintjs/core'
 import moment from 'moment';
 
 import styled from 'styled-components'
-import { Menu, MenuItem, MenuDivider, Tab2, Tabs2, Card, Icon, Tooltip, Position } from '@blueprintjs/core'
+import { Menu, MenuItem, MenuDivider, Tab, Tabs, Card, Icon, Tooltip, Position } from '@blueprintjs/core'
 import {TimePicker} from '@blueprintjs/datetime'
 import { DatePicker } from "@blueprintjs/datetime";
 
-const GroupTabs = styled(Tabs2)`
+const GroupTabs = styled(Tabs)`
   display: block;
   margin-top: 10px;
   margin-right: 0px;
@@ -200,7 +200,7 @@ const NewGroupButton = styled.button`
   }
 
 `
-const UserGroupTabs = styled(Tabs2)`
+const UserGroupTabs = styled(Tabs)`
   text-align: center;
   color: white;
   .pt-tab-list {
@@ -655,9 +655,9 @@ class GroupPage extends React.Component {
         return (
           <GroupContent>
             <GroupTabs id="group" selectedTabId={this.state.currentTabId} onChange={this.handleTabChange.bind(this)}>
-              <Tab2 id="members" title="Members" panel={this.renderGroupMembers()}/>
-              <Tab2 id="settings" title="Settings" panel={this.renderGroupSettings()}/>
-              <Tab2 id="past" title="Past Journals" panel={this.renderPastJournals()}/>
+              <Tab id="members" title="Members" panel={this.renderGroupMembers()}/>
+              <Tab id="settings" title="Settings" panel={this.renderGroupSettings()}/>
+              <Tab id="past" title="Past Journals" panel={this.renderPastJournals()}/>
             </GroupTabs>
           </GroupContent>
         )
@@ -666,9 +666,9 @@ class GroupPage extends React.Component {
         return (
           <GroupContent>
             <GroupTabs id="group" selectedTabId={this.state.currentTabId} onChange={this.handleTabChange.bind(this)}>
-              <Tab2 id="members" title="Members" panel={this.renderGroupMembers()}/>
-              <Tab2 id="settings" disabled title="Settings" panel={this.renderGroupSettings()}/>
-              <Tab2 id="past" title="Past Journals" panel={this.renderPastJournals()}/>
+              <Tab id="members" title="Members" panel={this.renderGroupMembers()}/>
+              <Tab id="settings" disabled title="Settings" panel={this.renderGroupSettings()}/>
+              <Tab id="past" title="Past Journals" panel={this.renderPastJournals()}/>
             </GroupTabs>
           </GroupContent>
         )
@@ -698,7 +698,7 @@ class GroupPage extends React.Component {
   renderUserGroupTabs(){
     return (
       this.state.groups.map(groupBundle => groupBundle.group).map(group => (
-        <Tab2 key={group.id} id={group.id} title={this.renderGroupMenuItem(group)} />
+        <Tab key={group.id} id={group.id} title={this.renderGroupMenuItem(group)} />
       ))
     )
   }
