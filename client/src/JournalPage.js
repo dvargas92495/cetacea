@@ -56,7 +56,7 @@ class JournalPage extends React.Component {
       lastSubmit: moment().toDate(),
       toaster: Toaster,
       refHandlers: {
-        toaster: (ref: Toaster) => this.toaster = ref
+        toaster: (ref = Toaster) => this.toaster = ref
       }
     };
 

@@ -5,13 +5,13 @@ branches:
 matrix:
   include:
   - language: node_js
-    node_js: 6.10.3
+    node_js: 10.15.3
     name: "End to end tests"
 
-    before_install:
+    before_install: ./cmd.sh setup-npm
+    install:
     - cd client
-    - npm install -g npm@latest
-    install: npm ci
+    - npm ci
     before_script:
     - npm run build
     - cd ..

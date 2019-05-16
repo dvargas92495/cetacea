@@ -11,13 +11,13 @@ var config = {
     filename: 'bundle.js'
   },
   module : {
-    loaders : [
+    rules : [
       {
         test : /\.jsx?/,
         include : APP_DIR,
         loader : 'babel-loader',
         query : {
-          presets: ['react']
+          presets: ['@babel/react']
         }
       },
       {
