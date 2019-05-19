@@ -9,16 +9,9 @@ matrix:
     name: "End to end tests"
 
     before_install: ./cmd.sh setup-npm
-    install:
-    - cd client
-    - npm ci
-    before_script:
-    - npm run build
-    - cd ..
-    - gradle build
-    - ./cmd.sh run &
-    - cd client
-    script: npm run cypress
+    install: ./cmd.sh ci-npm
+    before_script: ./cmd.sh build-ci
+    script: ./cmd.sh run-cypress
 
     # keep the npm cache around to speed up installs
     cache:
