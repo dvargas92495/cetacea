@@ -2,14 +2,18 @@
 
 helpCmd() {
     echo "You could use the following commands:";
-    echo "    help: prints all available commands to console";
-    echo "    build: builds the project with gradle and npm";
-    echo "    zip: zips the necessary files for deployment";
-    echo "    run: runs the backend server";
-    echo "    gen: creates data directory for jOOQ files";
-    echo "    dbcopy: copies to the local psql database mirroring production schema";
+    echo "    build-ci: builds and runs the project with gradle and npm for the CI environment";
+    echo "    build-prod: builds the project with gradle and npm for the prod environment";
+    echo "    ci-npm: npm installs for the CI environment";
     echo "    dbconnect: connects to the prod psql database";
+    echo "    dbcopy: copies to the local psql database mirroring production schema";
     echo "    dbuser: creates a local db user";
+    echo "    gen: creates data directory for jOOQ files";
+    echo "    help: prints all available commands to console";
+    echo "    run: runs the backend server";
+    echo "    run-cypress: runs the cypress tests";
+    echo "    setup-npm: installs the current version of npm we use";
+    echo "    zip: zips the necessary files for deployment";
 }
 
 setupNpmCmd() {
@@ -17,20 +21,37 @@ setupNpmCmd() {
     npm install npm@6.9.0 -g;
 }
 
-buildCmd() {
+ciNpmCmd() {
+    cd client;
+    npm ci;
+}
+
+buildProdCmd() {
     gradle build;
     setupNpmCmd;
     npm install;
-    npm run build;
+    npm run build:prod;
 }
 
 zipCmd() {
     rm cetacea.zip;
-    zip -r cetacea.zip .ebextensions lib client/src client/images client/favicon.ico client/.babelrc client/*.html client/package.json client/webpack.config.js src build.gradle Buildfile cmd.sh cron.yaml Procfile;
+    zip -r cetacea.zip .ebextensions lib client/src client/images client/favicon.ico client/.babelrc client/*.html client/package.json client/webpack.config.js client/webpack.config.prod.js src/main build.gradle Buildfile cmd.sh cron.yaml Procfile;
+}
+
+runCypressCmd() {
+    cd client;
+    npm run cypress;
 }
 
 runCmd() {
     java -jar -Dapple.awt.UIElement=true build/libs/Cetacea-v0.jar;
+}
+
+buildCiCmd() {
+    gradle build;
+    runCmd &
+    cd client;
+    npm run build:prod;
 }
 
 genCmd() {
@@ -49,8 +70,12 @@ dbconnectCmd() {
     psql -h "aanlh5mrzrcgku.c2sjnb5f4d57.us-east-1.rds.amazonaws.com" -U "cetacea" -p 5432 -d postgres
 }
 
-if [[ $1 = "build" ]]; then
-    buildCmd;
+if [[ $1 = "build-ci" ]]; then
+    buildCiCmd;
+elif [[ $1 = "build-prod" ]]; then
+    buildProdCmd;
+elif [[ $1 = "ci-npm" ]]; then
+    ciNpmCmd;
 elif [[ $1 = "dbcopy" ]]; then
     dbcopyCmd;
 elif [[ $1 = "dbconnect" ]]; then
@@ -63,6 +88,8 @@ elif [[ $1 = "help" ]]; then
     helpCmd;
 elif [[ $1 = "run" ]]; then
     runCmd;
+elif [[ $1 = "run-cypress" ]]; then
+    runCypressCmd;
 elif [[ $1 = "setup-npm" ]]; then
     setupNpmCmd;
 elif [[ $1 = "zip" ]]; then

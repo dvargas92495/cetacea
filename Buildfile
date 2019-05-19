@@ -1,1 +1,1 @@
-build: sudo ./cmd.sh build
+build: sudo ./cmd.sh build-prod
