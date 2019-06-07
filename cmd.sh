@@ -5,9 +5,10 @@ helpCmd() {
     echo "    build-ci: builds and runs the project with gradle and npm for the CI environment";
     echo "    build-prod: builds the project with gradle and npm for the prod environment";
     echo "    ci-npm: npm installs for the CI environment";
-    echo "    dbconnect: connects to the prod psql database";
-    echo "    dbcopy: copies to the local psql database mirroring production schema";
-    echo "    dbuser: creates a local db user";
+    echo "    db-connect: connects to the prod psql database";
+    echo "    db-copy: copies to the local psql database mirroring production schema";
+    echo "    db-local: connects to the local psql database";
+    echo "    db-user: creates a local db user";
     echo "    gen: creates data directory for jOOQ files";
     echo "    help: prints all available commands to console";
     echo "    run: runs the backend server";
@@ -58,16 +59,20 @@ genCmd() {
     java -classpath "lib/jooq-3.10.1.jar;lib/jooq-meta-3.10.1.jar;lib/jooq-codegen-3.10.1.jar;lib/postgresql-9.4.1212.jar;." org.jooq.util.GenerationTool /datagen.xml
 }
 
-dbuserCmd() {
+dbUserCmd() {
     psql -U postgres -d postgres -c "CREATE USER cetacea WITH PASSWORD 'passwerd'";
 }
 
-dbcopyCmd() {
+dbCopyCmd() {
     pg_dump -h "aanlh5mrzrcgku.c2sjnb5f4d57.us-east-1.rds.amazonaws.com" -U "cetacea" -p 5432 -Cs postgres | psql -U cetacea postgres;
 }
 
-dbconnectCmd() {
+dbConnectCmd() {
     psql -h "aanlh5mrzrcgku.c2sjnb5f4d57.us-east-1.rds.amazonaws.com" -U "cetacea" -p 5432 -d postgres
+}
+
+ dbLocalCmd() {
+    psql -U "cetacea" -p 5432 -d postgres
 }
 
 if [[ $1 = "build-ci" ]]; then
@@ -76,12 +81,14 @@ elif [[ $1 = "build-prod" ]]; then
     buildProdCmd;
 elif [[ $1 = "ci-npm" ]]; then
     ciNpmCmd;
-elif [[ $1 = "dbcopy" ]]; then
-    dbcopyCmd;
-elif [[ $1 = "dbconnect" ]]; then
-    dbconnectCmd;
-elif [[ $1 = "dbuser" ]]; then
-    dbuserCmd;
+elif [[ $1 = "db-copy" ]]; then
+    dbCopyCmd;
+elif [[ $1 = "db-connect" ]]; then
+    dbConnectCmd;
+elif [[ $1 = "db-local" ]]; then
+    dbLocalCmd;
+elif [[ $1 = "db-user" ]]; then
+    dbUserCmd;
 elif [[ $1 = "gen" ]]; then
     genCmd;
 elif [[ $1 = "help" ]]; then
