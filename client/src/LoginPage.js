@@ -47,7 +47,7 @@ class LoginPage extends React.Component {
 
   componentDidMount() {
     gapi.signin2.render('g-signin2', {
-      'scope': 'https://www.googleapis.com/auth/plus.login',
+      'scope': 'https://www.googleapis.com/auth/userinfo.profile',
       'onsuccess': this.onSignIn.bind(this)
     });
   }

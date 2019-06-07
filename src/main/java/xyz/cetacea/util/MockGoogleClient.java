@@ -1,4 +1,4 @@
-package xyz.cetacea.mocks;
+package xyz.cetacea.util;
 
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken.Payload;
 import xyz.cetacea.util.IGoogleClient;
@@ -6,6 +6,9 @@ import xyz.cetacea.util.IGoogleClient;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 
+/*
+ * TODO: One already exists!
+ */
 public class MockGoogleClient implements IGoogleClient {
     @Override
     public Payload verify(String idToken) throws GeneralSecurityException, IOException {

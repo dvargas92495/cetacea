@@ -1,7 +1,9 @@
 package xyz.cetacea;
 
 import xyz.cetacea.endpoints.*;
+import xyz.cetacea.util.DependencyManager;
 import xyz.cetacea.util.Environment;
+import xyz.cetacea.util.MockGoogleClient;
 import xyz.cetacea.util.Scheduler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletHandler;
@@ -11,6 +13,9 @@ public class Application {
 
         //Establish Scheduler
         // Scheduler.init();
+        if(!Environment.isProd()) {
+            DependencyManager.setGoogleClient(new MockGoogleClient());
+        }
 
         //Establish Endpoints
         Server server = new Server(Environment.PORT);

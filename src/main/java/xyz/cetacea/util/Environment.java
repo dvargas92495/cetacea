@@ -19,6 +19,11 @@ public class Environment {
 
     public static final String GOOGLE_CLIENT = getEnv("CETACEA_GOOGLE_CLIENT", null);
 
+    public static Boolean isProd()
+    {
+        return ENVIRONMENT.equals(PRODUCTION);
+    }
+
     private static String getEnv(String envVariable, String defaultValue)
     {
         String val = System.getenv().get(envVariable);

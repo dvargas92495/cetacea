@@ -121,7 +121,7 @@ class NavBar extends React.Component {
     gapi.load('auth2', function(){
       self.a2 = gapi.auth2.init({
         client_id: '548992550759-kmikahq1pkfhffgps85151j5o2a6gduu.apps.googleusercontent.com',
-        scope: 'https://www.googleapis.com/auth/plus.login'
+        scope: 'https://www.googleapis.com/auth/userinfo.profile',
       });
       self.a2.then(function(){
         if(self.a2.isSignedIn.get()) {

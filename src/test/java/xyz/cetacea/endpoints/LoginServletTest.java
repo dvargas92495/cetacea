@@ -3,7 +3,7 @@ package xyz.cetacea.endpoints;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import xyz.cetacea.data.tables.pojos.Users;
-import xyz.cetacea.mocks.MockGoogleClient;
+import xyz.cetacea.util.MockGoogleClient;
 import xyz.cetacea.queries.UsersQueries;
 import xyz.cetacea.util.DependencyManager;
 

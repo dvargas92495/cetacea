@@ -1,7 +1,9 @@
 import React from 'react'
 import {Card, Icon} from '@blueprintjs/core'
+import {IconNames} from '@blueprintjs/icons'
 import styled from 'styled-components'
 import {Link} from 'react-router-dom'
+import { onSignIn } from './actions';
 import Logo from '../images/cetacea_logo.png'
 
 const SignUpCard = styled(Card)`
@@ -37,7 +39,7 @@ const BackButton = styled(Link)`
   font-size: 35px;
 `
 const BackButtonSpan = styled.span`
-  .pt-icon{
+  .bp3-icon{
     font-size: 35px;
     margin-top: 20px;
   }
@@ -47,41 +49,23 @@ class SignupPage extends React.Component {
 
   componentDidMount() {
     gapi.signin2.render('g-signin2', {
-      'scope': 'https://www.googleapis.com/auth/plus.login',
-      'onsuccess': this.onSignIn.bind(this)
+      scope: 'https://www.googleapis.com/auth/userinfo.profile',
+      onsuccess: onSignIn
     });
   }
-
-  onSignIn(googleUser) {
-    var profile = googleUser.getBasicProfile();
-    var id_token = googleUser.getAuthResponse().id_token;
-
-    var self = this;
-    fetch('/api/login', {
-      method: 'POST',
-      body: JSON.stringify({
-        idtoken: id_token
-      })
-    }).then(function(resp){
-      return resp.json();
-    }).then(function(body){
-      self.props.history.push("/", {userId:body.id});
-    })
-  }
-
 
   render () {
     return (
       <div>
         <BackButton to='/'>
-          <BackButtonSpan><Icon iconName="pt-icon-circle-arrow-left" iconSize="35px" /></BackButtonSpan>
+          <BackButtonSpan><Icon icon={IconNames.CIRCLE_ARROW_LEFT} iconSize={35} /></BackButtonSpan>
         </BackButton>
         <SignUpCard>
           <Link to='/'>
             <LogoContainer src={Logo} />
           </Link>
           <HelpText>{"Sign up for Cetacea with your Google Account:"}</HelpText>
-          <GoogleButton id="g-signin2" data-onsuccess={this.onSignIn}></GoogleButton>
+          <GoogleButton id="g-signin2"></GoogleButton>
           <Link to='/login'>
             <LogInText><b>{"Already have an account? Log in here."}</b></LogInText>
           </Link>

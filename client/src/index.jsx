@@ -1,11 +1,12 @@
 import React from 'react'
 import {render} from 'react-dom'
-import { BrowserRouter } from 'react-router-dom'
+import { Router } from 'react-router-dom'
+import history from './history';
 
 import HomeRoutes from './HomeRoutes.js'
 
 render((
-  <BrowserRouter>
+  <Router history={history}>
     <HomeRoutes/>
-  </BrowserRouter>
+  </Router>
 ), document.getElementById('root'));

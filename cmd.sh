@@ -70,6 +70,10 @@ dbconnectCmd() {
     psql -h "aanlh5mrzrcgku.c2sjnb5f4d57.us-east-1.rds.amazonaws.com" -U "cetacea" -p 5432 -d postgres
 }
 
+dbLocalCmd() {
+    psql -U "cetacea" -p 5432 -d postgres
+}
+
 if [[ $1 = "build-ci" ]]; then
     buildCiCmd;
 elif [[ $1 = "build-prod" ]]; then
@@ -80,6 +84,8 @@ elif [[ $1 = "dbcopy" ]]; then
     dbcopyCmd;
 elif [[ $1 = "dbconnect" ]]; then
     dbconnectCmd;
+elif [[ $1 = "db-local" ]]; then
+    dbLocalCmd;
 elif [[ $1 = "dbuser" ]]; then
     dbuserCmd;
 elif [[ $1 = "gen" ]]; then
