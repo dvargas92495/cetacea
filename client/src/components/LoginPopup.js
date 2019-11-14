@@ -1,5 +1,6 @@
 import React from 'react'
 import Button from './Button.js'
+import GoogleButton from './GoogleButton'
 import styled from 'styled-components'
 import {Dialog} from '@blueprintjs/core'
 
@@ -17,28 +18,12 @@ const LoginDialog = styled(Dialog)`
   .pt-dialog-header {
     background: #D4EDF0;
   }`
-const GoogleButton = styled.div`
-  .abcRioButton.abcRioButtonLightBlue { margin: 0 auto;}
-  display: block;
-  margin: auto;
-  margin-bottom: 30px;
-`
 
 class LoginPopup extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
       id: null
-    }
-    this.onSignIn = this.props.login
-  }
-
-  componentDidUpdate() {
-    if (this.props.isOpen == true) {
-      gapi.signin2.render('g-signin2', {
-            'scope': 'https://www.googleapis.com/auth/plus.login',
-            'onsuccess': this.onSignIn
-      })
     }
   }
 
@@ -51,7 +36,7 @@ class LoginPopup extends React.Component {
               {"Please login with your Google account below."}
             </PopupText>
 
-            <GoogleButton id="g-signin2" data-onsuccess={this.onSignIn}></GoogleButton>
+            <GoogleButton id="g-signin2" login={this.props.login}></GoogleButton>
           </div>
         </LoginDialog>
       </div>

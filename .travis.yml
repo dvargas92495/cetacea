@@ -8,6 +8,11 @@ matrix:
     node_js: 10.15.3
     name: "End to end tests"
 
+    addons:
+      apt:
+        packages:
+        - libgconf-2-4
+
     before_install: ./cmd.sh setup-npm
     install: ./cmd.sh ci-npm
     before_script: ./cmd.sh build-ci
