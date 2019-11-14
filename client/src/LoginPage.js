@@ -3,6 +3,7 @@ import {Card, Icon} from '@blueprintjs/core'
 import styled from 'styled-components'
 import {Link} from 'react-router-dom'
 import Logo from '../images/cetacea_logo.png'
+import GoogleButton from './components/GoogleButton'
 
 const SignUpCard = styled(Card)`
   margin: 20px 350px 20px 350px;
@@ -21,11 +22,6 @@ const HelpText = styled.h4`
   font-family: 'Open Sans';
 `
 
-const GoogleButton = styled.div`
-  .abcRioButton.abcRioButtonLightBlue { margin: 0 auto;}
-  display: block;
-  margin: auto;
-`
 const LogInText = styled.p`
   font-family: 'Open Sans';
   text-align: center;
@@ -44,13 +40,6 @@ const BackButtonSpan = styled.span`
 `
 
 class LoginPage extends React.Component {
-
-  componentDidMount() {
-    gapi.signin2.render('g-signin2', {
-      'scope': 'https://www.googleapis.com/auth/plus.login',
-      'onsuccess': this.onSignIn.bind(this)
-    });
-  }
 
   onSignIn(googleUser) {
     var profile = googleUser.getBasicProfile();
@@ -81,7 +70,7 @@ class LoginPage extends React.Component {
             <LogoContainer src={Logo} />
           </Link>
           <HelpText>{"Log into your Cetacea account with your Google Account: "}</HelpText>
-          <GoogleButton id="g-signin2" data-onsuccess={this.onSignIn}></GoogleButton>
+          <GoogleButton id="g-signin2" login={this.onSignIn.bind(this)}></GoogleButton>
           <Link to='/signup'>
             <LogInText><b>{"Don't have an account? Sign up here."}</b></LogInText>
           </Link>
