@@ -14,24 +14,24 @@ const GroupTabs = styled(Tabs)`
   margin-top: 10px;
   margin-right: 0px;
   font-family: Allerta;
-  .pt-tab {
+  bp3-tab {
     font-size: 12px;
     padding-right: 80px;
     padding-left: 80px;
     border-radius: 6px 6px 0px 0px;
     outline: 0px;
   }
-  .pt-tab[aria-selected="true"]{
+  bp3-tab[aria-selected="true"]{
     border-radius: 6px 6px 0px 0px;
     background: #FFFFFF;
   }
-  .pt-tab-list > *:not(:last-child) {
+  bp3-tab-list > *:not(:last-child) {
     margin-right: 0px;
   }
-  .pt-tab-panel {
+  bp3-tab-panel {
     margin-top: 0px;
   }
-  .pt-tab[aria-selected="false"]{
+  bp3-tab[aria-selected="false"]{
     background: #E0E0E0;
     font-color: #424242;
   }
@@ -121,7 +121,7 @@ const RemoveButtons = styled.button`
   }`
 
 const SavePopover = styled(Popover)`
-  .pt-popover {
+  bp3-popover {
     width: 320px;
     padding: 10px;
     padding-right: 3px;
@@ -203,20 +203,20 @@ const NewGroupButton = styled.button`
 const UserGroupTabs = styled(Tabs)`
   text-align: center;
   color: white;
-  .pt-tab-list {
+  bp3-tab-list {
     width: 100%;
   }
-  .pt-tab[aria-selected="true"]{
+  bp3-tab[aria-selected="true"]{
     background: #FFFFFF;
     box-shadow: none;
   }
-  .pt-tab[aria-selected="false"]{
+  bp3-tab[aria-selected="false"]{
     color: white;
     &:hover {
       background: #6f7377;
     }
   }
-  .pt-tab {
+  bp3-tab {
     border-radius: 2px;
     border-bottom: rgba(16, 22, 26, 0.15) solid thin;
     &:focus {
@@ -270,20 +270,11 @@ class GroupPage extends React.Component {
     this.handleAddMemberSubmit = this.handleAddMemberSubmit.bind(this)
 
     this.toggleDeleteWarningDialog = this.toggleDeleteWarningDialog.bind(this)
-
-    // this.popoverInteraction =
-
   }
 
   handleClick (id, e) {
     this.setState({currentGroupId: id})
     this.handleTabChange("members")
-  }
-
-  handleNewGroupClick(e) {
-    if (this.state.userId == 6 || this.state.userId == 7){
-      this.toggleNewGroupDialog()
-    }
   }
 
   getGroups(userObj){
@@ -712,7 +703,7 @@ class GroupPage extends React.Component {
           </NavBarGrid>
           <GroupSelect>
             <TooltipFix content={"This feature is not yet functional."} position={Position.RIGHT}>
-              <NewGroupButton onClick={this.handleNewGroupClick.bind(this)}><Icon iconName="plus" iconSize={20} style={{fontSize: "30px"}}/><NewGroupTitle>{"New Group"}</NewGroupTitle></NewGroupButton>
+              <NewGroupButton onClick={this.toggleNewGroupDialog.bind(this)}><Icon iconName="plus" iconSize={20} style={{fontSize: "30px"}}/><NewGroupTitle>{"New Group"}</NewGroupTitle></NewGroupButton>
             </TooltipFix>
             <Horizontal/>
             <UserGroupTabs id="usergroup" animate={false} vertical={true} onChange={this.handleUserGroupTabChange.bind(this)} selectedTabId={this.state.currentUserGroupId}>
