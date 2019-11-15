@@ -1,5 +1,6 @@
 import React from 'react'
 import {Card, Icon} from '@blueprintjs/core'
+import { IconNames } from "@blueprintjs/icons";
 import styled from 'styled-components'
 import {Link} from 'react-router-dom'
 import Logo from '../images/cetacea_logo.png'
@@ -63,7 +64,7 @@ class SignupPage extends React.Component {
     return (
       <div>
         <BackButton to='/'>
-          <BackButtonSpan><Icon iconName="pt-icon-circle-arrow-left" iconSize="35px" /></BackButtonSpan>
+          <BackButtonSpan><Icon icon={IconNames.CIRCLE_ARROW_LEFT} iconSize={35} /></BackButtonSpan>
         </BackButton>
         <SignUpCard>
           <Link to='/'>

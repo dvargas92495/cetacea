@@ -15,7 +15,7 @@ const PopupText = styled.h2`
   margin-bottom: 30px;`
 const LoginDialog = styled(Dialog)`
   background: #FFFFFF;
-  .pt-dialog-header {
+  .bp3-dialog-header {
     background: #D4EDF0;
   }`
 

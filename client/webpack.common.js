@@ -22,7 +22,11 @@ var config = {
         }
       },
       {
-        test: /\.(png|jpg|gif)$/,
+        test: /\.css$/i,
+        use: ['style-loader', 'css-loader'],
+      },
+      {
+        test: /\.(png|jpg|gif|woff|eot|ttf)$/,
         use: [
           {
             loader: 'file-loader',
